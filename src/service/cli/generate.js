@@ -2,7 +2,7 @@
 
 const chalk = require(`chalk`);
 
-const fs = require(`fs`);
+const fs = require(`fs`).promises;
 const dayjs = require(`dayjs`);
 const {ExitCode} = require(`../../constants`);
 const {
@@ -105,7 +105,7 @@ const generateArticles = (count) => Array(count).fill({}).map(generateArticle);
 
 module.exports = {
   name: `--generate`,
-  run(args) {
+  async run(args) {
     const [rawCount] = args;
     const count = Number.parseInt(rawCount, 10) || DEFAULT_COUNT;
 
@@ -118,12 +118,12 @@ module.exports = {
 
     console.info(chalk.yellowBright(`Дождитесь окончания записи файла...`));
 
-    fs.writeFile(FILE_MOCKS_PATH, content, (err) => {
-      if (err) {
-        return console.error(chalk.red(`Операция завершена с ошибкой. Данные не сохранены.`));
-      }
-
-      return console.info(chalk.green(`Операция завершена успешно. Данные записаны в файл ${FILE_MOCKS_PATH}.`));
-    });
+    try {
+      await fs.writeFile(FILE_MOCKS_PATH, content);
+      console.info(chalk.green(`Операция завершена успешно. Данные записаны в файл ${FILE_MOCKS_PATH}.`));
+    } catch (error) {
+      console.error(chalk.red(`Операция завершена с ошибкой. Данные не сохранены.`));
+      process.exit(ExitCode.ERROR);
+    }
   },
 };

@@ -1,7 +1,5 @@
 'use strict';
 
-const getRandomTrue = (probabilityOfTrue) => Math.random() < probabilityOfTrue;
-
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -11,17 +9,6 @@ const getRandomInt = (min, max) => {
 
 const getRandomItem = (items) => items[getRandomInt(0, items.length - 1)];
 
-const getUniqueArray = (items) => {
-  const nonUniqueItems = [];
-  const maxCount = getRandomTrue(0.75) ? items.length / 2 : 1;
-
-  for (let i = 0; i < maxCount; i++) {
-    nonUniqueItems.push(getRandomItem(items));
-  }
-
-  return Array.from(new Set(nonUniqueItems));
-};
-
 const shuffle = (items) => {
   for (let i = items.length - 1; i > 0; i--) {
     const randomPosition = Math.floor(Math.random() * i);
@@ -29,6 +16,10 @@ const shuffle = (items) => {
   }
 
   return items;
+};
+
+const getUniqueArray = (items) => {
+  return shuffle(items).slice(0, getRandomInt(0, items.length - 1));
 };
 
 module.exports = {

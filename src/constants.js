@@ -7,6 +7,14 @@ const ExitCode = {
   ERROR: 1,
 };
 
+const HttpCode = {
+  OK: 200,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  INTERNAL_SERVER_ERROR: 500,
+};
+
 const FilePath = {
   MOCKS: `mocks.json`,
   CATEGORIES: `data/categories.txt`,
@@ -18,4 +26,5 @@ module.exports = {
   DEFAULT_COMMAND,
   FilePath,
   ExitCode,
+  HttpCode,
 };

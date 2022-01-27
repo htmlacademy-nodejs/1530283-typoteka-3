@@ -7,7 +7,9 @@ const rootRoutes = new Router();
 
 rootRoutes.get(`/`, (req, res) => res.render(`main`));
 
-rootRoutes.get(`/register`, sendPath);
+rootRoutes.get(`/register`, () => {
+  throw new Error(`message`);
+});
 
 rootRoutes.get(`/login`, sendPath);
 

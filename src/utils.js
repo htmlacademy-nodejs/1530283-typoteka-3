@@ -2,10 +2,8 @@
 
 const fs = require(`fs`).promises;
 const chalk = require(`chalk`);
-const {HttpCode} = require(`./constants`);
 
 const PATH_DIVIDER = `/`;
-const NOT_FOUND = `Not Found`;
 
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
@@ -50,11 +48,6 @@ const sendPath = (req, res) => {
   res.send(path);
 };
 
-const sendNotFound = (req, res) => {
-  res.status(HttpCode.NOT_FOUND);
-  res.send(NOT_FOUND);
-};
-
 module.exports = {
   shuffle,
   getRandomInt,
@@ -62,5 +55,4 @@ module.exports = {
   getUniqueArray,
   readContent,
   sendPath,
-  sendNotFound,
 };

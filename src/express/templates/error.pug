@@ -2,9 +2,9 @@ extends ./layout.pug
 
 block content
   main
-    h1.visually-hidden Ошибка #{errorCode}
-    section.error(class=`error--${errorCode}`)
-      h2.error__title.title.title--big= errorMessage
-      if errorText
-        p.error__text.text.text--big= errorText
+    h1.visually-hidden Ошибка #{error.code}
+    section.error(class=`error--${error.code}`)
+      h2.error__title.title.title--big= error.title
+      if error.text
+        p.error__text.text.text--big= error.text
       a.error__link.text.text--big(href='/') Вернуться на главную

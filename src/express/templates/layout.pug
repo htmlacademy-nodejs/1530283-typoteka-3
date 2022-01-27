@@ -11,7 +11,9 @@ html
     link(rel='preload' href='/fonts/SFProDisplay-Regular.woff2' as='font' crossorigin='anonymous')
     link(rel='stylesheet' href='/css/style.min.css')
   body
-    div(class=!!errorCode ? `wrapper-color` : `wrapper`)
+    - const isError = Boolean(error)
+
+    div(class=isError ? `wrapper-color` : `wrapper`)
 
       include ./partials/header.pug
 

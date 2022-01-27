@@ -1,18 +1,14 @@
-mixin headerLogo(errorCode)
-  -
-    const isError = Boolean(errorCode);
-    const logoErrorClass = `header__logo--${errorCode}`;
-    const source = isError ? `/img/icons/logo.svg` : `/img/icons/logo-image-only.svg`;
+-
+  const logoImageSource = `/img/icons/logo${isError ? `` : `-image-only`}.svg`;
+  const logoErrorModifier = isError ? `header__logo--${error.code}` : ``;
 
-  a.header__logo.logo(class={[logoErrorClass]: isError} href='/')
-    img(class={logo__image: !isError} src=source alt='логотип Типотеки')
+header.header(class={[`header--error`]: isError})
+  a.header__logo.logo(class=logoErrorModifier href='/')
+    img(class={logo__image: !isError} src=logoImageSource alt='логотип Типотеки')
     if !isError
-        span.logo__name Типотека
+      span.logo__name Типотека
 
-header.header(class={[`header--error`]: !!errorCode})
-  +headerLogo(errorCode)
-
-  if (isAdmin)
+  if isAdmin
     a.button.button--colored.header__button-new(href='/articles/add') Новая запись
     .header__dropdown
       a.button.button--burger.header__burger Открыть меню
@@ -25,7 +21,7 @@ header.header(class={[`header--error`]: !!errorCode})
           a(href='main.html') Пункт меню
         li.navigation__item
           a(href='main.html') Пункт меню
-  else if (isUser)
+  else if isUser
     nav.header__nav
       ul.header__nav-list
         li.header__list-item

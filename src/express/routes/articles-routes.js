@@ -1,17 +1,24 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {sendPath} = require(`../../utils`);
 
 const articlesRoutes = new Router();
 
-articlesRoutes.get(`/category/:id`, sendPath);
+articlesRoutes.get(`/category/:id`, () => {
+  throw new Error(`message`);
+});
 
-articlesRoutes.get(`/add`, sendPath);
+articlesRoutes.get(`/add`, () => {
+  throw new Error(`message`);
+});
 
-articlesRoutes.get(`/edit/:id`, sendPath);
+articlesRoutes.get(`/edit/:id`, () => {
+  throw new Error(`message`);
+});
 
-articlesRoutes.get(`/:id`, sendPath);
+articlesRoutes.get(`/:id`, () => {
+  throw new Error(`message`);
+});
 
 module.exports = articlesRoutes;
 

@@ -3,8 +3,6 @@
 const fs = require(`fs`).promises;
 const chalk = require(`chalk`);
 
-const PATH_DIVIDER = `/`;
-
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -37,22 +35,10 @@ const readContent = async (filePath) => {
   }
 };
 
-const sendPath = (req, res) => {
-  const path = `${req.baseUrl}${req.route.path}`;
-
-  if (path !== PATH_DIVIDER && path.slice(-1) === PATH_DIVIDER) {
-    res.send(path.slice(0, -1));
-    return;
-  }
-
-  res.send(path);
-};
-
 module.exports = {
   shuffle,
   getRandomInt,
   getRandomItem,
   getUniqueArray,
   readContent,
-  sendPath,
 };

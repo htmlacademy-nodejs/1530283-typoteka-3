@@ -1,14 +1,19 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {sendPath} = require(`../../utils`);
 
 const myRoutes = new Router();
 
-myRoutes.get(`/`, sendPath);
+myRoutes.get(`/`, () => {
+  throw new Error(`message`);
+});
 
-myRoutes.get(`/comments`, sendPath);
+myRoutes.get(`/comments`, () => {
+  throw new Error(`message`);
+});
 
-myRoutes.get(`/categories`, sendPath);
+myRoutes.get(`/categories`, () => {
+  throw new Error(`message`);
+});
 
 module.exports = myRoutes;

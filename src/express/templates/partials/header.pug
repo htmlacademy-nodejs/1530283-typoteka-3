@@ -11,11 +11,35 @@ mixin headerLogo(errorCode)
 
 header.header(class={[`header--error`]: !!errorCode})
   +headerLogo(errorCode)
-  nav.header__nav
-    ul.header__nav-list
-      li.header__list-item
-        a.header__registration(href='/register') Регистрация
-      li.header__list-item
-        a.header__enter(href='/login') Вход с паролем
-  a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')
 
+  if (isAdmin)
+    a.button.button--colored.header__button-new(href='/articles/add') Новая запись
+    .header__dropdown
+      a.button.button--burger.header__burger Открыть меню
+      ul.navigation.header__navigation
+        li.navigation__item
+          a(href='main.html') Пункт меню
+        li.navigation__item
+          a(href='main.html') Пункт меню
+        li.navigation__item
+          a(href='main.html') Пункт меню
+        li.navigation__item
+          a(href='main.html') Пункт меню
+  else if (isUser)
+    nav.header__nav
+      ul.header__nav-list
+        li.header__list-item
+          p Алёна Фролова
+        li.header__list-item
+          a.header__exit(href='#') Выйти
+    a.header__avatar.avatar
+      img(src='/img/avatar-2.png' alt='аватар пользователя')
+  else
+    nav.header__nav
+      ul.header__nav-list
+        li.header__list-item
+          a.header__registration(href='/register') Регистрация
+        li.header__list-item
+          a.header__enter(href='/login') Вход с паролем
+
+  a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')

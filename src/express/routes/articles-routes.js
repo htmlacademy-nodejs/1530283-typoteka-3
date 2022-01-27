@@ -4,21 +4,13 @@ const {Router} = require(`express`);
 
 const articlesRoutes = new Router();
 
-articlesRoutes.get(`/category/:id`, () => {
-  throw new Error(`message`);
-});
+articlesRoutes.get(`/category/:id`, (req, res) => res.render(`articles-by-category`));
 
-articlesRoutes.get(`/add`, () => {
-  throw new Error(`message`);
-});
+articlesRoutes.get(`/add`, (req, res) => res.render(`article-form`));
 
-articlesRoutes.get(`/edit/:id`, () => {
-  throw new Error(`message`);
-});
+articlesRoutes.get(`/edit/:id`, (req, res) => res.render(`article-form`));
 
-articlesRoutes.get(`/:id`, () => {
-  throw new Error(`message`);
-});
+articlesRoutes.get(`/:id`, (req, res) => res.render(`article`));
 
 module.exports = articlesRoutes;
 

@@ -4,16 +4,10 @@ const {Router} = require(`express`);
 
 const myRoutes = new Router();
 
-myRoutes.get(`/`, () => {
-  throw new Error(`message`);
-});
+myRoutes.get(`/`, (req, res) => res.render(`admin-articles`));
 
-myRoutes.get(`/comments`, () => {
-  throw new Error(`message`);
-});
+myRoutes.get(`/comments`, (req, res) => res.render(`admin-comments`));
 
-myRoutes.get(`/categories`, () => {
-  throw new Error(`message`);
-});
+myRoutes.get(`/categories`, (req, res) => res.render(`admin-categories`));
 
 module.exports = myRoutes;

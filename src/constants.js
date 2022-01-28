@@ -22,9 +22,22 @@ const FilePath = {
   SENTENCES: `data/sentences.txt`,
 };
 
+const HttpError = {
+  CLIENT: {
+    code: HttpCode.NOT_FOUND,
+    title: `Похоже ошиблись адресом`
+  },
+  SERVER: {
+    code: HttpCode.INTERNAL_SERVER_ERROR,
+    title: `Что-то пошло не так`,
+    text: `Причин может быть много: сервер не выдержал нагрузку или в коде ошибка. Попробуйте повторить попытку позже.`
+  }
+};
+
 module.exports = {
   DEFAULT_COMMAND,
   FilePath,
   ExitCode,
   HttpCode,
+  HttpError
 };

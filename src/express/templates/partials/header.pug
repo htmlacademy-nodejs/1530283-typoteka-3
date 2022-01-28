@@ -1,0 +1,41 @@
+-
+  const logoImageSource = `/img/icons/logo${isHttpError ? `` : `-image-only`}.svg`;
+  const logoErrorModifier = isHttpError ? `header__logo--${httpError.code}` : ``;
+
+header.header(class={[`header--error`]: isHttpError})
+  a.header__logo.logo(class=logoErrorModifier href='/')
+    img(class={logo__image: !isHttpError} src=logoImageSource alt='логотип Типотеки')
+    if !isHttpError
+      span.logo__name Типотека
+
+  if !user
+    nav.header__nav
+      ul.header__nav-list
+        li.header__list-item
+          a.header__registration(href='/register') Регистрация
+        li.header__list-item
+          a.header__enter(href='/login') Вход с паролем
+  else if user.isAdmin
+    a.button.button--colored.header__button-new(href='/articles/add') Новая запись
+    .header__dropdown
+      a.button.button--burger.header__burger Открыть меню
+      ul.navigation.header__navigation
+        li.navigation__item
+          a(href='main.html') Пункт меню
+        li.navigation__item
+          a(href='main.html') Пункт меню
+        li.navigation__item
+          a(href='main.html') Пункт меню
+        li.navigation__item
+          a(href='main.html') Пункт меню
+  else
+    nav.header__nav
+      ul.header__nav-list
+        li.header__list-item
+          p Алёна Фролова
+        li.header__list-item
+          a.header__exit(href='#') Выйти
+    a.header__avatar.avatar
+      img(src='/img/avatar-2.png' alt='аватар пользователя')
+
+  a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')

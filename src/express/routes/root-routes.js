@@ -1,17 +1,16 @@
 'use strict';
 
 const {Router} = require(`express`);
-const {sendPath} = require(`../../utils`);
 
 const rootRoutes = new Router();
 
-rootRoutes.get(`/`, sendPath);
+rootRoutes.get(`/`, (req, res) => res.render(`articles/all-articles`));
 
-rootRoutes.get(`/register`, sendPath);
+rootRoutes.get(`/register`, (req, res) => res.render(`auth/register`));
 
-rootRoutes.get(`/login`, sendPath);
+rootRoutes.get(`/login`, (req, res) => res.render(`auth/login`));
 
-rootRoutes.get(`/search`, sendPath);
+rootRoutes.get(`/search`, (req, res) => res.render(`articles/search`));
 
 module.exports = rootRoutes;
 

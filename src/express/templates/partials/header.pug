@@ -1,14 +1,21 @@
 -
-  const logoImageSource = `/img/icons/logo${isError ? `` : `-image-only`}.svg`;
-  const logoErrorModifier = isError ? `header__logo--${error.code}` : ``;
+  const logoImageSource = `/img/icons/logo${isHttpError ? `` : `-image-only`}.svg`;
+  const logoErrorModifier = isHttpError ? `header__logo--${httpError.code}` : ``;
 
-header.header(class={[`header--error`]: isError})
+header.header(class={[`header--error`]: isHttpError})
   a.header__logo.logo(class=logoErrorModifier href='/')
-    img(class={logo__image: !isError} src=logoImageSource alt='логотип Типотеки')
-    if !isError
+    img(class={logo__image: !isHttpError} src=logoImageSource alt='логотип Типотеки')
+    if !isHttpError
       span.logo__name Типотека
 
-  if isAdmin
+  if !user
+    nav.header__nav
+      ul.header__nav-list
+        li.header__list-item
+          a.header__registration(href='/register') Регистрация
+        li.header__list-item
+          a.header__enter(href='/login') Вход с паролем
+  else if user.isAdmin
     a.button.button--colored.header__button-new(href='/articles/add') Новая запись
     .header__dropdown
       a.button.button--burger.header__burger Открыть меню
@@ -21,7 +28,7 @@ header.header(class={[`header--error`]: isError})
           a(href='main.html') Пункт меню
         li.navigation__item
           a(href='main.html') Пункт меню
-  else if isUser
+  else
     nav.header__nav
       ul.header__nav-list
         li.header__list-item
@@ -30,12 +37,5 @@ header.header(class={[`header--error`]: isError})
           a.header__exit(href='#') Выйти
     a.header__avatar.avatar
       img(src='/img/avatar-2.png' alt='аватар пользователя')
-  else
-    nav.header__nav
-      ul.header__nav-list
-        li.header__list-item
-          a.header__registration(href='/register') Регистрация
-        li.header__list-item
-          a.header__enter(href='/login') Вход с паролем
 
   a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')

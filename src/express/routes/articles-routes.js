@@ -5,19 +5,23 @@ const {Router} = require(`express`);
 const articlesRoutes = new Router();
 
 articlesRoutes.get(`/category/:id`, (req, res) => res.render(`articles/articles-by-category`, {
-  isUser: true
+  user: {},
 }));
 
 articlesRoutes.get(`/add`, (req, res) => res.render(`admin/form`, {
-  isAdmin: true
+  user: {
+    isAdmin: true,
+  }
 }));
 
 articlesRoutes.get(`/edit/:id`, (req, res) => res.render(`admin/form`, {
-  isAdmin: true
+  user: {
+    isAdmin: true,
+  }
 }));
 
 articlesRoutes.get(`/:id`, (req, res) => res.render(`articles/article`, {
-  isUser: true
+  user: {},
 }));
 
 module.exports = articlesRoutes;

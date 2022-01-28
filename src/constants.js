@@ -22,7 +22,7 @@ const FilePath = {
   SENTENCES: `data/sentences.txt`,
 };
 
-const Error = {
+const HttpError = {
   CLIENT: {
     code: HttpCode.NOT_FOUND,
     title: `Похоже ошиблись адресом`
@@ -39,5 +39,5 @@ module.exports = {
   FilePath,
   ExitCode,
   HttpCode,
-  Error
+  HttpError
 };

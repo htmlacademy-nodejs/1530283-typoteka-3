@@ -34,10 +34,16 @@ const HttpError = {
   }
 };
 
+const FileType = {
+  TEXT: `txt`,
+  JSON: `json`,
+};
+
 module.exports = {
   DEFAULT_COMMAND,
   FilePath,
   ExitCode,
   HttpCode,
-  HttpError
+  HttpError,
+  FileType
 };

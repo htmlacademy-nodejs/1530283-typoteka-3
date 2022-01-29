@@ -1,58 +1,36 @@
 "use strict";
 
 const chalk = require(`chalk`);
-const http = require(`http`);
-const fs = require(`fs`).promises;
+const express = require(`express`);
 
-const {HttpCode, FilePath, ExitCode} = require(`../../constants`);
+const {HttpCode} = require(`../../constants`);
+const articlesRoutes = require(`./routes/articles-routes`);
 
-const ROOT_PATH = `/`;
 const DEFAULT_PORT = 3000;
-const NOT_FOUND_MESSAGE = `Not found`;
-
-const getTemplate = (message) => `
-<!Doctype html>
-  <html lang="ru">
-  <head>
-    <title>First server</title>
-  </head>
-  <body>${message}</body>
-</html>`.trim();
-
-const getMessage = (articles) => {
-  const items = articles.map((article) => `<li>${article.title}</li>`).join(``);
-  return `<ul>${items}</ul>`;
+const Messages = {
+  NOT_FOUND_MESSAGE: `Ресурс не найден`,
+  SERVER_ERROR_MESSAGE: `Ошибка сервера`,
 };
 
-const sendResponse = (res, statusCode, message) => {
-  res.writeHead(statusCode, {
-    "Content-Type": `text/html; charset=UTF-8`,
-  });
-
-  res.end(getTemplate(message));
+const sendNotFoundResponse = (req, res) => {
+  res.status(HttpCode.NOT_FOUND).send(Messages.NOT_FOUND_MESSAGE);
 };
 
-const sendNotFoundResponse = (res) => {
-  sendResponse(res, HttpCode.NOT_FOUND, NOT_FOUND_MESSAGE);
+const sendServerErrorResponse = (err, req, res, next) => {
+  res
+    .status(HttpCode.INTERNAL_SERVER_ERROR)
+    .send(Messages.SERVER_ERROR_MESSAGE);
+  next();
 };
 
-const onClientConnect = async (req, res) => {
-  switch (req.url) {
-    case ROOT_PATH:
-      try {
-        const rawContent = await fs.readFile(FilePath.MOCKS);
-        const articles = JSON.parse(rawContent);
-        sendResponse(res, HttpCode.OK, getMessage(articles));
-      } catch (err) {
-        sendNotFoundResponse(res);
-      }
+const app = express();
 
-      break;
-    default:
-      sendNotFoundResponse(res);
-      break;
-  }
-};
+app.use(express.json());
+
+app.use(`/articles`, articlesRoutes);
+
+app.use(sendNotFoundResponse);
+app.use(sendServerErrorResponse);
 
 module.exports = {
   name: `--server`,
@@ -60,15 +38,8 @@ module.exports = {
     const [rawPort] = args;
     const port = Number.parseInt(rawPort, 10) || DEFAULT_PORT;
 
-    http
-      .createServer(onClientConnect)
-      .listen(port)
-      .on(`listening`, () => {
-        console.info(chalk.green(`Ожидаю соединений на ${port}`));
-      })
-      .on(`error`, ({message}) => {
-        console.error(chalk.red(`Сервер остановлен из-за ошибки: ${message}`));
-        process.exit(ExitCode.ERROR);
-      });
+    app.listen(port, () =>
+      console.log(chalk.green(`Сервер запущен на порту: ${port}`))
+    );
   },
 };

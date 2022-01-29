@@ -3,6 +3,8 @@
 const fs = require(`fs`).promises;
 const chalk = require(`chalk`);
 
+const {FileType} = require(`./constants`);
+
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -25,13 +27,23 @@ const getUniqueArray = (items) => {
   return shuffle(items).slice(0, getRandomInt(0, items.length - 1));
 };
 
-const readContent = async (filePath) => {
+const readFile = async (filePath, fileType, fallbackContent = []) => {
   try {
     const content = await fs.readFile(filePath, `utf8`);
-    return content.trim().split(`\n`);
+
+    switch (fileType) {
+      case FileType.JSON:
+        return JSON.parse(content);
+
+      case FileType.TEXT:
+        return content.trim().split(`\n`);
+
+      default:
+        throw new Error(`Unknown file type: ${fileType}`);
+    }
   } catch (err) {
     console.error(chalk.red(err));
-    return [];
+    return fallbackContent;
   }
 };
 
@@ -40,5 +52,5 @@ module.exports = {
   getRandomInt,
   getRandomItem,
   getUniqueArray,
-  readContent,
+  readFile,
 };

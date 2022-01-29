@@ -4,13 +4,13 @@ const chalk = require(`chalk`);
 
 const fs = require(`fs`).promises;
 const dayjs = require(`dayjs`);
-const {ExitCode, FilePath} = require(`../../constants`);
+const {ExitCode, FilePath, FileType} = require(`../../constants`);
 const {
   shuffle,
   getRandomInt,
   getRandomItem,
   getUniqueArray,
-  readContent,
+  readFile,
 } = require(`../../utils`);
 
 const DEFAULT_COUNT = 1;
@@ -67,9 +67,9 @@ module.exports = {
     }
 
     const [titles, categories, sentences] = await Promise.all([
-      readContent(FilePath.TITLES),
-      readContent(FilePath.CATEGORIES),
-      readContent(FilePath.SENTENCES),
+      readFile(FilePath.TITLES, FileType.TEXT),
+      readFile(FilePath.CATEGORIES, FileType.TEXT),
+      readFile(FilePath.SENTENCES, FileType.TEXT),
     ]);
 
     const content = JSON.stringify(

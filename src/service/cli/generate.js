@@ -1,6 +1,7 @@
 "use strict";
 
 const chalk = require(`chalk`);
+const {nanoid} = require(`nanoid`);
 
 const fs = require(`fs`).promises;
 const dayjs = require(`dayjs`);
@@ -43,6 +44,7 @@ const generateCreatedDate = () => {
 };
 
 const generateArticle = ({titles, categories, sentences}) => ({
+  id: nanoid(),
   title: getRandomItem(titles),
   announce: generateAnnounce(sentences),
   fullText: generateFullText(sentences),

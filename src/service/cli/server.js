@@ -4,6 +4,7 @@ const chalk = require(`chalk`);
 const express = require(`express`);
 
 const {HttpCode} = require(`../../constants`);
+const rootRoutes = require(`./routes/root-routes`);
 const articlesRoutes = require(`./routes/articles-routes`);
 
 const DEFAULT_PORT = 3000;
@@ -27,7 +28,8 @@ const app = express();
 
 app.use(express.json());
 
-app.use(`/articles`, articlesRoutes);
+app.use(`/api`, rootRoutes);
+app.use(`/api/articles`, articlesRoutes);
 
 app.use(sendNotFoundResponse);
 app.use(sendServerErrorResponse);

@@ -4,23 +4,26 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 const comment = require(`./comment`);
 const articleValidator = require(`./middlewares/article-validator`);
+const articleExists = require(`./middlewares/article-exists`);
 
 const articlesRoutes = new Router();
 
 const sendArticleNotFound = (res, articleId) =>
   res.status(HttpCode.NOT_FOUND).send(`No article with id = ${articleId}`);
 
-module.exports = (app, articleService) => {
+module.exports = (app, articleService, commentService) => {
   app.use(`/articles`, articlesRoutes);
 
-  comment(articlesRoutes);
+  articlesRoutes.use(`/:articleId`, articleExists(articleService));
 
-  articlesRoutes.get(`/`, async (req, res) => {
+  comment(articlesRoutes, commentService);
+
+  articlesRoutes.get(`/`, (req, res) => {
     const articles = articleService.findAll();
     res.json(articles);
   });
 
-  articlesRoutes.get(`/:articleId`, async (req, res) => {
+  articlesRoutes.get(`/:articleId`, (req, res) => {
     const {articleId} = req.params;
     const article = articleService.findOne(articleId);
 
@@ -32,12 +35,12 @@ module.exports = (app, articleService) => {
     sendArticleNotFound(res, articleId);
   });
 
-  articlesRoutes.post(`/`, articleValidator, async (req, res) => {
+  articlesRoutes.post(`/`, articleValidator, (req, res) => {
     const newArticle = articleService.create(req.body);
     res.status(HttpCode.CREATED).json(newArticle);
   });
 
-  articlesRoutes.put(`/:articleId`, articleValidator, async (req, res) => {
+  articlesRoutes.put(`/:articleId`, articleValidator, (req, res) => {
     const {articleId} = req.params;
     const article = articleService.update(articleId, req.body);
 
@@ -49,7 +52,7 @@ module.exports = (app, articleService) => {
     sendArticleNotFound(res, articleId);
   });
 
-  articlesRoutes.delete(`/:articleId`, async (req, res) => {
+  articlesRoutes.delete(`/:articleId`, (req, res) => {
     const {articleId} = req.params;
     const article = articleService.drop(articleId);
 

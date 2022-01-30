@@ -1,8 +1,6 @@
 "use strict";
 
-const {nanoid} = require(`nanoid`);
-
-const MAX_ID_LENGTH = 6;
+const {getId} = require(`../../utils`);
 
 class ArticleService {
   constructor(articles) {
@@ -12,7 +10,7 @@ class ArticleService {
   create(article) {
     const newArticle = Object.assign(
         {
-          id: nanoid(MAX_ID_LENGTH),
+          id: getId(),
           comments: [],
         },
         article

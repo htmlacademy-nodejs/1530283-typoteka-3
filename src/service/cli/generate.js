@@ -1,7 +1,6 @@
 "use strict";
 
 const chalk = require(`chalk`);
-const {nanoid} = require(`nanoid`);
 
 const fs = require(`fs`).promises;
 const dayjs = require(`dayjs`);
@@ -12,9 +11,8 @@ const {
   getRandomItem,
   getUniqueArray,
   readFile,
+  getId,
 } = require(`../../utils`);
-
-const MAX_ID_LENGTH = 6;
 
 const DEFAULT_COUNT = 1;
 
@@ -56,7 +54,7 @@ const generateCreatedDate = () => {
 };
 
 const generateComment = (comments) => ({
-  id: nanoid(MAX_ID_LENGTH),
+  id: getId(),
   text: shuffle(comments)
   .slice(0, getRandomInt(CommentTextRestrict.MIN, CommentTextRestrict.MAX))
   .join(` `),
@@ -64,7 +62,7 @@ const generateComment = (comments) => ({
 
 const generateArticle = ({titles, categories, sentences, comments}) => {
   return {
-    id: nanoid(MAX_ID_LENGTH),
+    id: getId(),
     title: getRandomItem(titles),
     announce: generateAnnounce(sentences),
     fullText: generateFullText(sentences),

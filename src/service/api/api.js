@@ -8,15 +8,14 @@ const category = require(`./category`);
 const article = require(`./article`);
 const search = require(`./search`);
 
-const {ArticleService} = require(`../data-service`);
+const {ArticleService, CategoryService} = require(`../data-service`);
 
 const api = new Router();
 
 (async () => {
   const mockData = await getMockData();
-
   article(api, new ArticleService(mockData));
-  category(api);
+  category(api, new CategoryService(mockData));
   search(api);
 })();
 

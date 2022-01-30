@@ -20,6 +20,7 @@ const FilePath = {
   CATEGORIES: `data/categories.txt`,
   TITLES: `data/titles.txt`,
   SENTENCES: `data/sentences.txt`,
+  COMMENTS: `data/comments.txt`,
 };
 
 const HttpError = {

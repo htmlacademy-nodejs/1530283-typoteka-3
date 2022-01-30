@@ -2,9 +2,9 @@
 
 const {Router} = require(`express`);
 
-const {readFile} = require(`../../../utils`);
-const {FilePath, FileType} = require(`../../../constants`);
-const commentsRoutes = require(`./comments-routes`);
+const {readFile} = require(`../../utils`);
+const {FilePath, FileType} = require(`../../constants`);
+const commentsRoutes = require(`./comments`);
 
 const articlesRoutes = new Router();
 

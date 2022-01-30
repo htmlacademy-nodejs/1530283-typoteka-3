@@ -2,9 +2,6 @@
 
 const {Router} = require(`express`);
 
-// const {readFile} = require(`../../../utils`);
-// const {FilePath, FileType} = require(`../../../constants`);
-
 const commentsRoutes = new Router();
 
 commentsRoutes.get(`/`, async (req, res) => {

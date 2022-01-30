@@ -61,7 +61,7 @@ GET http://localhost:3000/api/categories HTTP/1.1
 ###
 
 # Поиск публикаций по заголовкам
-GET http://localhost:3000/api/search?query=Play HTTP/1.1
+GET http://localhost:3000/api/search?query= HTTP/1.1
 
 ###
 

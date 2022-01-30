@@ -4,10 +4,13 @@ const {Router} = require(`express`);
 
 const searchRoutes = new Router();
 
-module.exports = (app) => {
+module.exports = (app, searchService) => {
   app.use(`/search`, searchRoutes);
 
   searchRoutes.get(`/`, async (req, res) => {
-    res.send(`Get articles by query`);
+    const {query: searchText} = req.query;
+    const articles = searchService.findAll(searchText);
+
+    res.json(articles);
   });
 };

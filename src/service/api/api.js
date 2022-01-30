@@ -2,16 +2,16 @@
 
 const {Router} = require(`express`);
 
-const categoriesRoutes = require(`./categories`);
-const articlesRoutes = require(`./articles`);
-const searchRoutes = require(`./search`);
+const category = require(`./category`);
+const article = require(`./article`);
+const search = require(`./search`);
 
-const apiRoutes = new Router();
+const api = new Router();
 
-apiRoutes.use(`/articles`, articlesRoutes);
+(() => {
+  article(api);
+  category(api);
+  search(api);
+})();
 
-apiRoutes.use(`/categories`, categoriesRoutes);
-
-apiRoutes.use(`/search`, searchRoutes);
-
-module.exports = apiRoutes;
+module.exports = api;

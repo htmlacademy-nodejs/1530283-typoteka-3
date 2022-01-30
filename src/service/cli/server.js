@@ -17,6 +17,8 @@ const sendNotFoundResponse = (req, res) => {
 };
 
 const sendServerErrorResponse = (err, req, res, next) => {
+  console.error(chalk.red(err));
+
   res
     .status(HttpCode.INTERNAL_SERVER_ERROR)
     .send(Messages.SERVER_ERROR_MESSAGE);

@@ -1,9 +1,8 @@
 'use strict';
 
 const {Router} = require(`express`);
+const getMockData = require(`../lib/get-mock-data`);
 
-const {readFile} = require(`../../utils`);
-const {FilePath, FileType} = require(`../../constants`);
 const commentsRoutes = require(`./comments`);
 
 const articlesRoutes = new Router();
@@ -11,7 +10,7 @@ const articlesRoutes = new Router();
 articlesRoutes.use(`/:articleId/comments`, commentsRoutes);
 
 articlesRoutes.get(`/`, async (req, res) => {
-  const articles = await readFile(FilePath.MOCKS, FileType.JSON);
+  const articles = await getMockData();
   res.json(articles);
 });
 

@@ -14,6 +14,8 @@ const {
   readFile,
 } = require(`../../utils`);
 
+const MAX_ID_LENGTH = 6;
+
 const DEFAULT_COUNT = 1;
 
 const MAX_COUNT = 1000;
@@ -54,7 +56,7 @@ const generateCreatedDate = () => {
 };
 
 const generateComment = (comments) => ({
-  id: nanoid(),
+  id: nanoid(MAX_ID_LENGTH),
   text: shuffle(comments)
   .slice(0, getRandomInt(CommentTextRestrict.MIN, CommentTextRestrict.MAX))
   .join(` `),
@@ -62,7 +64,7 @@ const generateComment = (comments) => ({
 
 const generateArticle = ({titles, categories, sentences, comments}) => {
   return {
-    id: nanoid(),
+    id: nanoid(MAX_ID_LENGTH),
     title: getRandomItem(titles),
     announce: generateAnnounce(sentences),
     fullText: generateFullText(sentences),

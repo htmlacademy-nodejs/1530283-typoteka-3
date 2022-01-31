@@ -14,6 +14,7 @@ class ArticleService {
   findOne(articleId) {
     return this._articles.find((article) => article.id === articleId);
   }
+
   create(article) {
     const newArticle = Object.assign(
         {
@@ -27,10 +28,8 @@ class ArticleService {
     return newArticle;
   }
 
-  update(articleId, newArticle) {
-    const oldArticle = this._articles.find((article) => article.id === articleId);
-
-    return oldArticle ? Object.assign(oldArticle, newArticle) : oldArticle;
+  update(oldArticle, newArticle) {
+    return Object.assign(oldArticle, newArticle);
   }
 
   drop(articleId) {
@@ -39,14 +38,10 @@ class ArticleService {
     );
 
     if (articleIndex === -1) {
-      return null;
+      throw new Error(`No article with id = ${articleId}`);
     }
 
-    const article = this._articles[articleIndex];
-
     this._articles.splice(articleIndex, 1);
-
-    return article;
   }
 }
 

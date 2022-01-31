@@ -26,22 +26,16 @@ class CommentService {
     return newComment;
   }
 
-  drop(articleId, commentId) {
-    const articleIndex = this._articles.findIndex(
-        (article) => article.id === articleId
-    );
-
-    const commentIndex = this._articles[articleIndex].comments.findIndex(
-        (comment) => comment.id === commentId
-    );
+  drop(article, commentId) {
+    const commentIndex = article.comments.findIndex((comment) => comment.id === commentId);
 
     if (commentIndex === -1) {
       return null;
     }
 
-    const comment = this._articles[articleIndex].comments[commentIndex];
+    const comment = article.comments[commentIndex];
 
-    this._articles[articleIndex].comments.splice(commentIndex, 1);
+    article.comments.splice(commentIndex, 1);
 
     return comment;
   }

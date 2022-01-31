@@ -24,8 +24,10 @@ module.exports = (app, commentService) => {
   });
 
   commentsRoutes.delete(`/:commentId`, (req, res) => {
-    const {articleId, commentId} = req.params;
-    const comment = commentService.drop(articleId, commentId);
+    const {article} = res.locals;
+    const {commentId} = req.params;
+
+    const comment = commentService.drop(article, commentId);
 
     if (!comment) {
       res.status(HttpCode.NOT_FOUND).send(`No comment with id = ${commentId}`);

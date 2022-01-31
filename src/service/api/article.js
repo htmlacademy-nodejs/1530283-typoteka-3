@@ -21,8 +21,7 @@ module.exports = (app, articleService, commentService) => {
   });
 
   articlesRoutes.get(`/:articleId`, (req, res) => {
-    const {articleId} = req.params;
-    const article = articleService.findOne(articleId);
+    const {article} = res.locals;
 
     res.status(HttpCode.OK).json(article);
   });
@@ -33,15 +32,15 @@ module.exports = (app, articleService, commentService) => {
   });
 
   articlesRoutes.put(`/:articleId`, articleValidator, (req, res) => {
-    const {articleId} = req.params;
-    const article = articleService.update(articleId, req.body);
+    const {article} = res.locals;
+    const updatedArticle = articleService.update(article, req.body);
 
-    res.status(HttpCode.OK).json(article);
+    res.status(HttpCode.OK).json(updatedArticle);
   });
 
   articlesRoutes.delete(`/:articleId`, (req, res) => {
-    const {articleId} = req.params;
-    articleService.drop(articleId);
+    const {article} = res.locals;
+    articleService.drop(article.id);
 
     res.status(HttpCode.NO_CONTENT).end();
   });

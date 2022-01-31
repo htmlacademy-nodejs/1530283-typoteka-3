@@ -11,6 +11,7 @@ const articleExists = (articleService) => (req, res, next) => {
     return;
   }
 
+  res.locals.article = article;
   next();
 };
 

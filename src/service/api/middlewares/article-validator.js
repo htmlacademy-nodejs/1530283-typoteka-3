@@ -17,8 +17,9 @@ const articleValidator = (req, res, next) => {
   }
 
   if (absentKeys.length) {
+    const formattedAbsentKeys = absentKeys.join(`, `);
     res.status(HttpCode.BAD_REQUEST)
-      .send(`Article does not have required fields: ${absentKeys.join(`, `)}`);
+      .send(`Article does not have required fields: ${formattedAbsentKeys}`);
     return;
   }
 

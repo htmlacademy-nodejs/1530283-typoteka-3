@@ -1,6 +1,7 @@
 'use strict';
 
 const {Router} = require(`express`);
+const {HttpCode} = require(`../../constants`);
 
 const searchRoutes = new Router();
 
@@ -11,6 +12,6 @@ module.exports = (app, searchService) => {
     const {query: searchText} = req.query;
     const articles = searchService.findAll(searchText);
 
-    res.json(articles);
+    res.status(HttpCode.OK).json(articles);
   });
 };

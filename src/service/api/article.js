@@ -8,9 +8,6 @@ const articleExists = require(`./middlewares/article-exists`);
 
 const articlesRoutes = new Router();
 
-const sendArticleNotFound = (res, articleId) =>
-  res.status(HttpCode.NOT_FOUND).send(`No article with id = ${articleId}`);
-
 module.exports = (app, articleService, commentService) => {
   app.use(`/articles`, articlesRoutes);
 
@@ -20,19 +17,14 @@ module.exports = (app, articleService, commentService) => {
 
   articlesRoutes.get(`/`, (req, res) => {
     const articles = articleService.findAll();
-    res.json(articles);
+    res.status(HttpCode.OK).json(articles);
   });
 
   articlesRoutes.get(`/:articleId`, (req, res) => {
     const {articleId} = req.params;
     const article = articleService.findOne(articleId);
 
-    if (article) {
-      res.status(HttpCode.OK).json(article);
-      return;
-    }
-
-    sendArticleNotFound(res, articleId);
+    res.status(HttpCode.OK).json(article);
   });
 
   articlesRoutes.post(`/`, articleValidator, (req, res) => {
@@ -44,23 +36,13 @@ module.exports = (app, articleService, commentService) => {
     const {articleId} = req.params;
     const article = articleService.update(articleId, req.body);
 
-    if (article) {
-      res.status(HttpCode.OK).json(article);
-      return;
-    }
-
-    sendArticleNotFound(res, articleId);
+    res.status(HttpCode.OK).json(article);
   });
 
   articlesRoutes.delete(`/:articleId`, (req, res) => {
     const {articleId} = req.params;
-    const article = articleService.drop(articleId);
+    articleService.drop(articleId);
 
-    if (article) {
-      res.status(HttpCode.NO_CONTENT).end();
-      return;
-    }
-
-    sendArticleNotFound(res, articleId);
+    res.status(HttpCode.NO_CONTENT).end();
   });
 };

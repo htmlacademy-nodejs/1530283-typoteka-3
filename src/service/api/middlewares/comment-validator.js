@@ -17,8 +17,9 @@ const commentValidator = (req, res, next) => {
   }
 
   if (absentKeys.length) {
+    const formattedAbsentKeys = absentKeys.join(`, `);
     res.status(HttpCode.BAD_REQUEST)
-      .send(`Comment does not have required fields: ${absentKeys.join(`, `)}`);
+      .send(`Comment does not have required fields: ${formattedAbsentKeys}`);
     return;
   }
 

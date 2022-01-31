@@ -7,6 +7,13 @@ class ArticleService {
     this._articles = articles;
   }
 
+  findAll() {
+    return this._articles;
+  }
+
+  findOne(articleId) {
+    return this._articles.find((article) => article.id === articleId);
+  }
   create(article) {
     const newArticle = Object.assign(
         {
@@ -18,6 +25,12 @@ class ArticleService {
 
     this._articles.push(newArticle);
     return newArticle;
+  }
+
+  update(articleId, newArticle) {
+    const oldArticle = this._articles.find((article) => article.id === articleId);
+
+    return oldArticle ? Object.assign(oldArticle, newArticle) : oldArticle;
   }
 
   drop(articleId) {
@@ -34,20 +47,6 @@ class ArticleService {
     this._articles.splice(articleIndex, 1);
 
     return article;
-  }
-
-  findAll() {
-    return this._articles;
-  }
-
-  findOne(articleId) {
-    return this._articles.find((article) => article.id === articleId);
-  }
-
-  update(articleId, newArticle) {
-    const oldArticle = this._articles.find((article) => article.id === articleId);
-
-    return oldArticle ? Object.assign(oldArticle, newArticle) : oldArticle;
   }
 }
 

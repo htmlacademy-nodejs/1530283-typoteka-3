@@ -7,11 +7,10 @@ const articleExists = (articleService) => (req, res, next) => {
   const article = articleService.findOne(articleId);
 
   if (!article) {
-    res.status(HttpCode.NOT_FOUND).send(`No article with id = ${articleId}`).end();
+    res.status(HttpCode.NOT_FOUND).send(`No article with id = ${articleId}`);
     return;
   }
 
-  res.locals.article = article;
   next();
 };
 

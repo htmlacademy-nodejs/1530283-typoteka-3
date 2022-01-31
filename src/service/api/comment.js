@@ -13,7 +13,7 @@ module.exports = (app, commentService) => {
     const {articleId} = req.params;
     const comments = commentService.findAll(articleId);
 
-    res.json(comments);
+    res.status(HttpCode.OK).json(comments);
   });
 
   commentsRoutes.post(`/`, commentValidator, (req, res) => {

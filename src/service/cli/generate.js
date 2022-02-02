@@ -11,11 +11,22 @@ const {
   getRandomItem,
   getUniqueArray,
   readFile,
+  getId,
 } = require(`../../utils`);
 
 const DEFAULT_COUNT = 1;
 
 const MAX_COUNT = 1000;
+
+const CommentsCountRestrict = {
+  MIN: 0,
+  MAX: 5,
+};
+
+const CommentTextRestrict = {
+  MIN: 1,
+  MAX: 3,
+};
 
 const SentenceRestrict = {
   MIN: 1,
@@ -42,13 +53,26 @@ const generateCreatedDate = () => {
   return dayjs().subtract(randomDay, `day`).toISOString();
 };
 
-const generateArticle = ({titles, categories, sentences}) => ({
-  title: getRandomItem(titles),
-  announce: generateAnnounce(sentences),
-  fullText: generateFullText(sentences),
-  createdDate: generateCreatedDate(),
-  category: getUniqueArray(categories),
+const generateComment = (comments) => ({
+  id: getId(),
+  text: shuffle(comments)
+  .slice(0, getRandomInt(CommentTextRestrict.MIN, CommentTextRestrict.MAX))
+  .join(` `),
 });
+
+const generateArticle = ({titles, categories, sentences, comments}) => {
+  return {
+    id: getId(),
+    title: getRandomItem(titles),
+    announce: generateAnnounce(sentences),
+    fullText: generateFullText(sentences),
+    createdDate: generateCreatedDate(),
+    category: getUniqueArray(categories),
+    comments: Array(getRandomInt(CommentsCountRestrict.MIN, CommentsCountRestrict.MAX))
+      .fill({})
+      .map(() => generateComment(comments)),
+  };
+};
 
 const generateArticles = (count, sourceData) =>
   Array(count)
@@ -66,14 +90,15 @@ module.exports = {
       process.exit(ExitCode.ERROR);
     }
 
-    const [titles, categories, sentences] = await Promise.all([
+    const [titles, categories, sentences, comments] = await Promise.all([
       readFile(FilePath.TITLES, FileType.TEXT),
       readFile(FilePath.CATEGORIES, FileType.TEXT),
       readFile(FilePath.SENTENCES, FileType.TEXT),
+      readFile(FilePath.COMMENTS, FileType.TEXT),
     ]);
 
     const content = JSON.stringify(
-        generateArticles(count, {titles, categories, sentences})
+        generateArticles(count, {titles, categories, sentences, comments})
     );
 
     console.info(chalk.yellowBright(`Дождитесь окончания записи файла...`));

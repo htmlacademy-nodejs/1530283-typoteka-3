@@ -2,8 +2,9 @@
 
 const fs = require(`fs`).promises;
 const chalk = require(`chalk`);
+const {nanoid} = require(`nanoid`);
 
-const {FileType} = require(`./constants`);
+const {FileType, MAX_ID_LENGTH} = require(`./constants`);
 
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
@@ -47,10 +48,13 @@ const readFile = async (filePath, fileType, fallbackContent = []) => {
   }
 };
 
+const getId = () => nanoid(MAX_ID_LENGTH);
+
 module.exports = {
   shuffle,
   getRandomInt,
   getRandomItem,
   getUniqueArray,
   readFile,
+  getId,
 };

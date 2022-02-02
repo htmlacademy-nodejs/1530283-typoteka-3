@@ -1,5 +1,7 @@
 'use strict';
 
+const MAX_ID_LENGTH = 6;
+
 const DEFAULT_COMMAND = `--help`;
 
 const ExitCode = {
@@ -9,6 +11,9 @@ const ExitCode = {
 
 const HttpCode = {
   OK: 200,
+  CREATED: 201,
+  NO_CONTENT: 204,
+  BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
   NOT_FOUND: 404,
@@ -20,6 +25,7 @@ const FilePath = {
   CATEGORIES: `data/categories.txt`,
   TITLES: `data/titles.txt`,
   SENTENCES: `data/sentences.txt`,
+  COMMENTS: `data/comments.txt`,
 };
 
 const HttpError = {
@@ -41,6 +47,7 @@ const FileType = {
 
 module.exports = {
   DEFAULT_COMMAND,
+  MAX_ID_LENGTH,
   FilePath,
   ExitCode,
   HttpCode,

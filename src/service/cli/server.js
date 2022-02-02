@@ -4,7 +4,7 @@ const chalk = require(`chalk`);
 const express = require(`express`);
 
 const {HttpCode} = require(`../../constants`);
-const articlesRoutes = require(`./routes/articles-routes`);
+const apiRoutes = require(`../api/api`);
 
 const DEFAULT_PORT = 3000;
 const Messages = {
@@ -17,6 +17,8 @@ const sendNotFoundResponse = (req, res) => {
 };
 
 const sendServerErrorResponse = (err, req, res, next) => {
+  console.error(chalk.red(err));
+
   res
     .status(HttpCode.INTERNAL_SERVER_ERROR)
     .send(Messages.SERVER_ERROR_MESSAGE);
@@ -27,7 +29,7 @@ const app = express();
 
 app.use(express.json());
 
-app.use(`/articles`, articlesRoutes);
+app.use(`/api`, apiRoutes);
 
 app.use(sendNotFoundResponse);
 app.use(sendServerErrorResponse);

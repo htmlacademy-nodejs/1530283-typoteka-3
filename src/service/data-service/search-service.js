@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 class SearchService {
   constructor(articles) {
@@ -6,21 +6,9 @@ class SearchService {
   }
 
   findAll(searchText) {
-    if (searchText === ``) {
-      return this._articles;
-    }
-
-    const articles = [];
-
     const regExp = new RegExp(searchText, `i`);
 
-    for (const article of this._articles) {
-      if (regExp.test(article.title)) {
-        articles.push(article);
-      }
-    }
-
-    return articles;
+    return this._articles.filter((article) => regExp.test(article.title));
   }
 }
 

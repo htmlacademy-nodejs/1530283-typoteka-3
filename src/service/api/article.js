@@ -6,9 +6,10 @@ const comment = require(`./comment`);
 const articleValidator = require(`./middlewares/article-validator`);
 const articleExists = require(`./middlewares/article-exists`);
 
-const articlesRoutes = new Router();
 
 module.exports = (app, articleService, commentService) => {
+  const articlesRoutes = new Router();
+
   app.use(`/articles`, articlesRoutes);
 
   articlesRoutes.use(`/:articleId`, articleExists(articleService));

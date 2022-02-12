@@ -7,8 +7,9 @@
     "start": "nodemon ./src/service/service.js --server 3000",
     "start-front-server": "nodemon ./src/express/express.js",
     "generate": "node ./src/service/service.js --generate",
-    "test": "npm run eslint",
-    "eslint": "eslint --ext .js src/"
+    "test": "npm run eslint && npm run jest",
+    "eslint": "eslint --ext .js src/",
+    "jest": "jest"
   },
   "repository": {
     "type": "git",
@@ -23,7 +24,9 @@
   "devDependencies": {
     "eslint": "8.7.0",
     "eslint-config-htmlacademy": "0.6.0",
-    "nodemon": "2.0.15"
+    "jest": "27.5.1",
+    "nodemon": "2.0.15",
+    "supertest": "6.2.2"
   },
   "dependencies": {
     "chalk": "4.1.2",

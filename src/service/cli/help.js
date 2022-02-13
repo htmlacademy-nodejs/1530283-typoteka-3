@@ -12,6 +12,7 @@ const INFO_TEXT = `
     --version:            выводит номер версии
     --help:               печатает этот текст
     --generate <count>    формирует файл mocks.json
+    --server <port>       запускает API сервер
 `;
 
 module.exports = {

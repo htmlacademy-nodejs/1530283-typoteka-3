@@ -45,6 +45,11 @@ const FileType = {
   JSON: `json`,
 };
 
+const Environment = {
+  DEVELOPMENT: `development`,
+  PRODUCTION: `production`
+};
+
 module.exports = {
   DEFAULT_COMMAND,
   MAX_ID_LENGTH,
@@ -52,5 +57,6 @@ module.exports = {
   ExitCode,
   HttpCode,
   HttpError,
-  FileType
+  FileType,
+  Environment
 };

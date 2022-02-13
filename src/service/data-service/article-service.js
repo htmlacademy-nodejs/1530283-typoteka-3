@@ -37,10 +37,6 @@ class ArticleService {
         (article) => article.id === articleId
     );
 
-    if (articleIndex === -1) {
-      throw new Error(`No article with id = ${articleId}`);
-    }
-
     this._articles.splice(articleIndex, 1);
   }
 }

@@ -50,6 +50,8 @@ const readFile = async (filePath, fileType, fallbackContent = []) => {
 
 const getId = () => nanoid(MAX_ID_LENGTH);
 
+const clone = (data) => JSON.parse(JSON.stringify(data));
+
 module.exports = {
   shuffle,
   getRandomInt,
@@ -57,4 +59,5 @@ module.exports = {
   getUniqueArray,
   readFile,
   getId,
+  clone,
 };

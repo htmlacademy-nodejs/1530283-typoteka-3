@@ -4,9 +4,10 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 const commentValidator = require(`./middlewares/comment-validator`);
 
-const commentsRoutes = new Router({mergeParams: true});
 
 module.exports = (app, commentService) => {
+  const commentsRoutes = new Router({mergeParams: true});
+
   app.use(`/:articleId/comments`, commentsRoutes);
 
   commentsRoutes.get(`/`, (req, res) => {

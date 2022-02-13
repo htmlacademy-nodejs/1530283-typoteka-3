@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "chalk": "4.1.2",
-    "cross-env": "^7.0.3",
+    "cross-env": "7.0.3",
     "dayjs": "1.10.7",
     "express": "4.17.2",
     "nanoid": "3.2.0",

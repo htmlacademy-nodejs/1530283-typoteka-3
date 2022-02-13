@@ -1,6 +1,5 @@
 "use strict";
 
-const chalk = require(`chalk`);
 const express = require(`express`);
 
 const {HttpCode} = require(`../../constants`);
@@ -9,8 +8,8 @@ const {getLogger} = require(`../lib/logger`);
 
 const DEFAULT_PORT = 3000;
 const Messages = {
-  NOT_FOUND_MESSAGE: `Ресурс не найден`,
-  SERVER_ERROR_MESSAGE: `Ошибка сервера`,
+  NOT_FOUND_MESSAGE: `Not found`,
+  SERVER_ERROR_MESSAGE: `Internal server error`,
 };
 
 const logger = getLogger({name: `api`});
@@ -25,28 +24,24 @@ const logEveryRequest = (req, res, next) => {
   next();
 };
 
-const logUnhandledRequest = (req, res, next) => {
+const logUnhandledRequest = (req, _res, next) => {
   logger.error(`Route not found: ${req.url}`);
   next();
 };
 
-const logInternalError = (err, req, res, next) => {
+const logInternalError = (err, _req, _res, next) => {
   logger.error(`An error occurred on processing request: ${err.message}`);
   next();
 };
 
-const sendNotFoundResponse = (req, res) => {
-
+const sendNotFoundResponse = (_req, res) => {
   res.status(HttpCode.NOT_FOUND).send(Messages.NOT_FOUND_MESSAGE);
 };
 
-const sendServerErrorResponse = (err, req, res, next) => {
-  logger.error(`${err}`);
-
+const sendServerErrorResponse = (_err, _req, res, _next) => {
   res
     .status(HttpCode.INTERNAL_SERVER_ERROR)
     .send(Messages.SERVER_ERROR_MESSAGE);
-  next();
 };
 
 const app = express();
@@ -72,12 +67,13 @@ module.exports = {
     try {
       app.listen(port, (err) => {
         if (err) {
-          return logger.error(`An error occurred on server creation: ${err.message}`);
+          return logger.error(
+              `An error occurred on server creation: ${err.message}`
+          );
         }
 
         return logger.info(`Listening to connections on ${port}`);
       });
-
     } catch (err) {
       logger.error(`An error occurred: ${err.message}`);
       process.exit(1);

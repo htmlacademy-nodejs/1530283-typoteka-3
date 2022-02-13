@@ -95,7 +95,7 @@ describe(`API returns an article with given id`, () => {
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(`Offer's title is "Самый лучший музыкальный альбом этого года"`, () =>
+  test(`Article's title is "Самый лучший музыкальный альбом этого года"`, () =>
     expect(response.body.title).toBe(
         `Самый лучший музыкальный альбом этого года`
     ));
@@ -172,11 +172,11 @@ describe(`API refuses to create an article if data is invalid`, () => {
 
   test(`Without any required property response code is 400`, async () => {
     for (const key of Object.keys(newArticle)) {
-      const badOffer = {...newArticle};
-      delete badOffer[key];
+      const badArticle = {...newArticle};
+      delete badArticle[key];
       await request(app)
         .post(`/articles`)
-        .send(badOffer)
+        .send(badArticle)
         .expect(HttpCode.BAD_REQUEST);
     }
   });
@@ -214,7 +214,7 @@ describe(`API changes existent article with given id`, () => {
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(`Returns changed offer`, () =>
+  test(`Returns changed article`, () =>
     expect(response.body).toEqual(expect.objectContaining(newArticle)));
 
   test(`Article is really changed`, () =>
@@ -231,22 +231,32 @@ describe(`API changes existent article with given id`, () => {
 test(`API returns status code 404 when trying to change non-existent article`, () => {
   const app = createAPI();
 
-  const validOffer = {
-    category: `Это`,
-    title: `валидный`,
-    description: `объект`,
-    picture: `объявления`,
-    type: `однако`,
-    sum: 404,
+  const validArticle = {
+    title: `Обновленный заголовок`,
+    announce:
+      `Теперь на счету 36-летнего россиянина 759 шайб в карьере в НХЛ. Это один из лучших рок-музыкантов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем. Программировать не настолько сложно, как об этом говорят.`,
+    fullText:
+      `Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Рок-музыка всегда ассоциировалась с протестами. Так ли это на самом деле? Собрать камни бесконечности легко, если вы прирожденный герой. Из под его пера вышло 8 платиновых альбомов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем.`,
+    createdDate: `2022-01-09T08:08:28.115Z`,
+    category: [
+      `За жизнь`,
+      `Без рамки`,
+      `Разное`,
+      `Деревья`,
+      `Программирование`,
+      `Спорт`,
+      `Железо`,
+      `Наука`,
+    ],
   };
 
   return request(app)
-    .put(`/offers/NON_EXIST`)
-    .send(validOffer)
+    .put(`/articles/NON_EXIST`)
+    .send(validArticle)
     .expect(HttpCode.NOT_FOUND);
 });
 
-test(`API returns status code 400 when trying to change an offer with invalid data`, () => {
+test(`API returns status code 400 when trying to change an article with invalid data`, () => {
   const app = createAPI();
 
   const invalidArticle = {
@@ -259,7 +269,7 @@ test(`API returns status code 400 when trying to change an offer with invalid da
     .expect(HttpCode.BAD_REQUEST);
 });
 
-describe(`API correctly deletes an offer with given id`, () => {
+describe(`API correctly deletes an article with given id`, () => {
   const app = createAPI();
 
   beforeAll(async () => {

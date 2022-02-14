@@ -1,10 +1,22 @@
 'use strict';
 
 const {Router} = require(`express`);
+const {getArticleTemplateData} = require(`../../utils/article`);
+const {getAPI} = require(`../api`);
 
 const rootRoutes = new Router();
+const api = getAPI();
 
-rootRoutes.get(`/`, (req, res) => res.render(`articles/all-articles`));
+rootRoutes.get(`/`, async (_req, res) => {
+  try {
+    const articles = await api.getArticles();
+    res.render(`articles/all-articles`, {
+      articles: articles.map(getArticleTemplateData)
+    });
+  } catch (error) {
+    throw error;
+  }
+});
 
 rootRoutes.get(`/register`, (req, res) => res.render(`auth/register`));
 

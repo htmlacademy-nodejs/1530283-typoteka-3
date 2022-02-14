@@ -1,7 +1,7 @@
 'use strict';
 
 const chalk = require(`chalk`);
-const {readFile} = require(`../../utils`);
+const {readFile} = require(`../../utils/common`);
 const {FilePath, FileType} = require(`../../constants`);
 
 let data = null;

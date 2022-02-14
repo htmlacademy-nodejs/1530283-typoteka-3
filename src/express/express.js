@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const path = require(`path`);
 const chalk = require(`chalk`);
@@ -23,12 +23,13 @@ app.use(`/`, errorRoutes);
 app.use(`/my`, myRoutes);
 app.use(`/articles`, articlesRoutes);
 
-app.use((req, res) => res.redirect(`/404`));
+app.use((_req, res) => res.redirect(`/404`));
 
-app.use((err, req, res, next) => {
+app.use((err, _req, res, _next) => {
+  console.error(err);
   res.redirect(`/500`);
-  next();
 });
 
-app.listen(PORT,
-    () => console.log(chalk.green(`Сервер запущен на порту: ${PORT}`)));
+app.listen(PORT, () =>
+  console.log(chalk.green(`Сервер запущен на порту: ${PORT}`))
+);

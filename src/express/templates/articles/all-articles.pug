@@ -11,35 +11,36 @@ block content
         li.themes__item
           a.themes__item-link(href='/articles/category/1')
             | Автомобили
-            sup 88
+            sup  88
         li.themes__item
           a.themes__item-link(href='#')
             | Удаленная работа
-            sup 13
+            sup  13
         li.themes__item
           a.themes__item-link(href='#')
             | Бизнес
-            sup 13
+            sup  13
         li.themes__item
           a.themes__item-link(href='#')
             | Путешествия
-            sup 13
+            sup  13
         li.themes__item
           a.themes__item-link.themes__item-link--padding(href='#')
             | Дизайн и обустройство
-            sup 13
+            sup  13
         li.themes__item
           a.themes__item-link(href='#')
             | Производство игрушек
-            sup 22
+            sup  22
         li.themes__item
           a.themes__item-link(href='#')
             | UX & UI
-            sup 22
+            sup  22
     .main-page__section-flex
       section.main-page__hot.hot
         h2.hot__name
           | Самое обсуждаемое
+          |
           span.hot__icon.hot__icon--fire
         ul.hot__list
           li.hot__list-item
@@ -63,6 +64,7 @@ block content
       section.main-page__last.last
         h2.last__name
           | Последние комментарии
+          |
           span.last__icon.last__icon--cloud
         ul.last__list
           li.last__list-item
@@ -93,7 +95,7 @@ block content
             h3.preview__name
               a.preview__name-link(href=`/articles/${article.id}`)= article.title
             p.preview__text= article.announce
-            a.preview__comment(href='#')
+            a.preview__comment(href=`/articles/${article.id}#comments`)
               | Комментарии
               span.preview__cloud
               |

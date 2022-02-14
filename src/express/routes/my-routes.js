@@ -1,14 +1,22 @@
 'use strict';
 
 const {Router} = require(`express`);
+const {getArticleTemplateData} = require(`../../utils/article`);
+const {getAPI} = require(`../api`);
 
 const myRoutes = new Router();
+const api = getAPI();
 
-myRoutes.get(`/`, (req, res) => res.render(`admin/articles`, {
-  user: {
-    isAdmin: true,
-  }
-}));
+myRoutes.get(`/`, async (_req, res) => {
+  const articles = await api.getArticles();
+
+  res.render(`admin/articles`, {
+    user: {
+      isAdmin: true,
+    },
+    articles: articles.map(getArticleTemplateData)
+  });
+});
 
 myRoutes.get(`/comments`, (req, res) => res.render(`admin/comments`, {
   user: {

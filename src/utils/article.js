@@ -8,6 +8,15 @@ const getArticleTemplateData = (article) => ({
   createdCEODate: formatArticleCEODate(article.createdDate)
 });
 
+const getInitialArticle = () => ({
+  title: ``,
+  announce: ``,
+  fullText: ``,
+  createdDate: new Date().toISOString(),
+  categories: []
+});
+
 module.exports = {
-  getArticleTemplateData
+  getArticleTemplateData,
+  getInitialArticle
 };

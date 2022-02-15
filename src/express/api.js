@@ -39,6 +39,13 @@ class API {
       }
     });
   }
+
+  createArticle(data) {
+    return this._load(`/articles`, {
+      method: `POST`,
+      data
+    });
+  }
 }
 
 const defaultAPI = new API(defaultUrl, TIMEOUT);

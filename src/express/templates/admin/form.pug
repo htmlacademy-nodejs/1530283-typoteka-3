@@ -5,7 +5,7 @@ block content
     section
       .popup.popup--new-publication.popup--anti
         .new-publication
-          form(action='#' method='POST' content-type='multipart/form-data')
+          form(action='#' method='POST' enctype='multipart/form-data')
             .new-publication__header
               h1= isNew ? `Новая публикация` : `Редактирование публикации`
               .new-publication__date-form
@@ -13,7 +13,7 @@ block content
                 .new-publication__date-form-division
                   .new-publication__date-block
                     label(for='new-publication-date' aria-label='Календарь')
-                    input#new-publication-date(type='text' name='createdDate' placeholder=article.createdDate value=article.createdDate style='width:90px')
+                    input#new-publication-date(type='text' name='date' placeholder=article.createdDate value=article.createdDate style='width:90px')
               button.new-publication__button.button.button--colored(type='submit')= isNew ? `Опубликовать` : `Сохранить`
             a.popup__button.button.button--popup-close(href="/my" aria-label='Закрыть окно') Закрыть окно
             .new-publication__form.form
@@ -33,12 +33,12 @@ block content
                     .new-publication__checkbox
                       - const checkboxId = `category-${index}-checkbox`
                       - const isChecked = article.categories.includes(category)
-                      input(id=checkboxId type='checkbox' name='categories' checked=isChecked)
+                      input(id=checkboxId type='checkbox' name='categories' value=category checked=isChecked)
                       label(for=checkboxId)= category
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows='5' name='announcement' placeholder='Анонс публикации' required minlength='30' maxlength='250')
+                    textarea(rows='5' name='announce' placeholder='Анонс публикации' required minlength='30' maxlength='250')
                       = article.announce
                 .form__field.form__field--publication-text
                   label

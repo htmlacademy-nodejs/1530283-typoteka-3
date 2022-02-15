@@ -1,11 +1,15 @@
 "use strict";
 
-const {formatArticleDate, formatArticleCEODate} = require(`./date`);
+const {
+  formatArticleDate,
+  formatArticleCEODate,
+  parseArticleClientDate,
+} = require(`./date`);
 
 const getArticleTemplateData = (article) => ({
   ...article,
   createdDate: formatArticleDate(article.createdDate),
-  createdCEODate: formatArticleCEODate(article.createdDate)
+  createdCEODate: formatArticleCEODate(article.createdDate),
 });
 
 const getInitialArticle = () => ({
@@ -13,10 +17,19 @@ const getInitialArticle = () => ({
   announce: ``,
   fullText: ``,
   createdDate: new Date().toISOString(),
-  categories: []
+  categories: [],
+});
+
+const parseClientArticle = (clientArticle) => ({
+  title: clientArticle.title,
+  createdDate: parseArticleClientDate(clientArticle.date),
+  categories: clientArticle.categories,
+  announce: clientArticle.announce,
+  fullText: clientArticle[`full-text`],
 });
 
 module.exports = {
   getArticleTemplateData,
-  getInitialArticle
+  getInitialArticle,
+  parseClientArticle,
 };

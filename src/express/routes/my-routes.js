@@ -41,12 +41,19 @@ myRoutes.get(`/comments`, async (_req, res) => {
   }
 });
 
-myRoutes.get(`/categories`, (req, res) =>
-  res.render(`admin/categories`, {
-    user: {
-      isAdmin: true,
-    },
-  })
-);
+myRoutes.get(`/categories`, async (_req, res) => {
+  try {
+    const categories = await api.getCategories();
+
+    res.render(`admin/categories`, {
+      user: {
+        isAdmin: true,
+      },
+      categories,
+    });
+  } catch (error) {
+    throw error;
+  }
+});
 
 module.exports = myRoutes;

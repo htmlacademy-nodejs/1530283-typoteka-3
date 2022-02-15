@@ -1,6 +1,7 @@
 "use strict";
 
 const {Router} = require(`express`);
+const {HttpCode} = require(`../../constants`);
 const {getArticleTemplateData} = require(`../../utils/article`);
 const {getAPI} = require(`../api`);
 
@@ -27,6 +28,39 @@ rootRoutes.get(`/register`, (req, res) => res.render(`auth/register`));
 
 rootRoutes.get(`/login`, (req, res) => res.render(`auth/login`));
 
-rootRoutes.get(`/search`, (req, res) => res.render(`articles/search`));
+rootRoutes.get(`/search`, async (req, res) => {
+  const {query} = req.query;
+
+  try {
+    const articles = await api.search(query);
+
+    res.render(`articles/search`, {
+      articles: articles.map(getArticleTemplateData),
+      query
+    });
+  } catch (error) {
+    if (!error.response) {
+      throw error;
+    }
+
+    if (error.response.status === HttpCode.BAD_REQUEST) {
+      res.render(`articles/search`, {
+        articles: null,
+        query
+      });
+      return;
+    }
+
+    if (error.response.status === HttpCode.NOT_FOUND) {
+      res.render(`articles/search`, {
+        articles: [],
+        query
+      });
+      return;
+    }
+
+    throw error;
+  }
+});
 
 module.exports = rootRoutes;

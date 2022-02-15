@@ -15,10 +15,23 @@ const api = getAPI();
 
 const upload = multer();
 
-articlesRoutes.get(`/category/:id`, (req, res) =>
-  res.render(`articles/articles-by-category`, {
-    user: {},
-  })
+articlesRoutes.get(`/category/:id`, async (req, res) =>{
+  try {
+    const [articles, categories] = await Promise.all([
+      api.getArticles(),
+      api.getCategories(),
+    ]);
+
+    res.render(`articles/articles-by-category`, {
+      user: {},
+      articles: articles.map(getArticleTemplateData),
+      categories
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
 );
 
 articlesRoutes.get(`/add`, async (_req, res) => {
@@ -90,11 +103,15 @@ articlesRoutes.get(`/edit/:id`, async (req, res) => {
 
 articlesRoutes.get(`/:id`, async (req, res) => {
   try {
-    const article = await api.getArticle(req.params.id);
+    const [article, categories] = await Promise.all([
+      api.getArticle(req.params.id),
+      api.getCategories(),
+    ]);
 
     res.render(`articles/article`, {
       user: {},
       article: getArticleTemplateData(article),
+      categories
     });
   } catch (error) {
     throw error;

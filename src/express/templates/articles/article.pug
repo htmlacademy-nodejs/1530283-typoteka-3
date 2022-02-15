@@ -12,29 +12,22 @@ block content
             time.post__date(datetime='2019-03-21T20:33') 21.03.2019, 20:33
             h2.post__title.title.title--main= article.title
             ul.post__themes.themes
-              li.themes__item
-                a.themes__item-link(href='#')
-                  | Автомобили
-                  sup 88
-                button.themes__remove-btn(type='button') Удалить категорию
-              li.themes__item
-                a.themes__item-link(href='#')
-                  | Удаленная работа
-                  sup 13
-                button.themes__remove-btn(type='button') Удалить категорию
-              li.themes__item
-                a.themes__item-link(href='#')
-                  | Бизнес
-                  sup 13
-                button.themes__remove-btn(type='button') Удалить категорию
-          .post__picture
-            img(src='/img/sea-fullsize@1x.jpg' alt='пейзаж море, скалы, пляж')
+              each category, index in categories
+                - const href = `/articles/category/${index}`
+                - const isShown = article.categories.includes(category)
+                if isShown
+                  li.themes__item
+                    a.themes__item-link(class={[`themes__item-link--active`]: isActive} href=href)
+                      = category
+                      sup  #{index + 1}
+          if article.image
+            .post__picture
+              img(src='/img/sea-fullsize@1x.jpg' alt='пейзаж море, скалы, пляж')
           .post__text
-            h3 Бирюзовое доверие
-            p.
-              У Apple иногда попадаются интерфейсы, за которые создателей хочется сильно поругать — к примеру интерфейс публикации приложения в AppStore, для которого я уже неделю восстановливаю свой аккаунт разработчика.
+            h3= article.title
+            p= article.announce
+            p= article.fullText
 
-            p Или интерфейс подключения AirPods на макбуке. Чтобы переключить наушники между телефоном и компьютером, нужно сначала нажать на значок звука, затем дождаться, когда в списке устройств появятся наушники, потом нажать на них и дождаться, пока случится вся магия подключения. Иногда по загадочным причинам магия не случается, и операцию нужно повторить, выполняя все те же клики-ожидания-клики — бесит.
       .post__wrapper.post__wrapper--comments
         section#comments.post__comments.comments
           h2.comments__title.title.title--middle Комментарии
@@ -78,3 +71,18 @@ block content
               label
                 textarea(rows='1' name='message' placeholder='Присоединиться к обсуждению')
               button.comments__button.button.button--colored(type='submit') Опубликовать
+
+block scripts
+  script(type='text/javascript').
+    (() => {
+      const backButton = document.querySelector('.post__backwards')
+
+      if (!backButton) {
+        return;
+      }
+
+      backButton.addEventListener('click', (evt) => {
+        evt.preventDefault();
+        history.back();
+      })
+    })()

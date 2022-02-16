@@ -8,7 +8,7 @@ const {getAPI} = require(`../api`);
 const rootRoutes = new Router();
 const api = getAPI();
 
-rootRoutes.get(`/`, async (_req, res) => {
+rootRoutes.get(`/`, async (_req, res, next) => {
   try {
     const [articles, categories] = await Promise.all([
       api.getArticles(),
@@ -20,7 +20,7 @@ rootRoutes.get(`/`, async (_req, res) => {
       categories,
     });
   } catch (error) {
-    throw error;
+    next(error);
   }
 });
 
@@ -28,7 +28,7 @@ rootRoutes.get(`/register`, (req, res) => res.render(`auth/register`));
 
 rootRoutes.get(`/login`, (req, res) => res.render(`auth/login`));
 
-rootRoutes.get(`/search`, async (req, res) => {
+rootRoutes.get(`/search`, async (req, res, next) => {
   const {query} = req.query;
 
   try {
@@ -40,7 +40,8 @@ rootRoutes.get(`/search`, async (req, res) => {
     });
   } catch (error) {
     if (!error.response) {
-      throw error;
+      next(error);
+      return;
     }
 
     if (error.response.status === HttpCode.BAD_REQUEST) {
@@ -59,7 +60,7 @@ rootRoutes.get(`/search`, async (req, res) => {
       return;
     }
 
-    throw error;
+    next(error);
   }
 });
 

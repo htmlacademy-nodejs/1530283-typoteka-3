@@ -31,7 +31,7 @@ app.use(`/articles`, articlesRoutes);
 app.use((_req, res) => res.redirect(`/404`));
 
 app.use((err, _req, res, _next) => {
-  console.error(err);
+  console.error(err.message);
   res.redirect(`/500`);
 });
 

@@ -29,7 +29,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage});
 
-articlesRoutes.get(`/category/:categoryId`, async (req, res) =>{
+articlesRoutes.get(`/category/:categoryId`, async (_req, res, next) =>{
   try {
     const [articles, categories] = await Promise.all([
       api.getArticles(),
@@ -42,13 +42,13 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res) =>{
       categories
     });
   } catch (error) {
-    throw error;
+    next(error);
   }
 }
 
 );
 
-articlesRoutes.get(`/add`, async (_req, res) => {
+articlesRoutes.get(`/add`, async (_req, res, next) => {
   try {
     const categories = await api.getCategories();
 
@@ -61,11 +61,11 @@ articlesRoutes.get(`/add`, async (_req, res) => {
       isNew: true,
     });
   } catch (error) {
-    throw error;
+    next(error);
   }
 });
 
-articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res) => {
+articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
   let newArticle;
 
   try {
@@ -78,7 +78,7 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res) => {
       res.redirect(`/my`);
     } catch (error) {
       if (!error.response) {
-        throw error;
+        next(error);
       }
 
       const categories = await api.getCategories();
@@ -93,11 +93,11 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res) => {
       });
     }
   } catch (error) {
-    throw error;
+    next(error);
   }
 });
 
-articlesRoutes.get(`/edit/:articleId`, async (req, res) => {
+articlesRoutes.get(`/edit/:articleId`, async (req, res, next) => {
   try {
     const [article, categories] = await Promise.all([
       api.getArticle(req.params.articleId),
@@ -112,11 +112,11 @@ articlesRoutes.get(`/edit/:articleId`, async (req, res) => {
       categories,
     });
   } catch (error) {
-    throw error;
+    next(error);
   }
 });
 
-articlesRoutes.get(`/:articleId`, async (req, res) => {
+articlesRoutes.get(`/:articleId`, async (req, res, next) => {
   try {
     const [article, categories] = await Promise.all([
       api.getArticle(req.params.articleId),
@@ -129,7 +129,7 @@ articlesRoutes.get(`/:articleId`, async (req, res) => {
       categories
     });
   } catch (error) {
-    throw error;
+    next(error);
   }
 });
 

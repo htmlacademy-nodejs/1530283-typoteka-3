@@ -7,7 +7,7 @@ const {getAPI} = require(`../api`);
 const myRoutes = new Router();
 const api = getAPI();
 
-myRoutes.get(`/`, async (_req, res) => {
+myRoutes.get(`/`, async (_req, res, next) => {
   try {
     const articles = await api.getArticles();
 
@@ -18,11 +18,11 @@ myRoutes.get(`/`, async (_req, res) => {
       articles: articles.map(getArticleTemplateData),
     });
   } catch (error) {
-    throw error;
+    next(error);
   }
 });
 
-myRoutes.get(`/comments`, async (_req, res) => {
+myRoutes.get(`/comments`, async (_req, res, next) => {
   try {
     const articles = await api.getArticles();
     const comments = articles.reduce(
@@ -37,11 +37,11 @@ myRoutes.get(`/comments`, async (_req, res) => {
       comments,
     });
   } catch (error) {
-    throw error;
+    next(error);
   }
 });
 
-myRoutes.get(`/categories`, async (_req, res) => {
+myRoutes.get(`/categories`, async (_req, res, next) => {
   try {
     const categories = await api.getCategories();
 
@@ -52,7 +52,7 @@ myRoutes.get(`/categories`, async (_req, res) => {
       categories,
     });
   } catch (error) {
-    throw error;
+    next(error);
   }
 });
 

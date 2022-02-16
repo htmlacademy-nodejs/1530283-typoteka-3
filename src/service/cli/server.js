@@ -6,6 +6,7 @@ const {HttpCode} = require(`../../constants`);
 const apiRoutes = require(`../api/api`);
 const {getLogger} = require(`../lib/logger`);
 
+const API_PREFIX = `/api`;
 const DEFAULT_PORT = 3000;
 const Messages = {
   NOT_FOUND_MESSAGE: `Not found`,
@@ -31,7 +32,7 @@ const logUnhandledRequest = (req, _res, next) => {
 
 const logInternalError = (err, _req, _res, next) => {
   logger.error(`An error occurred on processing request: ${err.message}`);
-  next();
+  next(err);
 };
 
 const sendNotFoundResponse = (_req, res) => {
@@ -50,12 +51,12 @@ app.use(express.json());
 
 app.use(logEveryRequest);
 
-app.use(`/api`, apiRoutes);
+app.use(API_PREFIX, apiRoutes);
 
 app.use(logUnhandledRequest);
-app.use(sendNotFoundResponse);
-
 app.use(logInternalError);
+
+app.use(sendNotFoundResponse);
 app.use(sendServerErrorResponse);
 
 module.exports = {

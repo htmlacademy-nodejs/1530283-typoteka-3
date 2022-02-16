@@ -23,11 +23,13 @@ block content
                     input(type='text' name='title' placeholder='Заголовок' value=article.title required)
                 .form__field.form__field--post-image
                   label
-                    input#image-name-field(type='text' name='photo' placeholder='Фотография' readonly)
+                    input#image-name-field(type='text' name='photo' placeholder='Фотография' readonly value=article.image)
                   .form__image-loader.form__image-loader--publication
                     label
                       input.visually-hidden(type='file' name='upload')
                       | Обзор
+                    if article.image
+                      button.button.button--transparent(type="button") Удалить
                 .new-publication__category-wrapper
                   each category, index in categories
                     .new-publication__checkbox

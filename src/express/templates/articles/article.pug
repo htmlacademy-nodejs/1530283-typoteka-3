@@ -9,7 +9,7 @@ block content
         .post__wrapper
           .post__head
             a.post__backwards.button.button--backwards(href='#') Назад
-            time.post__date(datetime='2019-03-21T20:33') 21.03.2019, 20:33
+            time.post__date(datetime=article.createdCEODate)= article.createdDate
             h2.post__title.title.title--main= article.title
             ul.post__themes.themes
               each category, index in categories
@@ -22,7 +22,7 @@ block content
                       sup  #{index + 1}
           if article.image
             .post__picture
-              img(src='/img/sea-fullsize@1x.jpg' alt='пейзаж море, скалы, пляж')
+              img(src=`/img/${article.image}` alt='')
           .post__text
             h3= article.title
             p= article.announce

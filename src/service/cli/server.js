@@ -53,9 +53,9 @@ app.use(logEveryRequest);
 app.use(`/api`, apiRoutes);
 
 app.use(logUnhandledRequest);
-app.use(logInternalError);
-
 app.use(sendNotFoundResponse);
+
+app.use(logInternalError);
 app.use(sendServerErrorResponse);
 
 module.exports = {

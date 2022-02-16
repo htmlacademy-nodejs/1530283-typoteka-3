@@ -1,5 +1,6 @@
 "use strict";
 
+const path = require(`path`);
 const {Router} = require(`express`);
 const multer = require(`multer`);
 const {getAPI} = require(`../api`);
@@ -8,12 +9,25 @@ const {
   getInitialArticle,
   parseClientArticle,
 } = require(`../../utils/article`);
+const {getImageFileName} = require(`../../utils/image`);
+
+const UPLOAD_DIR = `../upload/img`;
+const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
 
 const articlesRoutes = new Router();
 
 const api = getAPI();
 
-const upload = multer();
+const storage = multer.diskStorage({
+  destination: uploadDirAbsolute,
+  filename: (_req, file, callback) => {
+    const error = null;
+    const fileName = getImageFileName(file);
+    callback(error, fileName);
+  }
+});
+
+const upload = multer({storage});
 
 articlesRoutes.get(`/category/:categoryId`, async (req, res) =>{
   try {
@@ -51,12 +65,13 @@ articlesRoutes.get(`/add`, async (_req, res) => {
   }
 });
 
-articlesRoutes.post(`/add`, upload.none(), async (req, res) => {
+articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res) => {
   let newArticle;
 
   try {
     try {
-      newArticle = parseClientArticle(req.body);
+      const {body, file} = req;
+      newArticle = parseClientArticle(body, file);
 
       await api.createArticle(newArticle);
 

@@ -20,8 +20,9 @@ const getInitialArticle = () => ({
   categories: [],
 });
 
-const parseClientArticle = (clientArticle) => ({
+const parseClientArticle = (clientArticle, file) => ({
   title: clientArticle.title,
+  image: file ? file.filename : ``,
   createdDate: parseArticleClientDate(clientArticle.date),
   categories: clientArticle.categories,
   announce: clientArticle.announce,

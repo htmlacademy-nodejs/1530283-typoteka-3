@@ -24,9 +24,9 @@ rootRoutes.get(`/`, async (_req, res, next) => {
   }
 });
 
-rootRoutes.get(`/register`, (req, res) => res.render(`auth/register`));
+rootRoutes.get(`/register`, (_req, res) => res.render(`auth/register`));
 
-rootRoutes.get(`/login`, (req, res) => res.render(`auth/login`));
+rootRoutes.get(`/login`, (_req, res) => res.render(`auth/login`));
 
 rootRoutes.get(`/search`, async (req, res, next) => {
   const {query} = req.query;

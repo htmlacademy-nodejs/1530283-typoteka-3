@@ -35,6 +35,7 @@ block content
                       - const isChecked = article.categories.includes(category)
                       input(id=checkboxId type='checkbox' name='categories' value=category checked=isChecked)
                       label(for=checkboxId)= category
+                  a.new-publication__form-link.button.button--transparent(href='/my/categories') Добавить категорию
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label

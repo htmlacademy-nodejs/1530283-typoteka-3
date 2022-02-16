@@ -9,11 +9,7 @@ block content
       h2.visually-hidden Список тем
       ul.themes
         each category, index in categories
-          - const href = `/articles/category/${index}`
-          li.themes__item
-            a.themes__item-link(href=href)
-              = category
-              sup  #{index + 1}
+          +categoryTab(category, index + 1)
     .main-page__section-flex
       section.main-page__hot.hot
         h2.hot__name

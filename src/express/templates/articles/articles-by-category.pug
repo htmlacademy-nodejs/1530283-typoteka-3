@@ -7,12 +7,8 @@ block content
       h2.visually-hidden Список тем
       ul.themes
         each category, index in categories
-          - const href = `/articles/category/${index}`
           - const isActive = index === 0
-          li.themes__item
-            a.themes__item-link(class={[`themes__item-link--active`]: isActive} href=href)
-              = category
-              sup  #{index + 1}
+          +categoryTab(category, index + 1, isActive)
     section.articles-category__list.preview
       h2.visually-hidden Список превью статей
       ul.preview__list

@@ -1,6 +1,6 @@
 "use strict";
 
-const {getId} = require(`../../utils`);
+const {getId} = require(`../../utils/common`);
 
 class CommentService {
   constructor(articles) {

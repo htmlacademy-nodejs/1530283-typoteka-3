@@ -11,6 +11,8 @@ html
     link(rel='preload' href='/fonts/SFProDisplay-Regular.woff2' as='font' crossorigin='anonymous')
     link(rel='stylesheet' href='/css/style.min.css')
   body
+    include ./mixins/index.pug
+
     - const isHttpError = Boolean(httpError)
 
     div(class=isHttpError ? `wrapper-color` : `wrapper`)
@@ -23,3 +25,5 @@ html
 
     script(src='/js/vendor.js')
     script(src='/js/main.js')
+
+    block scripts

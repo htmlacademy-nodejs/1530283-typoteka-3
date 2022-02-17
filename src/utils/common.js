@@ -4,7 +4,7 @@ const fs = require(`fs`).promises;
 const chalk = require(`chalk`);
 const {nanoid} = require(`nanoid`);
 
-const {FileType, MAX_ID_LENGTH} = require(`./constants`);
+const {FileType, MAX_ID_LENGTH} = require(`../constants`);
 
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);

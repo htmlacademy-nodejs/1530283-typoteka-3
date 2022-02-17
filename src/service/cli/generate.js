@@ -12,7 +12,7 @@ const {
   getUniqueArray,
   readFile,
   getId,
-} = require(`../../utils`);
+} = require(`../../utils/common`);
 
 const DEFAULT_COUNT = 1;
 
@@ -67,7 +67,7 @@ const generateArticle = ({titles, categories, sentences, comments}) => {
     announce: generateAnnounce(sentences),
     fullText: generateFullText(sentences),
     createdDate: generateCreatedDate(),
-    category: getUniqueArray(categories),
+    categories: getUniqueArray(categories),
     comments: Array(getRandomInt(CommentsCountRestrict.MIN, CommentsCountRestrict.MAX))
       .fill({})
       .map(() => generateComment(comments)),

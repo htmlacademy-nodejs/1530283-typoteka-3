@@ -1,0 +1,6 @@
+mixin categoryTab(category, categoryId, isActive)
+  - const href = !isActive ? `/articles/category/${categoryId}` : undefined
+  li.themes__item
+    a.themes__item-link(class={[`themes__item-link--active`]: isActive} href=href)
+      = category
+      sup  #{categoryId}

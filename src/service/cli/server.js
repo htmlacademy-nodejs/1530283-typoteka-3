@@ -1,11 +1,13 @@
 "use strict";
 
 const express = require(`express`);
+const requestId = require(`express-request-id`);
 
 const {HttpCode} = require(`../../constants`);
 const apiRoutes = require(`../api/api`);
-const {getLogger} = require(`../lib/logger`);
+const {getLogger} = require(`../lib/logger/logger`);
 
+const API_PREFIX = `/api`;
 const DEFAULT_PORT = 3000;
 const Messages = {
   NOT_FOUND_MESSAGE: `Not found`,
@@ -15,10 +17,10 @@ const Messages = {
 const logger = getLogger({name: `api`});
 
 const logEveryRequest = (req, res, next) => {
-  logger.debug(`Request on route ${req.url}`);
+  logger.debug(`${req.id}: ${req.method} Request on route ${req.url}`);
 
   res.on(`finish`, () => {
-    logger.info(`Response status code ${res.statusCode}`);
+    logger.info(`${req.id}: Response status code ${res.statusCode}`);
   });
 
   next();
@@ -29,9 +31,9 @@ const logUnhandledRequest = (req, _res, next) => {
   next();
 };
 
-const logInternalError = (err, _req, _res, next) => {
-  logger.error(`An error occurred on processing request: ${err.message}`);
-  next();
+const logInternalError = (err, req, _res, next) => {
+  logger.error(`${req.id}: An error occurred on processing request: ${err.message}`);
+  next(err);
 };
 
 const sendNotFoundResponse = (_req, res) => {
@@ -48,9 +50,11 @@ const app = express();
 
 app.use(express.json());
 
+app.use(requestId());
+
 app.use(logEveryRequest);
 
-app.use(`/api`, apiRoutes);
+app.use(API_PREFIX, apiRoutes);
 
 app.use(logUnhandledRequest);
 app.use(logInternalError);

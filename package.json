@@ -8,7 +8,8 @@
     "start::debug": "cross-env LOG_LEVEL=debug NODE_ENV=development nodemon ./src/service/service.js",
     "start-api-server": "cross-env LOG_LEVEL=error NODE_ENV=production node ./src/service/service.js --server 3000",
     "start-api-server::debug": "cross-env LOG_LEVEL=debug NODE_ENV=development nodemon ./src/service/service.js --server 3000",
-    "start-front-server": "nodemon ./src/express/express.js",
+    "start-front-server": "node ./src/express/express.js",
+    "start-front-server::debug": "nodemon ./src/express/express.js",
     "generate": "node ./src/service/service.js --generate",
     "test": "npm run eslint && npm run jest",
     "eslint": "eslint --ext .js src/",
@@ -33,10 +34,13 @@
     "supertest": "6.2.2"
   },
   "dependencies": {
+    "axios": "0.26.0",
     "chalk": "4.1.2",
     "cross-env": "7.0.3",
     "dayjs": "1.10.7",
     "express": "4.17.2",
+    "express-request-id": "1.4.1",
+    "multer": "1.4.4",
     "nanoid": "3.2.0",
     "pino": "7.6.5",
     "pug": "3.0.2"

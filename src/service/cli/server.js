@@ -4,7 +4,6 @@ const express = require(`express`);
 const requestId = require(`express-request-id`);
 
 const {HttpCode} = require(`../../constants`);
-const {getId} = require(`../../utils/common`);
 const apiRoutes = require(`../api/api`);
 const {getLogger} = require(`../lib/logger/logger`);
 
@@ -18,7 +17,7 @@ const Messages = {
 const logger = getLogger({name: `api`});
 
 const logEveryRequest = (req, res, next) => {
-  logger.debug(`${req.id}: Request on route ${req.url}`);
+  logger.debug(`${req.id}: ${req.method} Request on route ${req.url}`);
 
   res.on(`finish`, () => {
     logger.info(`${req.id}: Response status code ${res.statusCode}`);

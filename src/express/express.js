@@ -3,6 +3,7 @@
 const path = require(`path`);
 const chalk = require(`chalk`);
 const express = require(`express`);
+const {HttpCode} = require(`../constants`);
 const rootRoutes = require(`./routes/root-routes`);
 const errorRoutes = require(`./routes/error-routes`);
 const myRoutes = require(`./routes/my-routes`);
@@ -13,6 +14,18 @@ const Dir = {
   TEMPLATES: `templates`,
   PUBLIC: `public`,
   UPLOAD: `upload`
+};
+
+const handleClientError = (_req, res) => res.redirect(`/404`);
+
+const handleServerError = (err, req, res, _next) => {
+  if (err.response && err.response.status === HttpCode.NOT_FOUND) {
+    handleClientError(req, res);
+    return;
+  }
+
+  console.error(chalk.red(`Request failed with error: ${err.message}`));
+  res.redirect(`/500`);
 };
 
 const app = express();
@@ -28,13 +41,14 @@ app.use(`/`, errorRoutes);
 app.use(`/my`, myRoutes);
 app.use(`/articles`, articlesRoutes);
 
-app.use((_req, res) => res.redirect(`/404`));
+app.use(handleClientError);
+app.use(handleServerError);
 
-app.use((err, _req, res, _next) => {
-  console.error(err.message);
-  res.redirect(`/500`);
+app.listen(PORT, (err) => {
+  if (err) {
+    console.error(chalk.red(`An error occurred on server creation: ${err.message}`));
+    return;
+  }
+
+  console.info(chalk.green(`Сервер запущен на порту: ${PORT}`));
 });
-
-app.listen(PORT, () =>
-  console.log(chalk.green(`Сервер запущен на порту: ${PORT}`))
-);

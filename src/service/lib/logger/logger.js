@@ -14,7 +14,7 @@ const logger = pino({
   transport: {
     target: isDevMode ? `./pino-pretty-target` : `pino/file`,
     options: {
-      destination: !isDevMode ? path.resolve(__dirname, `../../../logs/api.log`) : undefined,
+      destination: !isDevMode ? path.resolve(__dirname, `../../../../logs/api.log`) : undefined,
     }
   }
 });

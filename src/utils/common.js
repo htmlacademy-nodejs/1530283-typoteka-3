@@ -50,6 +50,8 @@ const readFile = async (filePath, fileType, fallbackContent = []) => {
 
 const getId = () => nanoid(MAX_ID_LENGTH);
 
+const multiLineJoin = (items) => items.join(`,\n`);
+
 const clone = (data) => JSON.parse(JSON.stringify(data));
 
 module.exports = {
@@ -60,4 +62,5 @@ module.exports = {
   readFile,
   getId,
   clone,
+  multiLineJoin
 };

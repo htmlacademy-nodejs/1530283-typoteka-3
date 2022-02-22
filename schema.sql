@@ -1,24 +1,28 @@
+-- Удаляет все существующие таблицы при их наличии
 DROP TABLE IF EXISTS categories CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS articles CASCADE;
 DROP TABLE IF EXISTS comments CASCADE;
 DROP TABLE IF EXISTS articles_categories CASCADE;
 
+-- Создает таблицу категорий
 CREATE TABLE categories(
   id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   name varchar(30) UNIQUE NOT NULL
 );
 
+-- Создает таблицу пользователей
 CREATE TABLE users(
   id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   email varchar(255) UNIQUE NOT NULL,
   first_name varchar(255) NOT NULL,
   last_name varchar(255) NOT NULL,
-  hash_password varchar(255) NOT NULL,
+  password_hash varchar(255) NOT NULL,
   is_admin boolean NOT NULL DEFAULT false,
   avatar varchar(50)
 );
 
+-- Создает таблицу публикаций
 CREATE TABLE articles(
   id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   created_at timestamp DEFAULT current_timestamp,
@@ -30,6 +34,16 @@ CREATE TABLE articles(
   FOREIGN KEY (author_id) REFERENCES users(id)
 );
 
+-- Создает таблицу сочетаний публикация-категория
+CREATE TABLE articles_categories(
+  article_id bigint NOT NULL,
+  category_id bigint NOT NULL,
+  PRIMARY KEY (article_id, category_id),
+  FOREIGN KEY (article_id) REFERENCES articles(id),
+  FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+
+-- Создает таблицу комментариев
 CREATE TABLE comments(
   id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   created_at timestamp DEFAULT current_timestamp,
@@ -40,12 +54,5 @@ CREATE TABLE comments(
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
-CREATE TABLE articles_categories(
-  article_id bigint NOT NULL,
-  category_id bigint NOT NULL,
-  PRIMARY KEY (article_id, category_id),
-  FOREIGN KEY (article_id) REFERENCES articles(id),
-  FOREIGN KEY (category_id) REFERENCES categories(id)
-);
-
+-- Создает индекс по заголовкам публикаций
 CREATE INDEX ON articles(title);

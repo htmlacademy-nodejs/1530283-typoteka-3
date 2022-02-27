@@ -32,6 +32,8 @@ CREATE TABLE articles(
   picture varchar(50),
   author_id bigint NOT NULL,
   FOREIGN KEY (author_id) REFERENCES users(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 -- Создает таблицу сочетаний публикация-категория
@@ -39,8 +41,12 @@ CREATE TABLE articles_categories(
   article_id bigint NOT NULL,
   category_id bigint NOT NULL,
   PRIMARY KEY (article_id, category_id),
-  FOREIGN KEY (article_id) REFERENCES articles(id),
+  FOREIGN KEY (article_id) REFERENCES articles(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
   FOREIGN KEY (category_id) REFERENCES categories(id)
+    ON UPDATE CASCADE
+    ON DELETE RESTRICT
 );
 
 -- Создает таблицу комментариев
@@ -50,8 +56,12 @@ CREATE TABLE comments(
   text varchar(255),
   user_id bigint NOT NULL,
   article_id bigint NOT NULL,
-  FOREIGN KEY (article_id) REFERENCES articles(id),
+  FOREIGN KEY (article_id) REFERENCES articles(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
 -- Создает индекс по заголовкам публикаций

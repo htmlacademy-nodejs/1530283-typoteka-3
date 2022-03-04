@@ -3,9 +3,10 @@
 const express = require(`express`);
 const requestId = require(`express-request-id`);
 
-const {HttpCode} = require(`../../constants`);
+const {HttpCode, ExitCode} = require(`../../constants`);
 const apiRoutes = require(`../api/api`);
 const {getLogger} = require(`../lib/logger/logger`);
+const sequelize = require(`../lib/sequelize`);
 
 const API_PREFIX = `/api`;
 const DEFAULT_PORT = 3000;
@@ -32,7 +33,9 @@ const logUnhandledRequest = (req, _res, next) => {
 };
 
 const logInternalError = (err, req, _res, next) => {
-  logger.error(`${req.id}: An error occurred on processing request: ${err.message}`);
+  logger.error(
+      `${req.id}: An error occurred on processing request: ${err.message}`
+  );
   next(err);
 };
 
@@ -64,7 +67,17 @@ app.use(sendServerErrorResponse);
 
 module.exports = {
   name: `--server`,
-  run(args) {
+  run: async (args) => {
+    try {
+      logger.info(`Trying to connect to database...`);
+      await sequelize.authenticate();
+    } catch (err) {
+      logger.error(`An error occurred: ${err.message}`);
+      process.exit(ExitCode.ERROR);
+    }
+
+    logger.info(`Connection to database established`);
+
     const [rawPort] = args;
     const port = Number.parseInt(rawPort, 10) || DEFAULT_PORT;
 
@@ -80,7 +93,7 @@ module.exports = {
       });
     } catch (err) {
       logger.error(`An error occurred: ${err.message}`);
-      process.exit(1);
+      process.exit(ExitCode.ERROR);
     }
   },
 };

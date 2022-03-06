@@ -13,13 +13,9 @@ block content
             h2.post__title.title.title--main= article.title
             ul.post__themes.themes
               each category, index in categories
-                - const href = `/articles/category/${index}`
-                - const isShown = article.categories.includes(category)
+                - const isShown = article.categories.includes(category.name)
                 if isShown
-                  li.themes__item
-                    a.themes__item-link(class={[`themes__item-link--active`]: isActive} href=href)
-                      = category
-                      sup  #{index + 1}
+                  +categoryTab(category)
           if article.image
             .post__picture(style='height:490px')
               img(src=`/img/${article.image}` alt='' style='width:100%;height:100%;object-fit:cover')

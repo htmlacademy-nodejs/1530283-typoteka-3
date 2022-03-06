@@ -11,12 +11,12 @@ block content
             span.visually-hidden Добавить категорию
           button.category__button.button.button--category(type='submit') Добавить
       ul.category__list
-        each category, index in categories
-          - const name = `category-${index}`
+        each category in categories
+          - const name = `category-${category.id}`
           - const id = `modify-form-${name}`
           li.category__list-item
             form(action='#' method='POST')
-              input(id=id type='text' name=name value=category)
+              input(id=id type='text' name=name value=category.name)
               label(for=id)
                 span.visually-hidden Редактировать категорию
               button.category__button.button.button--category(type='submit') Сохранить

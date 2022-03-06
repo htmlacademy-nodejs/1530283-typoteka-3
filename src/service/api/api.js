@@ -21,7 +21,7 @@ defineModels(sequelize);
   const mockData = await getMockData();
 
   article(api, new ArticleService(mockData), new CommentService(mockData));
-  category(api, new CategoryService(mockData));
+  category(api, new CategoryService(sequelize));
   search(api, new SearchService(mockData));
 })();
 

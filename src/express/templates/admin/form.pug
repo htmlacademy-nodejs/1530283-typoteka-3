@@ -31,12 +31,12 @@ block content
                     if article.image
                       button.button.button--transparent(type="button") Удалить
                 .new-publication__category-wrapper
-                  each category, index in categories
+                  each category in categories
                     .new-publication__checkbox
-                      - const checkboxId = `category-${index}-checkbox`
-                      - const isChecked = article.categories.includes(category)
-                      input(id=checkboxId type='checkbox' name='categories' value=category checked=isChecked)
-                      label(for=checkboxId)= category
+                      - const checkboxId = `category-${category.id}-checkbox`
+                      - const isChecked = article.categories.includes(category.name)
+                      input(id=checkboxId type='checkbox' name='categories' value=category.id checked=isChecked)
+                      label(for=checkboxId)= category.name
                   a.new-publication__form-link.button.button--transparent(href='/my/categories') Добавить категорию
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text

@@ -8,9 +8,13 @@ module.exports = (app, categoryService) => {
 
   app.use(`/categories`, categoriesRoutes);
 
-  categoriesRoutes.get(`/`, (req, res) => {
-    const categories = categoryService.findAll();
+  categoriesRoutes.get(`/`, async (req, res, next) => {
+    try {
+      const categories = await categoryService.findAll();
 
-    res.status(HttpCode.OK).json(categories);
+      res.status(HttpCode.OK).json(categories);
+    } catch (error) {
+      next(error);
+    }
   });
 };

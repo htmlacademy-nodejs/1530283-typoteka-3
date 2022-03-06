@@ -8,7 +8,7 @@ block content
       ul.themes
         each category, index in categories
           - const isActive = index === 0
-          +categoryTab(category, index + 1, isActive)
+          +categoryTab(category, isActive)
     section.articles-category__list.preview
       h2.visually-hidden Список превью статей
       ul.preview__list

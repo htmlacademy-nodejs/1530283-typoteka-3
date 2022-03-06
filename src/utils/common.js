@@ -25,7 +25,7 @@ const shuffle = (items) => {
 };
 
 const getUniqueArray = (items) => {
-  return shuffle(items).slice(0, getRandomInt(0, items.length - 1));
+  return shuffle(items).slice(0, getRandomInt(1, items.length - 1));
 };
 
 const readFile = async (filePath, fileType, fallbackContent = []) => {

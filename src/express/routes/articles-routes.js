@@ -24,29 +24,28 @@ const storage = multer.diskStorage({
     const error = null;
     const fileName = getImageFileName(file);
     callback(error, fileName);
-  }
+  },
 });
 
 const upload = multer({storage});
 
-articlesRoutes.get(`/category/:categoryId`, async (_req, res, next) =>{
+articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
   try {
     const [articles, categories] = await Promise.all([
       api.getArticles(),
-      api.getCategories(),
+      api.getCategories({withArticlesCount: true, havingArticles: true}),
     ]);
 
     res.render(`articles/articles-by-category`, {
       user: {},
       articles: articles.map(getArticleTemplateData),
-      categories
+      categories,
+      currentCategoryId: Number(req.params.categoryId),
     });
   } catch (error) {
     next(error);
   }
-}
-
-);
+});
 
 articlesRoutes.get(`/add`, async (_req, res, next) => {
   try {
@@ -120,13 +119,15 @@ articlesRoutes.get(`/:articleId`, async (req, res, next) => {
   try {
     const [article, categories] = await Promise.all([
       api.getArticle(req.params.articleId),
-      api.getCategories(),
+      api.getCategories({
+        withArticlesCount: true,
+      }),
     ]);
 
     res.render(`articles/article`, {
       user: {},
       article: getArticleTemplateData(article),
-      categories
+      categories,
     });
   } catch (error) {
     next(error);

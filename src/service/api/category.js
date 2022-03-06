@@ -10,7 +10,7 @@ module.exports = (app, categoryService) => {
 
   categoriesRoutes.get(`/`, async (req, res, next) => {
     try {
-      const categories = await categoryService.findAll();
+      const categories = await categoryService.findAll(req.query);
 
       res.status(HttpCode.OK).json(categories);
     } catch (error) {

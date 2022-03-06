@@ -28,22 +28,22 @@ class API {
     return this._load(`/articles/${articleId}`);
   }
 
-  getCategories() {
-    return this._load(`/categories`);
+  getCategories(params) {
+    return this._load(`/categories`, {params});
   }
 
   search(query) {
     return this._load(`search`, {
       params: {
-        query
-      }
+        query,
+      },
     });
   }
 
   createArticle(data) {
     return this._load(`/articles`, {
       method: `POST`,
-      data
+      data,
     });
   }
 }
@@ -52,5 +52,5 @@ const defaultAPI = new API(defaultUrl, TIMEOUT);
 
 module.exports = {
   API,
-  getAPI: () => defaultAPI
+  getAPI: () => defaultAPI,
 };

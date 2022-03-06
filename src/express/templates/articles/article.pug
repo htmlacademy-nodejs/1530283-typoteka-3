@@ -12,13 +12,13 @@ block content
             time.post__date(datetime=article.createdCEODate)= article.createdDate
             h2.post__title.title.title--main= article.title
             ul.post__themes.themes
-              each category, index in categories
-                - const isShown = article.categories.includes(category.name)
+              each category in categories
+                - const isShown = Boolean(article.categories.find(({id}) => id === category.id))
                 if isShown
                   +categoryTab(category)
-          if article.image
+          if article.picture
             .post__picture(style='height:490px')
-              img(src=`/img/${article.image}` alt='' style='width:100%;height:100%;object-fit:cover')
+              img(src=`/img/${article.picture}` alt='' style='width:100%;height:100%;object-fit:cover')
           .post__text
             h3= article.title
             p= article.announce

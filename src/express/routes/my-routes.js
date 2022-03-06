@@ -43,7 +43,7 @@ myRoutes.get(`/comments`, async (_req, res, next) => {
 
 myRoutes.get(`/categories`, async (_req, res, next) => {
   try {
-    const categories = await api.getCategories();
+    const categories = await api.getCategories({withArticlesCount: true});
 
     res.render(`admin/categories`, {
       user: {

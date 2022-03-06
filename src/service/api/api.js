@@ -20,7 +20,7 @@ defineModels(sequelize);
 (async () => {
   const mockData = await getMockData();
 
-  article(api, new ArticleService(mockData), new CommentService(mockData));
+  article(api, new ArticleService(sequelize), new CommentService(mockData));
   category(api, new CategoryService(sequelize));
   search(api, new SearchService(mockData));
 })();

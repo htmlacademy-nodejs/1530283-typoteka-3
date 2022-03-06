@@ -23,18 +23,18 @@ block content
                     input(type='text' name='title' placeholder='Заголовок' value=article.title required)
                 .form__field.form__field--post-image
                   label
-                    input#image-name-field(type='text' name='photo' placeholder='Фотография' readonly value=article.image)
+                    input#image-name-field(type='text' name='photo' placeholder='Фотография' readonly value=article.picture)
                   .form__image-loader.form__image-loader--publication
                     label
                       input.visually-hidden(type='file' name='upload')
                       | Обзор
-                    if article.image
+                    if article.picture
                       button.button.button--transparent(type="button") Удалить
                 .new-publication__category-wrapper
                   each category in categories
                     .new-publication__checkbox
                       - const checkboxId = `category-${category.id}-checkbox`
-                      - const isChecked = article.categories.includes(category.name)
+                      - const isChecked = Boolean(article.categories.find(({id}) => id === category.id))
                       input(id=checkboxId type='checkbox' name='categories' value=category.id checked=isChecked)
                       label(for=checkboxId)= category.name
                   a.new-publication__form-link.button.button--transparent(href='/my/categories') Добавить категорию

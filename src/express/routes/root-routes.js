@@ -12,7 +12,7 @@ rootRoutes.get(`/`, async (_req, res, next) => {
   try {
     const [articles, categories] = await Promise.all([
       api.getArticles(),
-      api.getCategories(),
+      api.getCategories({withArticlesCount: true, havingArticles: true}),
     ]);
 
     res.render(`articles/all-articles`, {

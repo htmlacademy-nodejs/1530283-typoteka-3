@@ -3,5 +3,4 @@ mixin categoryTab(category, isActive)
   li.themes__item
     a.themes__item-link(class={[`themes__item-link--active`]: isActive} href=href)
       = category.name
-      //- sup  #{category.count}
-      sup  #{0}
+      sup  #{category.articlesCount}

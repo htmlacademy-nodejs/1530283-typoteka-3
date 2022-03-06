@@ -30,8 +30,6 @@ module.exports = async (sequelize, {categories, users, articles}) => {
       {}
   );
 
-  console.log(`Before articles`);
-
   articles.forEach((article) => {
     article.authorId = mapUserEmailToId[article.authorEmail];
 
@@ -39,8 +37,6 @@ module.exports = async (sequelize, {categories, users, articles}) => {
       comment.authorId = mapUserEmailToId[comment.authorEmail];
     });
   });
-
-  console.log(`Before prmoises`);
 
   try {
     const articlePromises = articles.map(async (article) => {

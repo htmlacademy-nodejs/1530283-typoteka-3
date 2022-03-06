@@ -8,8 +8,8 @@ const {
 
 const getArticleTemplateData = (article) => ({
   ...article,
-  createdDate: formatArticleDate(article.createdDate),
-  createdCEODate: formatArticleCEODate(article.createdDate),
+  createdDate: formatArticleDate(article.createdAt),
+  createdCEODate: formatArticleCEODate(article.createdAt),
 });
 
 const getInitialArticle = () => ({

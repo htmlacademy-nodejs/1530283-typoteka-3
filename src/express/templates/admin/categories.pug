@@ -20,4 +20,5 @@ block content
               label(for=id)
                 span.visually-hidden Редактировать категорию
               button.category__button.button.button--category(type='submit') Сохранить
-              button.category__button.button.button--category(type='button') Удалить
+              if Number(category.articlesCount) === 0
+                button.category__button.button.button--category(type='button') Удалить

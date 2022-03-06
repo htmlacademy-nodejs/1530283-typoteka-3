@@ -8,7 +8,7 @@ block content
     section.main-page__theme-list
       h2.visually-hidden Список тем
       ul.themes
-        each category, index in categories
+        each category in categories
           +categoryTab(category)
     .main-page__section-flex
       section.main-page__hot.hot

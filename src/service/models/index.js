@@ -91,6 +91,8 @@ const define = (sequelize) => {
     onDelete: `restrict`,
     onUpdate: `cascade`,
   });
+
+  return {User, Article, Comment, Category, ArticleCategory};
 };
 
 module.exports = define;

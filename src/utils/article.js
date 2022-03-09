@@ -1,15 +1,15 @@
 "use strict";
 
 const {
+  formatCEODate,
   formatArticleDate,
-  formatArticleCEODate,
   parseArticleClientDate,
 } = require(`./date`);
 
 const getArticleTemplateData = (article) => ({
   ...article,
   createdDate: formatArticleDate(article.createdAt),
-  createdCEODate: formatArticleCEODate(article.createdAt),
+  createdCEODate: formatCEODate(article.createdAt),
 });
 
 const getInitialArticle = () => ({

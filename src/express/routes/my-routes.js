@@ -2,6 +2,7 @@
 
 const {Router} = require(`express`);
 const {getArticleTemplateData} = require(`../../utils/article`);
+const {getCommentTemplateData} = require(`../../utils/comment`);
 const {getAPI} = require(`../api`);
 
 const myRoutes = new Router();
@@ -24,17 +25,15 @@ myRoutes.get(`/`, async (_req, res, next) => {
 
 myRoutes.get(`/comments`, async (_req, res, next) => {
   try {
-    const articles = await api.getArticles();
-    const comments = articles.reduce(
-        (acc, article) => acc.concat(article.comments),
-        []
-    );
+    const comments = await api.getComments();
+
+    console.log(comments[0]);
 
     res.render(`admin/comments`, {
       user: {
         isAdmin: true,
       },
-      comments,
+      comments: comments.map(getCommentTemplateData),
     });
   } catch (error) {
     next(error);

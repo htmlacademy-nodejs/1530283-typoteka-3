@@ -9,6 +9,7 @@ const defineModels = require(`../models`);
 
 const category = require(`./category`);
 const article = require(`./article`);
+const comment = require(`./comment`);
 const search = require(`./search`);
 
 const {ArticleService, CategoryService, SearchService, CommentService} = require(`../data-service`);
@@ -20,9 +21,12 @@ defineModels(sequelize);
 (async () => {
   const mockData = await getMockData();
 
-  article(api, new ArticleService(sequelize), new CommentService(mockData));
+  const commentService = new CommentService(sequelize);
+
+  article(api, new ArticleService(sequelize), commentService);
   category(api, new CategoryService(sequelize));
   search(api, new SearchService(mockData));
+  comment(api, commentService);
 })();
 
 module.exports = api;

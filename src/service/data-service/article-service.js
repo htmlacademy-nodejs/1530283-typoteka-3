@@ -19,48 +19,59 @@ class ArticleService {
         `announce`,
         `createdAt`,
         `picture`,
-        // [Sequelize.fn(`COUNT`, Sequelize.col(`comments.id`)), `commentsCount`],
-        // [Sequelize.fn(`COUNT`, Sequelize.col(`categories.id`)), `categoriesCount`],
+        [
+          Sequelize.fn(
+              `COUNT`,
+              Sequelize.fn(`DISTINCT`, Sequelize.col(`comments.id`))
+          ),
+          `commentsCount`,
+        ],
+        [
+          Sequelize.fn(
+              `ARRAY_AGG`,
+              Sequelize.fn(`DISTINCT`, Sequelize.col(`categories.name`))
+          ),
+          `categoryNames`,
+        ],
       ],
-      // group: [Sequelize.col(`Article.id`)],
+      group: [Sequelize.col(`Article.id`)],
       include: [
         {
           model: this._Comment,
           as: `comments`,
           required: false,
-          attributes: [`id`],
-          duplicating: false
+          attributes: [],
         },
         {
           model: this._Category,
           as: `categories`,
-          attributes: [`id`, `name`],
-          duplicating: false
+          through: {
+            attributes: [],
+          },
+          attributes: [],
         },
       ],
     });
 
-    // console.log(articles);
+    console.log(articles.map((article) => article.get()));
 
     return articles.map((article) => article.get());
   }
 
   async findOne(articleId) {
-    return await this._Article.findOne({
-      where: {id: articleId},
+    const article = await this._Article.findOne({
+      attributes: [`title`, `fullText`, `announce`, `picture`, `createdAt`],
       include: [
         {
-          model: this._Comment,
-          as: `comments`,
-          attributes: [`id`],
-        },
-        {
           model: this._Category,
+          through: {attributes: []},
           as: `categories`,
-          attributes: [`id`, `name`],
         },
       ],
+      where: {id: articleId},
     });
+
+    return article.get();
   }
 
   create(article) {

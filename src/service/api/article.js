@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
-const comment = require(`./comment`);
+const articleComment = require(`./article-comment`);
 const articleValidator = require(`./middlewares/article-validator`);
 const articleExists = require(`./middlewares/article-exists`);
 
@@ -14,7 +14,7 @@ module.exports = (app, articleService, commentService) => {
 
   articlesRoutes.use(`/:articleId`, articleExists(articleService));
 
-  comment(articlesRoutes, commentService);
+  articleComment(articlesRoutes, commentService);
 
   articlesRoutes.get(`/`, async (req, res, next) => {
     try {

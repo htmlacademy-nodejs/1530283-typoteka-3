@@ -3,14 +3,22 @@
 const {getId} = require(`../../utils/common`);
 
 class CommentService {
-  constructor(articles) {
-    this._articles = articles;
+  constructor(sequelize) {
+    this._Comment = sequelize.models.Comment;
   }
 
-  findAll(articleId) {
-    const article = this._articles.find(({id}) => id === articleId);
+  async findAll(articleId) {
+    const comments = await this._Comment.findAll({
+      attributes: [`text`, `createdAt`],
+      raw: true,
+      where: articleId
+        ? {
+          articleId: Number(articleId),
+        }
+        : {},
+    });
 
-    return article.comments;
+    return comments;
   }
 
   create(articleId, comment) {
@@ -27,7 +35,9 @@ class CommentService {
   }
 
   drop(article, commentId) {
-    const commentIndex = article.comments.findIndex((comment) => comment.id === commentId);
+    const commentIndex = article.comments.findIndex(
+        (comment) => comment.id === commentId
+    );
 
     if (commentIndex === -1) {
       return null;

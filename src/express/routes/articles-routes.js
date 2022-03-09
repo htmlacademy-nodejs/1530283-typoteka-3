@@ -117,17 +117,19 @@ articlesRoutes.get(`/edit/:articleId`, async (req, res, next) => {
 
 articlesRoutes.get(`/:articleId`, async (req, res, next) => {
   try {
-    const [article, categories] = await Promise.all([
+    const [article, categories, comments] = await Promise.all([
       api.getArticle(req.params.articleId),
       api.getCategories({
         withArticlesCount: true,
       }),
+      api.getComments(req.params.articleId),
     ]);
 
     res.render(`articles/article`, {
       user: {},
       article: getArticleTemplateData(article),
       categories,
+      comments,
     });
   } catch (error) {
     next(error);

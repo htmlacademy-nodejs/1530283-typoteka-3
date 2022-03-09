@@ -1,9 +1,9 @@
 mixin previewArticle(article)
   li.preview__item(class={[`preview__item--noimage`]: !article.picture})
     ul.preview__breadcrumbs(style=`flex-wrap:wrap`)
-      each category in article.categories
+      each categoryName in article.categoryNames
         li.preview__breadcrumbs-item
-          a.preview__breadcrumbs-link(href='#')= category.name
+          a.preview__breadcrumbs-link(href='#')= categoryName
     if article.picture
       .preview__background
         img.preview__background-image(src=`/img/${article.picture}` width='460' height='240' alt='' style="height:100%")
@@ -15,4 +15,4 @@ mixin previewArticle(article)
       | Комментарии
       span.preview__cloud
       |
-      b.preview__comment-count  #{article.comments.length}
+      b.preview__comment-count  #{article.commentsCount}

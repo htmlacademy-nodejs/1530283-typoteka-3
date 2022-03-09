@@ -32,6 +32,12 @@ class API {
     return this._load(`/categories`, {params});
   }
 
+  getComments(articleId) {
+    return articleId
+      ? this._load(`articles/${articleId}/comments`)
+      : this._load(`comments`);
+  }
+
   search(query) {
     return this._load(`search`, {
       params: {

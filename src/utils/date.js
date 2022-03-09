@@ -20,12 +20,15 @@ const parseArticleClientDate = (date) => dayjs(date, `DD-MM-YYYY`).toISOString()
 
 const formatArticleDate = (date) => dayjs(date).format(`DD.MM.YYYY`);
 
-const formatArticleCEODate = (date) => dayjs(date).format(`YYYY-MM-DD[T]hh:mm`);
+const formatCommentDate = (date) => dayjs(date).format(`DD.MM.YYYY, HH:mm`);
+
+const formatCEODate = (date) => dayjs(date).format(`YYYY-MM-DD[T]HH:mm`);
 
 module.exports = {
   formatTimestamp,
   getRandomPastDate,
   formatArticleDate,
-  formatArticleCEODate,
+  formatCEODate,
   parseArticleClientDate,
+  formatCommentDate,
 };

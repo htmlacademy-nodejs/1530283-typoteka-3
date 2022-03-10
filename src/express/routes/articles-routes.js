@@ -9,6 +9,10 @@ const {
   getInitialArticle,
   parseClientArticle,
 } = require(`../../utils/article`);
+const {
+  getCommentTemplateData,
+} = require(`../../utils/comment`);
+
 const {getImageFileName} = require(`../../utils/image`);
 
 const UPLOAD_DIR = `../upload/img`;
@@ -129,7 +133,7 @@ articlesRoutes.get(`/:articleId`, async (req, res, next) => {
       user: {},
       article: getArticleTemplateData(article),
       categories,
-      comments,
+      comments: comments.map(getCommentTemplateData),
     });
   } catch (error) {
     next(error);

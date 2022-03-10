@@ -17,24 +17,14 @@ block content
           |
           span.hot__icon.hot__icon--fire
         ul.hot__list
-          li.hot__list-item
-            a.hot__list-link(href='/articles/1')
-              | Билл Гейтс впервые за два года возглавил рейтинг самых богатых людей мира по версии Bloomberg
-              sup.hot__link-sup 12
-          li.hot__list-item
-            a.hot__list-link(href='#')
-              | Сервис для аналитики Telegram-чатов Combot попал под блокировку из-за информации на служебной
-              sup.hot__link-sup 15
-              |  странице
+          if mostCommentedArticles.length
+            each article in mostCommentedArticles
+              li.hot__list-item
+                a.hot__list-link(href=`/articles/${article.id}`)= article.announce
+                  sup.hot__link-sup #{article.commentsCount}
+          else
+            p Здесь пока ничего нет
 
-          li.hot__list-item.hot__list-item--margin
-            a.hot__list-link(href='#')
-              | Модель Кайли Дженнер продаст 51% своей компании Kylie Cosmetics владельцу Factor за $600 млн
-              sup.hot__link-sup 52
-          li.hot__list-item.hot__list-item--end
-            a.hot__list-link(href='#')
-              | Tesla получила 146 тысяч предзаказов на электрический пикап Cybertruck за двое суток
-              sup.hot__link-sup 153
       section.main-page__last.last
         h2.last__name
           | Последние комментарии

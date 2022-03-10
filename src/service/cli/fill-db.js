@@ -21,8 +21,8 @@ const SentenceRestrict = {
 };
 
 const CommentsCountRestrict = {
-  MIN: 5,
-  MAX: 7,
+  MIN: 0,
+  MAX: 1,
 };
 
 const CommentTextRestrict = {

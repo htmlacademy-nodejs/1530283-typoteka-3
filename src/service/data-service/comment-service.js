@@ -5,17 +5,45 @@ const {getId} = require(`../../utils/common`);
 class CommentService {
   constructor(sequelize) {
     this._Comment = sequelize.models.Comment;
+    this._Article = sequelize.models.Article;
+    this._User = sequelize.models.User;
   }
 
-  async findAll(articleId) {
+  async findAll() {
     const comments = await this._Comment.findAll({
       attributes: [`text`, `createdAt`],
-      raw: true,
-      where: articleId
-        ? {
-          articleId: Number(articleId),
-        }
-        : {},
+      include: [
+        {
+          model: this._Article,
+          as: `article`,
+          attributes: [`id`, `title`],
+        },
+        {
+          model: this._User,
+          as: `author`,
+          attributes: [`id`, `firstName`, `lastName`, `avatar`],
+        },
+      ],
+      order: [[`createdAt`, `DESC`]],
+    });
+
+    return comments;
+  }
+
+  async findAllByArticleId(articleId) {
+    const comments = await this._Comment.findAll({
+      attributes: [`text`, `createdAt`],
+      include: [
+        {
+          model: this._User,
+          as: `author`,
+          attributes: [`id`, `firstName`, `lastName`, `avatar`],
+        },
+      ],
+      where: {
+        articleId: Number(articleId),
+      },
+      order: [[`createdAt`, `DESC`]],
     });
 
     return comments;

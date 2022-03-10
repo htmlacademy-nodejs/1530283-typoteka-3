@@ -10,14 +10,18 @@ const api = getAPI();
 
 rootRoutes.get(`/`, async (_req, res, next) => {
   try {
-    const [articles, categories] = await Promise.all([
+    const [articles, categories, mostCommentedArticles] = await Promise.all([
       api.getArticles(),
       api.getCategories({withArticlesCount: true, havingArticles: true}),
+      api.getArticles({limit: 4, mostCommented: true}),
     ]);
+
+    console.log(mostCommentedArticles);
 
     res.render(`articles/all-articles`, {
       articles: articles.map(getArticleTemplateData),
       categories,
+      mostCommentedArticles: mostCommentedArticles.map(getArticleTemplateData),
     });
   } catch (error) {
     next(error);

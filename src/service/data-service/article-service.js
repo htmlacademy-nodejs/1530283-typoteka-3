@@ -11,8 +11,9 @@ class ArticleService {
     this._ArticleCategory = sequelize.models.Category;
   }
 
-  async findAll() {
-    let articles = await this._Article.findAll({
+  async findAll({limit, mostCommented} = {}) {
+    const articles = await this._Article.findAll({
+      subQuery: false,
       attributes: [
         `id`,
         `title`,
@@ -39,7 +40,8 @@ class ArticleService {
         {
           model: this._Comment,
           as: `comments`,
-          required: false,
+          distinct: true,
+          required: Boolean(mostCommented),
           attributes: [],
         },
         {
@@ -51,9 +53,12 @@ class ArticleService {
           attributes: [],
         },
       ],
+      order: [[mostCommented ? Sequelize.fn(
+          `COUNT`,
+          Sequelize.fn(`DISTINCT`, Sequelize.col(`comments.id`))
+      ) : `createdAt`, `DESC`]],
+      limit: limit ? Number(limit) : undefined,
     });
-
-    console.log(articles.map((article) => article.get()));
 
     return articles.map((article) => article.get());
   }

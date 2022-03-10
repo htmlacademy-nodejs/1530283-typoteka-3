@@ -20,8 +20,8 @@ class API {
     return response.data;
   }
 
-  getArticles() {
-    return this._load(`/articles`);
+  getArticles(params) {
+    return this._load(`/articles`, {params});
   }
 
   getArticle(articleId) {

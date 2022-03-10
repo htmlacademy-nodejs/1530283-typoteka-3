@@ -18,7 +18,7 @@ module.exports = (app, articleService, commentService) => {
 
   articlesRoutes.get(`/`, async (req, res, next) => {
     try {
-      const articles = await articleService.findAll();
+      const articles = await articleService.findAll(req.query);
 
       res.status(HttpCode.OK).json(articles);
     } catch (error) {

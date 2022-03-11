@@ -3,6 +3,7 @@
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 const {getArticleTemplateData} = require(`../../utils/article`);
+const {getCommentTemplateData} = require(`../../utils/comment`);
 const {getAPI} = require(`../api`);
 
 const rootRoutes = new Router();
@@ -10,10 +11,11 @@ const api = getAPI();
 
 rootRoutes.get(`/`, async (_req, res, next) => {
   try {
-    const [articles, categories, mostCommentedArticles] = await Promise.all([
+    const [articles, categories, mostCommentedArticles, latestComments] = await Promise.all([
       api.getArticles(),
       api.getCategories({withArticlesCount: true, havingArticles: true}),
       api.getArticles({limit: 4, mostCommented: true}),
+      api.getComments({limit: 4}),
     ]);
 
     console.log(mostCommentedArticles);
@@ -22,6 +24,7 @@ rootRoutes.get(`/`, async (_req, res, next) => {
       articles: articles.map(getArticleTemplateData),
       categories,
       mostCommentedArticles: mostCommentedArticles.map(getArticleTemplateData),
+      latestComments: latestComments.map(getCommentTemplateData),
     });
   } catch (error) {
     next(error);

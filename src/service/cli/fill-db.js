@@ -22,7 +22,7 @@ const SentenceRestrict = {
 
 const CommentsCountRestrict = {
   MIN: 0,
-  MAX: 1,
+  MAX: 3,
 };
 
 const CommentTextRestrict = {

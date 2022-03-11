@@ -27,8 +27,6 @@ myRoutes.get(`/comments`, async (_req, res, next) => {
   try {
     const comments = await api.getComments();
 
-    console.log(comments[0]);
-
     res.render(`admin/comments`, {
       user: {
         isAdmin: true,

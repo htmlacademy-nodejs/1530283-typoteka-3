@@ -9,9 +9,7 @@ const {
   getInitialArticle,
   parseClientArticle,
 } = require(`../../utils/article`);
-const {
-  getCommentTemplateData,
-} = require(`../../utils/comment`);
+const {getCommentTemplateData} = require(`../../utils/comment`);
 
 const {getImageFileName} = require(`../../utils/image`);
 
@@ -126,7 +124,7 @@ articlesRoutes.get(`/:articleId`, async (req, res, next) => {
       api.getCategories({
         withArticlesCount: true,
       }),
-      api.getComments(req.params.articleId),
+      api.getComments({articleId: req.params.articleId}),
     ]);
 
     res.render(`articles/article`, {

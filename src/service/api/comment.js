@@ -8,9 +8,9 @@ module.exports = (app, commentService) => {
 
   app.use(`/comments`, commentsRoutes);
 
-  commentsRoutes.get(`/`, async (_req, res, next) => {
+  commentsRoutes.get(`/`, async (req, res, next) => {
     try {
-      const comments = await commentService.findAll();
+      const comments = await commentService.findAll(req.query);
 
       res.status(HttpCode.OK).json(comments);
     } catch (error) {

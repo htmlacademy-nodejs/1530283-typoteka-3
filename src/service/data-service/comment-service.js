@@ -9,9 +9,9 @@ class CommentService {
     this._User = sequelize.models.User;
   }
 
-  async findAll() {
+  async findAll({limit}) {
     const comments = await this._Comment.findAll({
-      attributes: [`text`, `createdAt`],
+      attributes: [`text`, `createdAt`, `articleId`],
       include: [
         {
           model: this._Article,
@@ -25,6 +25,7 @@ class CommentService {
         },
       ],
       order: [[`createdAt`, `DESC`]],
+      limit: limit ? Number(limit) : undefined
     });
 
     return comments;

@@ -13,9 +13,7 @@ block content
             h2.post__title.title.title--main= article.title
             ul.post__themes.themes
               each category in categories
-                - const isShown = Boolean(article.categories.find(({id}) => id === category.id))
-                if isShown
-                  +categoryTab(category)
+                +categoryTab(category)
           if article.picture
             .post__picture(style='height:490px')
               img(src=`/img/${article.picture}` alt='' style='width:100%;height:100%;object-fit:cover')

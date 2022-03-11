@@ -9,7 +9,7 @@ class CategoryService {
     this._Article = sequelize.models.Article;
   }
 
-  async findAll({withArticlesCount = false, havingArticles = false} = {}) {
+  async findAll({withArticlesCount = false, havingArticles = false, articleId} = {}) {
     const basicAttributes = [`id`, `name`];
 
     const attributes = withArticlesCount
@@ -28,7 +28,12 @@ class CategoryService {
           attributes: [],
           through: {attributes: []},
         },
-      ]
+      ],
+      having: articleId ?
+        Sequelize.where(Sequelize.fn(`ARRAY_AGG`, Sequelize.col(`articles.id`)), {
+          [Sequelize.Op.contains]: [Number(articleId)]
+        })
+        : {}
     });
 
     return categories.map((category) => category.get());

@@ -18,8 +18,6 @@ rootRoutes.get(`/`, async (_req, res, next) => {
       api.getComments({limit: 4}),
     ]);
 
-    console.log(mostCommentedArticles);
-
     res.render(`articles/all-articles`, {
       articles: articles.map(getArticleTemplateData),
       categories,
@@ -40,6 +38,8 @@ rootRoutes.get(`/search`, async (req, res, next) => {
 
   try {
     const articles = await api.search(query);
+
+    console.log(articles);
 
     res.render(`articles/search`, {
       articles: articles.map(getArticleTemplateData),

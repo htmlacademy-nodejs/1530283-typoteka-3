@@ -1,14 +1,30 @@
 "use strict";
 
+const Sequelize = require(`sequelize`);
+
+const {Op} = Sequelize;
+
 class SearchService {
-  constructor(articles) {
-    this._articles = articles;
+  constructor(sequelize) {
+    this._Article = sequelize.models.Article;
   }
 
-  findAll(searchText) {
-    const regExp = new RegExp(searchText, `i`);
+  async findAll(searchText) {
+    const articles = await this._Article.findAll({
+      attributes: [
+        `id`,
+        `title`,
+        `created_at`
+      ],
+      order: [[`createdAt`, `DESC`]],
+      where: {
+        title: {
+          [Op.substring]: searchText
+        }
+      }
+    });
 
-    return this._articles.filter((article) => regExp.test(article.title));
+    return articles.map((article) => article.get());
   }
 }
 

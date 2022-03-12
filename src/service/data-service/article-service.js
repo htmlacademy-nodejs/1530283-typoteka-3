@@ -87,8 +87,6 @@ class ArticleService {
         : {},
     });
 
-    console.log(articles.map((article) => article.get())[0]);
-
     return articles.map((article) => article.get());
   }
 

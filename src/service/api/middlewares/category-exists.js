@@ -6,7 +6,7 @@ const categoryExists = (categoryService) => async (req, res, next) => {
   const {categoryId} = req.params;
 
   try {
-    await categoryService.checkExistence(categoryId);
+    await categoryService.checkExistence(Number(categoryId));
 
     next();
   } catch (error) {

@@ -1,8 +1,9 @@
-'use strict';
+"use strict";
 
 const {Router} = require(`express`);
 const categoryExists = require(`./middlewares/category-exists`);
 const {HttpCode} = require(`../../constants`);
+const categoryValidator = require(`./middlewares/category-validator`);
 
 module.exports = (app, categoryService) => {
   const categoriesRoutes = new Router();
@@ -15,7 +16,7 @@ module.exports = (app, categoryService) => {
       const categories = await categoryService.findAll({
         withArticlesCount: Boolean(withArticlesCount),
         havingArticles: Boolean(havingArticles),
-        articleId: articleId ? Number(articleId) : undefined
+        articleId: articleId ? Number(articleId) : undefined,
       });
 
       res.status(HttpCode.OK).json(categories);
@@ -24,7 +25,7 @@ module.exports = (app, categoryService) => {
     }
   });
 
-  categoriesRoutes.post(`/`, async (req, res, next) => {
+  categoriesRoutes.post(`/`, categoryValidator, async (req, res, next) => {
     try {
       const newCategory = await categoryService.create(req.body);
 
@@ -36,16 +37,22 @@ module.exports = (app, categoryService) => {
 
   categoriesRoutes.use(`/:categoryId`, categoryExists(categoryService));
 
-  categoriesRoutes.put(`/:categoryId`, async (req, res, next) => {
-    try {
+  categoriesRoutes.put(
+      `/:categoryId`,
+      categoryValidator,
+      async (req, res, next) => {
+        try {
+          const updatedCategory = await categoryService.update(
+              Number(req.params.categoryId),
+              req.body
+          );
 
-      const updatedCategory = await categoryService.update(Number(req.params.categoryId), req.body);
-
-      res.status(HttpCode.OK).json(updatedCategory);
-    } catch (error) {
-      next(error);
-    }
-  });
+          res.status(HttpCode.OK).json(updatedCategory);
+        } catch (error) {
+          next(error);
+        }
+      }
+  );
 
   categoriesRoutes.delete(`/:categoryId`, async (req, res, next) => {
     try {

@@ -17,6 +17,12 @@ class CategoryService {
         `articlesCount`]]
       : basicAttributes;
 
+    const havingArticle = articleId ?
+      Sequelize.where(Sequelize.fn(`ARRAY_AGG`, Sequelize.col(`articles.id`)), {
+        [Sequelize.Op.contains]: articleId
+      })
+      : {};
+
     const categories = await this._Category.findAll({
       attributes,
       group: [Sequelize.col(`Category.id`)],
@@ -24,17 +30,13 @@ class CategoryService {
         {
           model: this._Article,
           as: `articles`,
-          required: Boolean(havingArticles),
+          required: havingArticles,
           attributes: [],
           through: {attributes: []},
         },
       ],
       order: [[`id`, `DESC`]],
-      having: articleId ?
-        Sequelize.where(Sequelize.fn(`ARRAY_AGG`, Sequelize.col(`articles.id`)), {
-          [Sequelize.Op.contains]: [Number(articleId)]
-        })
-        : {}
+      having: havingArticle
     });
 
     return categories.map((category) => category.get());
@@ -49,13 +51,17 @@ class CategoryService {
   }
 
   async update(categoryId, updatedCategoryData) {
-    const updatedCategory = await this._Category.update(updatedCategoryData, {
+    await this._Category.update(updatedCategoryData, {
       where: {
         id: categoryId
       }
     });
 
-    return updatedCategory;
+    return await this._Category.findOne({
+      where: {
+        id: categoryId
+      }
+    });
   }
 
   async drop(categoryId) {

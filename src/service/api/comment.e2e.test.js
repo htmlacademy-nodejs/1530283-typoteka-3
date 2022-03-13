@@ -6,8 +6,7 @@ const request = require(`supertest`);
 
 const initDB = require(`../lib/init-db`);
 
-const article = require(`./article`);
-const ArticleService = require(`../data-service/article-service`);
+const comment = require(`./comment`);
 const CommentService = require(`../data-service/comment-service`);
 const {HttpCode} = require(`../../constants`);
 // const {clone} = require(`../../utils/common`);
@@ -140,119 +139,31 @@ beforeAll(async () => {
     articles: mockArticles,
     users: mockUsers,
   });
-  article(app, new ArticleService(mockDB), new CommentService(mockDB));
+  comment(app, new CommentService(mockDB));
 });
 
 let response;
 
-// const createAPI = () => {
-//   const app = express();
-//   const clonedMockData = clone(mockData);
-//   app.use(express.json());
-//   article(app, new ArticleService(clonedMockData), new CommentService(clonedMockData));
-//   return app;
-// };
-
-describe(`API returns all comments of an article with given id`, () => {
-  // const app = createAPI();
-
-  const ARTICLE_ID = 1;
-
+describe(`API returns a list of all comments`, () => {
   beforeAll(async () => {
-    response = await request(app).get(`/articles/${ARTICLE_ID}/comments`);
+    response = await request(app).get(`/comments`);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(`Comments count is correct`, () => expect(response.body.length).toBe(3));
+  test(`Should return correct comments count`, () =>
+    expect(response.body.length).toBe(8));
 });
 
-describe.skip(`API returns status code 404 when trying to get comments of non-existent article`, () => {
-  // const app = createAPI();
+describe(`API returns limited list of comments`, () => {
+  const LIMIT = 2;
 
   beforeAll(async () => {
-    response = await request(app).get(`/articles/NON_EXIST/comments`);
+    response = await request(app).get(`/comments?limit=${LIMIT}`);
   });
 
-  test(`Status code 404`, () =>
-    expect(response.statusCode).toBe(HttpCode.NOT_FOUND));
-});
+  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-describe.skip(`API creates new comment for an article with given id if data is correct`, () => {
-  const newComment = {
-    text: `Text`,
-  };
-
-  // const app = createAPI();
-
-  beforeAll(async () => {
-    response = await request(app)
-      .post(`/articles/P2ytE4/comments`)
-      .send(newComment);
-  });
-
-  test(`Status code 201`, () =>
-    expect(response.statusCode).toBe(HttpCode.CREATED));
-
-  test(`Created comment has id`, () => expect(response.body.id).toBeDefined());
-
-  test(`Created comment contains post data`, () =>
-    expect(response.body).toEqual(expect.objectContaining(newComment)));
-
-  test(`Comments count is increased`, async () =>
-    request(app)
-      .get(`/articles/P2ytE4/comments`)
-      .expect(({body}) => expect(body.length).toBe(5)));
-});
-
-describe.skip(`API return status code 400 when trying to create new comment if data is incorrect`, () => {
-  const newComment = {};
-
-  // const app = createAPI();
-
-  beforeAll(async () => {
-    response = await request(app)
-      .post(`/articles/P2ytE4/comments`)
-      .send(newComment);
-  });
-
-  test(`Status code 400`, () =>
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
-
-  test(`Comments count is not changed`, async () =>
-    request(app)
-      .get(`/articles/P2ytE4/comments`)
-      .expect(({body}) => expect(body.length).toBe(4)));
-});
-
-describe.skip(`API deletes comment with given id for an article with given id`, () => {
-  // const app = createAPI();
-
-  beforeAll(async () => {
-    response = await request(app).delete(`/articles/P2ytE4/comments/GFOG8r`);
-  });
-
-  test(`Status code 204`, () =>
-    expect(response.statusCode).toBe(HttpCode.NO_CONTENT));
-
-  test(`Comments count is decreased`, async () =>
-    request(app)
-      .get(`/articles/P2ytE4/comments/`)
-      .expect(({body}) => expect(body.length).toBe(3)));
-});
-
-describe.skip(`API return status code 404 when trying to delete non-existent comment`, () => {
-  // const app = createAPI();
-
-  beforeAll(async () => {
-    response = await request(app).delete(`/articles/P2ytE4/comments/NON_EXIST`);
-  });
-
-  test(`Status code 404`, () =>
-    expect(response.statusCode).toBe(HttpCode.NOT_FOUND));
-
-  test(`Comments count is not changed`, async () =>
-    request(app)
-      .get(`/articles/P2ytE4/comments`)
-      .expect(({body}) => expect(body.length).toBe(4)));
+  test(`Should return correct comments count`, () =>
+    expect(response.body.length).toBe(LIMIT));
 });

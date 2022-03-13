@@ -11,7 +11,7 @@ class CommentService {
 
   async findAll({limit}) {
     const comments = await this._Comment.findAll({
-      attributes: [`text`, `createdAt`, `articleId`],
+      attributes: [`id`, `text`, `createdAt`, `articleId`],
       include: [
         {
           model: this._Article,
@@ -33,7 +33,7 @@ class CommentService {
 
   async findAllByArticleId(articleId) {
     const comments = await this._Comment.findAll({
-      attributes: [`text`, `createdAt`],
+      attributes: [`id`, `text`, `createdAt`],
       include: [
         {
           model: this._User,

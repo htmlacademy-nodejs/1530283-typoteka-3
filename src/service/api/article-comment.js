@@ -12,6 +12,7 @@ module.exports = (app, commentService) => {
   articleCommentsRoutes.get(`/`, async (req, res, next) => {
     try {
       const {articleId} = req.params;
+
       const comments = await commentService.findAllByArticleId(articleId);
 
       res.status(HttpCode.OK).json(comments);

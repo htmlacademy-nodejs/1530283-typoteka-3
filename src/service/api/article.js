@@ -22,6 +22,7 @@ module.exports = (app, articleService, commentService) => {
 
       res.status(HttpCode.OK).json(articles);
     } catch (error) {
+      console.log(error);
       next(error);
     }
   });

@@ -106,6 +106,10 @@ class ArticleService {
     return article.get();
   }
 
+  async checkExistence(articleId) {
+    await this._Article.findByPk(Number(articleId));
+  }
+
   create(article) {
     const newArticle = Object.assign(
         {

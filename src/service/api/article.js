@@ -22,15 +22,18 @@ module.exports = (app, articleService, commentService) => {
 
       res.status(HttpCode.OK).json(articles);
     } catch (error) {
-      console.log(error);
       next(error);
     }
   });
 
-  articlesRoutes.get(`/:articleId`, (req, res) => {
-    const {article} = res.locals;
+  articlesRoutes.get(`/:articleId`, async (req, res, next) => {
+    try {
+      const article = await articleService.findOne(req.params.articleId);
 
-    res.status(HttpCode.OK).json(article);
+      res.status(HttpCode.OK).json(article);
+    } catch (error) {
+      next(error);
+    }
   });
 
   articlesRoutes.post(`/`, articleValidator, (req, res) => {

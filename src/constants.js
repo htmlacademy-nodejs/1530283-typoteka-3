@@ -42,6 +42,12 @@ const HttpError = {
   }
 };
 
+const HttpMethod = {
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
 const FileType = {
   TEXT: `txt`,
   JSON: `json`,
@@ -59,6 +65,7 @@ module.exports = {
   ExitCode,
   HttpCode,
   HttpError,
+  HttpMethod,
   FileType,
   Environment
 };

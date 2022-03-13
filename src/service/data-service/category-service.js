@@ -9,7 +9,7 @@ class CategoryService {
     this._Article = sequelize.models.Article;
   }
 
-  async findAll({withArticlesCount = false, havingArticles = false, articleId} = {}) {
+  async findAll({withArticlesCount, havingArticles, articleId}) {
     const basicAttributes = [`id`, `name`];
 
     const attributes = withArticlesCount
@@ -29,6 +29,7 @@ class CategoryService {
           through: {attributes: []},
         },
       ],
+      order: [[`id`, `DESC`]],
       having: articleId ?
         Sequelize.where(Sequelize.fn(`ARRAY_AGG`, Sequelize.col(`articles.id`)), {
           [Sequelize.Op.contains]: [Number(articleId)]
@@ -37,6 +38,32 @@ class CategoryService {
     });
 
     return categories.map((category) => category.get());
+  }
+
+  async checkExistence(categoryId) {
+    await this._Category.findByPk(categoryId);
+  }
+
+  async create(newCategoryData) {
+    return await this._Category.create(newCategoryData);
+  }
+
+  async update(categoryId, updatedCategoryData) {
+    const updatedCategory = await this._Category.update(updatedCategoryData, {
+      where: {
+        id: categoryId
+      }
+    });
+
+    return updatedCategory;
+  }
+
+  async drop(categoryId) {
+    return await this._Category.destroy({
+      where: {
+        id: categoryId
+      }
+    });
   }
 }
 

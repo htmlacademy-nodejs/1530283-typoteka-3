@@ -159,13 +159,13 @@ describe(`API returns categories`, () => {
   test(`13 categories found`, () => expect(response.body.length).toBe(13));
 
   test(`1st category should be correct`, () =>
-    expect(response.body[0].name).toBe(`Деревья`));
+    expect(response.body[0].name).toBe(`Кулинария`));
 
   test(`2nd category should be correct`, () =>
-    expect(response.body[1].name).toBe(`За жизнь`));
+    expect(response.body[1].name).toBe(`Спорт`));
 
   test(`3rd category should be correct`, () =>
-    expect(response.body[2].name).toBe(`Без рамки`));
+    expect(response.body[2].name).toBe(`Наука`));
 });
 
 describe(`API returns categories with articles`, () => {
@@ -197,6 +197,9 @@ describe(`API returns categories with articles count`, () => {
     expect(response.body[0].articlesCount).toBe(1));
 
 
-  test(`5st category should be correct`, () =>
-    expect(response.body[4].articlesCount).toBe(2));
+  test(`2nd category should be correct`, () =>
+    expect(response.body[1].articlesCount).toBe(0));
+
+  test(`3rd category should be correct`, () =>
+    expect(response.body[2].articlesCount).toBe(1));
 });

@@ -4,6 +4,8 @@ const {Router} = require(`express`);
 const {getArticleTemplateData} = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
 const {getAPI} = require(`../api`);
+const multer = require(`multer`);
+const upload = multer();
 
 const myRoutes = new Router();
 const api = getAPI();
@@ -52,5 +54,46 @@ myRoutes.get(`/categories`, async (_req, res, next) => {
     next(error);
   }
 });
+
+myRoutes.post(`/categories`, upload.none(), async (req, res, next) => {
+  try {
+    await api.createCategory(req.body);
+
+    res.redirect(`/my/categories`);
+  } catch (error) {
+    next(error);
+  }
+});
+
+myRoutes.post(
+    `/categories/:categoryId/update`,
+    upload.none(),
+    async (req, res, next) => {
+      try {
+        await api.updateCategory({
+          id: req.params.categoryId,
+          data: req.body,
+        });
+
+        res.redirect(`/my/categories`);
+      } catch (error) {
+        next(error);
+      }
+    }
+);
+
+myRoutes.post(
+    `/categories/:categoryId/delete`,
+    async (req, res, next) => {
+      try {
+        await api.deleteCategory(req.params.categoryId);
+
+        res.redirect(`/my/categories`);
+      } catch (error) {
+        next(error);
+      }
+    }
+);
+
 
 module.exports = myRoutes;

@@ -10,7 +10,6 @@ const article = require(`./article`);
 const ArticleService = require(`../data-service/article-service`);
 const CommentService = require(`../data-service/comment-service`);
 const {HttpCode} = require(`../../constants`);
-// const {clone} = require(`../../utils/common`);
 
 const mockCategories = [
   `Деревья`,
@@ -129,36 +128,29 @@ const mockArticles = [
   },
 ];
 
-const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
+let response;
 
-const app = express();
-app.use(express.json());
-
-beforeAll(async () => {
+const createAPI = async () => {
+  const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
   await initDB(mockDB, {
     categories: mockCategories,
     articles: mockArticles,
     users: mockUsers,
   });
+
+  const app = express();
+  app.use(express.json());
+
   article(app, new ArticleService(mockDB), new CommentService(mockDB));
-});
 
-let response;
-
-// const createAPI = () => {
-//   const app = express();
-//   const clonedMockData = clone(mockData);
-//   app.use(express.json());
-//   article(app, new ArticleService(clonedMockData), new CommentService(clonedMockData));
-//   return app;
-// };
+  return app;
+};
 
 describe(`API returns all comments of an article with given id`, () => {
-  // const app = createAPI();
-
   const ARTICLE_ID = 1;
 
   beforeAll(async () => {
+    const app = await createAPI();
     response = await request(app).get(`/articles/${ARTICLE_ID}/comments`);
   });
 
@@ -167,10 +159,9 @@ describe(`API returns all comments of an article with given id`, () => {
   test(`Comments count is correct`, () => expect(response.body.length).toBe(3));
 });
 
-describe.skip(`API returns status code 404 when trying to get comments of non-existent article`, () => {
-  // const app = createAPI();
-
+describe(`API returns status code 404 when trying to get comments of non-existent article`, () => {
   beforeAll(async () => {
+    const app = await createAPI();
     response = await request(app).get(`/articles/NON_EXIST/comments`);
   });
 
@@ -183,9 +174,10 @@ describe.skip(`API creates new comment for an article with given id if data is c
     text: `Text`,
   };
 
-  // const app = createAPI();
+  let app;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app)
       .post(`/articles/P2ytE4/comments`)
       .send(newComment);
@@ -208,9 +200,10 @@ describe.skip(`API creates new comment for an article with given id if data is c
 describe.skip(`API return status code 400 when trying to create new comment if data is incorrect`, () => {
   const newComment = {};
 
-  // const app = createAPI();
+  let app;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app)
       .post(`/articles/P2ytE4/comments`)
       .send(newComment);
@@ -218,38 +211,6 @@ describe.skip(`API return status code 400 when trying to create new comment if d
 
   test(`Status code 400`, () =>
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
-
-  test(`Comments count is not changed`, async () =>
-    request(app)
-      .get(`/articles/P2ytE4/comments`)
-      .expect(({body}) => expect(body.length).toBe(4)));
-});
-
-describe.skip(`API deletes comment with given id for an article with given id`, () => {
-  // const app = createAPI();
-
-  beforeAll(async () => {
-    response = await request(app).delete(`/articles/P2ytE4/comments/GFOG8r`);
-  });
-
-  test(`Status code 204`, () =>
-    expect(response.statusCode).toBe(HttpCode.NO_CONTENT));
-
-  test(`Comments count is decreased`, async () =>
-    request(app)
-      .get(`/articles/P2ytE4/comments/`)
-      .expect(({body}) => expect(body.length).toBe(3)));
-});
-
-describe.skip(`API return status code 404 when trying to delete non-existent comment`, () => {
-  // const app = createAPI();
-
-  beforeAll(async () => {
-    response = await request(app).delete(`/articles/P2ytE4/comments/NON_EXIST`);
-  });
-
-  test(`Status code 404`, () =>
-    expect(response.statusCode).toBe(HttpCode.NOT_FOUND));
 
   test(`Comments count is not changed`, async () =>
     request(app)

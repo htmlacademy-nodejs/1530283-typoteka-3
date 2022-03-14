@@ -1,7 +1,5 @@
 "use strict";
 
-const {getId} = require(`../../utils/common`);
-
 class CommentService {
   constructor(sequelize) {
     this._Comment = sequelize.models.Comment;

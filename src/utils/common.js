@@ -2,9 +2,8 @@
 
 const fs = require(`fs`).promises;
 const chalk = require(`chalk`);
-const {nanoid} = require(`nanoid`);
 
-const {FileType, MAX_ID_LENGTH} = require(`../constants`);
+const {FileType} = require(`../constants`);
 
 const getRandomInt = (min, max) => {
   min = Math.ceil(min);
@@ -48,11 +47,7 @@ const readFile = async (filePath, fileType, fallbackContent = []) => {
   }
 };
 
-const getId = () => nanoid(MAX_ID_LENGTH);
-
 const multiLineJoin = (items) => items.join(`,\n`);
-
-const clone = (data) => JSON.parse(JSON.stringify(data));
 
 module.exports = {
   shuffle,
@@ -60,7 +55,5 @@ module.exports = {
   getRandomItem,
   getUniqueArray,
   readFile,
-  getId,
-  clone,
   multiLineJoin
 };

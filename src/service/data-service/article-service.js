@@ -1,7 +1,6 @@
 "use strict";
 
 const Sequelize = require(`sequelize`);
-const {getId} = require(`../../utils/common`);
 
 class ArticleService {
   constructor(sequelize) {
@@ -113,7 +112,7 @@ class ArticleService {
   create(article) {
     const newArticle = Object.assign(
         {
-          id: getId(),
+          id: 1,
           comments: [],
         },
         article

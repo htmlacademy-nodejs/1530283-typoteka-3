@@ -1,7 +1,5 @@
 'use strict';
 
-const MAX_ID_LENGTH = 6;
-
 const DEFAULT_COMMAND = `--help`;
 
 const ExitCode = {
@@ -61,7 +59,6 @@ const Environment = {
 
 module.exports = {
   DEFAULT_COMMAND,
-  MAX_ID_LENGTH,
   FilePath,
   ExitCode,
   HttpCode,

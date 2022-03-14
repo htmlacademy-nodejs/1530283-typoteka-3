@@ -10,7 +10,6 @@ const article = require(`./article`);
 const ArticleService = require(`../data-service/article-service`);
 const CommentService = require(`../data-service/comment-service`);
 const {HttpCode} = require(`../../constants`);
-// const {clone} = require(`../../utils/common`);
 
 const mockCategories = [
   `Деревья`,
@@ -139,31 +138,23 @@ const mockArticles = [
   }
 ];
 
-const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
-
-const app = express();
-app.use(express.json());
-
-beforeAll(async () => {
-  await initDB(mockDB, {categories: mockCategories, articles: mockArticles, users: mockUsers});
-  article(app, new ArticleService(mockDB), new CommentService(mockDB));
-});
-
-
 let response;
 
-// const createAPI = () => {
-//   const app = express();
-//   const clonedMockData = clone(mockData);
-//   app.use(express.json());
-//   article(app, new ArticleService(clonedMockData), new CommentService(clonedMockData));
-//   return app;
-// };
+const createAPI = async () => {
+  const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
+  await initDB(mockDB, {categories: mockCategories, articles: mockArticles, users: mockUsers});
+
+  const app = express();
+  app.use(express.json());
+
+  article(app, new ArticleService(mockDB), new CommentService(mockDB));
+
+  return app;
+};
 
 describe.skip(`API returns a list of all articles`, () => {
-  // const app = createAPI();
-
   beforeAll(async () => {
+    const app = await createAPI();
     response = await request(app).get(`/articles`);
   });
 
@@ -177,9 +168,8 @@ describe.skip(`API returns a list of all articles`, () => {
 });
 
 describe(`API returns an article with given id`, () => {
-  // const app = createAPI();
-
   beforeAll(async () => {
+    const app = await createAPI();
     response = await request(app).get(`/articles/1`);
   });
 
@@ -192,9 +182,8 @@ describe(`API returns an article with given id`, () => {
 });
 
 describe(`API returns status code 404 when trying to get non-existent article`, () => {
-  // const app = createAPI();
-
   beforeAll(async () => {
+    const app = await createAPI();
     response = await request(app).get(`/articles/NON_EXIST`);
   });
 
@@ -221,9 +210,12 @@ describe.skip(`API creates an article if data is valid`, () => {
       `Наука`,
     ],
   };
-  // const app = createAPI();
+
+
+  let app;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app).post(`/articles`).send(newArticle);
   });
 
@@ -258,7 +250,12 @@ describe.skip(`API refuses to create an article if data is invalid`, () => {
       `Наука`,
     ],
   };
-  // const app = createAPI();
+
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+  });
 
   test(`Without any required property response code is 400`, async () => {
     for (const key of Object.keys(newArticle)) {
@@ -296,9 +293,11 @@ describe.skip(`API changes existent article with given id`, () => {
       `Наука`,
     ],
   };
-  // const app = createAPI();
+
+  let app;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app).put(`/articles/9F-Pjp`).send(newArticle);
   });
 
@@ -319,7 +318,11 @@ describe.skip(`API changes existent article with given id`, () => {
 });
 
 test.skip(`API returns status code 404 when trying to change non-existent article`, () => {
-  // const app = createAPI();
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+  });
 
   const validArticle = {
     title: `Обновленный заголовок`,
@@ -347,7 +350,11 @@ test.skip(`API returns status code 404 when trying to change non-existent articl
 });
 
 test.skip(`API returns status code 400 when trying to change an article with invalid data`, () => {
-  // const app = createAPI();
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+  });
 
   const invalidArticle = {
     title: `Обновленный заголовок`,
@@ -360,9 +367,10 @@ test.skip(`API returns status code 400 when trying to change an article with inv
 });
 
 describe.skip(`API correctly deletes an article with given id`, () => {
-  // const app = createAPI();
+  let app;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app).delete(`/articles/P2ytE4`);
   });
 
@@ -377,9 +385,10 @@ describe.skip(`API correctly deletes an article with given id`, () => {
 });
 
 describe.skip(`API refuses to delete non-existent article`, () => {
-  // const app = createAPI();
+  let app;
 
   beforeAll(async () => {
+    app = await createAPI();
     response = await request(app).delete(`/articles/NON_EXIST`);
   });
 

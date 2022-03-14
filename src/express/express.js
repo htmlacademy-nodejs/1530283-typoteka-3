@@ -3,7 +3,7 @@
 const path = require(`path`);
 const chalk = require(`chalk`);
 const express = require(`express`);
-const {HttpCode} = require(`../constants`);
+const {HttpCode, HttpMethod} = require(`../constants`);
 const rootRoutes = require(`./routes/root-routes`);
 const errorRoutes = require(`./routes/error-routes`);
 const myRoutes = require(`./routes/my-routes`);
@@ -16,7 +16,14 @@ const Dir = {
   UPLOAD: `upload`
 };
 
-const handleClientError = (_req, res) => res.redirect(`/404`);
+const handleClientError = (req, res) => {
+  if (req.method !== HttpMethod.GET) {
+    res.status(HttpCode.NOT_FOUND).end();
+    return;
+  }
+
+  res.redirect(`/404`);
+};
 
 const handleServerError = (err, req, res, _next) => {
   if (err.response && err.response.status === HttpCode.NOT_FOUND) {

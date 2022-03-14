@@ -13,6 +13,7 @@ module.exports = (app, categoryService) => {
   categoriesRoutes.get(`/`, async (req, res, next) => {
     try {
       const {withArticlesCount, havingArticles, articleId} = req.query;
+
       const categories = await categoryService.findAll({
         withArticlesCount: Boolean(withArticlesCount),
         havingArticles: Boolean(havingArticles),

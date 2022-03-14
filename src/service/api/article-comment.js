@@ -13,7 +13,7 @@ module.exports = (app, commentService) => {
     try {
       const {articleId} = req.params;
 
-      const comments = await commentService.findAllByArticleId(articleId);
+      const comments = await commentService.findAllByArticleId(Number(articleId));
 
       res.status(HttpCode.OK).json(comments);
     } catch (error) {
@@ -23,22 +23,11 @@ module.exports = (app, commentService) => {
 
   articleCommentsRoutes.post(`/`, commentValidator, (req, res) => {
     const {articleId} = req.params;
-    const newComment = commentService.create(articleId, req.body);
+    const newComment = commentService.create({
+      ...req.body,
+      articleId: Number(articleId)
+    });
 
     res.status(HttpCode.CREATED).json(newComment);
-  });
-
-  articleCommentsRoutes.delete(`/:commentId`, (req, res) => {
-    const {article} = res.locals;
-    const {commentId} = req.params;
-
-    const comment = commentService.drop(article, commentId);
-
-    if (!comment) {
-      res.status(HttpCode.NOT_FOUND).send(`No comment with id = ${commentId}`);
-      return;
-    }
-
-    res.status(HttpCode.NO_CONTENT).end();
   });
 };

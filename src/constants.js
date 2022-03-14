@@ -43,6 +43,7 @@ const HttpError = {
 };
 
 const HttpMethod = {
+  GET: `GET`,
   POST: `POST`,
   PUT: `PUT`,
   DELETE: `DELETE`

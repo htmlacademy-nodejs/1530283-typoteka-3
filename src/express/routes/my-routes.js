@@ -5,6 +5,7 @@ const {getArticleTemplateData} = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
 const {getAPI} = require(`../api`);
 const multer = require(`multer`);
+const {HttpCode} = require(`../../constants`);
 const upload = multer();
 
 const myRoutes = new Router();
@@ -37,6 +38,15 @@ myRoutes.get(`/comments`, async (_req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+});
+
+myRoutes.delete(`/comments/:commentId`, async (req, res) => {
+  try {
+    await api.deleteComment(req.params.commentId);
+    res.status(HttpCode.NO_CONTENT).end();
+  } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).end();
   }
 });
 

@@ -29,7 +29,7 @@ class API {
     return this._load(`/articles/${articleId}`);
   }
 
-  getCategories(params) {
+  getCategories(params = {}) {
     return this._load(`/categories`, {params});
   }
 
@@ -58,6 +58,12 @@ class API {
     return articleId
       ? this._load(`articles/${articleId}/comments`, {params})
       : this._load(`comments`, {params});
+  }
+
+  deleteComment(id) {
+    return this._load(`/comments/${id}`, {
+      method: HttpMethod.DELETE,
+    });
   }
 
   search(query) {

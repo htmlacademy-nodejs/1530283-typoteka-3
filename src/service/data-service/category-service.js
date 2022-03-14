@@ -17,9 +17,9 @@ class CategoryService {
         `articlesCount`]]
       : basicAttributes;
 
-    const havingArticle = articleId ?
+    const havingArticleId = articleId ?
       Sequelize.where(Sequelize.fn(`ARRAY_AGG`, Sequelize.col(`articles.id`)), {
-        [Sequelize.Op.contains]: articleId
+        [Sequelize.Op.contains]: [articleId]
       })
       : {};
 
@@ -36,7 +36,7 @@ class CategoryService {
         },
       ],
       order: [[`id`, `DESC`]],
-      having: havingArticle
+      having: havingArticleId
     });
 
     return categories.map((category) => category.get());

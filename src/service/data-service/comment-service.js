@@ -25,7 +25,7 @@ class CommentService {
         },
       ],
       order: [[`createdAt`, `DESC`]],
-      limit: limit ? Number(limit) : undefined
+      limit
     });
 
     return comments;
@@ -42,7 +42,7 @@ class CommentService {
         },
       ],
       where: {
-        articleId: Number(articleId),
+        articleId,
       },
       order: [[`createdAt`, `DESC`]],
     });
@@ -50,33 +50,18 @@ class CommentService {
     return comments;
   }
 
-  create(articleId, comment) {
-    const articleIndex = this._articles.findIndex(({id}) => id === articleId);
-    const newComment = Object.assign(
-        {
-          id: getId(),
-        },
-        comment
-    );
-
-    this._articles[articleIndex].comments.push(newComment);
-    return newComment;
+  async checkExistence(commentId) {
+    return this._Comment.findByPk(commentId);
   }
 
-  drop(article, commentId) {
-    const commentIndex = article.comments.findIndex(
-        (comment) => comment.id === commentId
-    );
+  async create(commentData) {
+    return await this._Comment.create(commentData);
+  }
 
-    if (commentIndex === -1) {
-      return null;
-    }
-
-    const comment = article.comments[commentIndex];
-
-    article.comments.splice(commentIndex, 1);
-
-    return comment;
+  async drop(commentId) {
+    return await this._Comment.destroy({where: {
+      id: commentId
+    }});
   }
 }
 

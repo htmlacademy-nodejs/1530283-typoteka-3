@@ -11,7 +11,10 @@ block content
               img.publication__list-image(src=`/img/${comment.author.avatar}` width='20' height='20' alt='Аватар пользователя')
               b.publication__list-name #{comment.author.firstName} #{comment.author.lastName}
               time.publication__item-time(datetime=comment.createdCEODate)= comment.createdDate
-            a.publication__item-text(href='#')= comment.text
+            a.publication__item-text(href=`/articles/${comment.articleId}#comments`)= comment.text
             p.publication__text-strong= comment.article.title
-            button.publication__button.button.button--close-item(type='button')
+            button.publication__button.button.button--close-item(type='button' data-comment-id=comment.id)
               span.visually-hidden Закрыть строку списка
+
+block scripts
+  script(src='/js/delete-comment.js')

@@ -5,7 +5,7 @@ block content
     section.main-page__category.category
       h1.category__title Категории
       .category__add-form
-        form(action='categories' method='POST' enctype='multipart/form-data')
+        form(action='/my/categories' method='POST' enctype='multipart/form-data')
           input#add-form-add-category(type='text' name='name' placeholder='Новая категория')
           label(for='add-form-add-category')
             span.visually-hidden Добавить категорию
@@ -14,11 +14,14 @@ block content
         each category in categories
           - const id = `modify-form-category-${category.id}`
           li.category__list-item
-            form(style="width:auto;flex-grow:1" action=`categories/${category.id}/update` method='POST' enctype='multipart/form-data')
+            form(action='#' method='POST' enctype='multipart/form-data' data-category-id=category.id)
               input(id=id type='text' name='name' value=category.name)
               label(for=id)
                 span.visually-hidden Редактировать категорию
               button.category__button.button.button--category(type='submit') Сохранить
-            form(style="width:auto" action=`categories/${category.id}/delete` method='POST' enctype='multipart/form-data')
-              if Number(category.articlesCount) === 0
-                button.category__button.button.button--category(type='submit') Удалить
+
+            if Number(category.articlesCount) === 0
+              button.category__button.button.button--category(type='button' data-category-id=category.id) Удалить
+
+block scripts
+  script(src='/js/categories.js')

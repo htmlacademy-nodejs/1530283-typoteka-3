@@ -75,32 +75,32 @@ myRoutes.post(`/categories`, upload.none(), async (req, res, next) => {
   }
 });
 
-myRoutes.post(
-    `/categories/:categoryId/update`,
+myRoutes.put(
+    `/categories/:categoryId`,
     upload.none(),
-    async (req, res, next) => {
+    async (req, res) => {
       try {
-        await api.updateCategory({
+        const updatedCategory = await api.updateCategory({
           id: req.params.categoryId,
           data: req.body,
         });
 
-        res.redirect(`/my/categories`);
+        res.json(updatedCategory);
       } catch (error) {
-        next(error);
+        res.status(HttpCode.INTERNAL_SERVER_ERROR).end();
       }
     }
 );
 
-myRoutes.post(
-    `/categories/:categoryId/delete`,
-    async (req, res, next) => {
+myRoutes.delete(
+    `/categories/:categoryId`,
+    async (req, res) => {
       try {
         await api.deleteCategory(req.params.categoryId);
 
-        res.redirect(`/my/categories`);
+        res.status(HttpCode.NO_CONTENT).end();
       } catch (error) {
-        next(error);
+        res.status(HttpCode.INTERNAL_SERVER_ERROR).end();
       }
     }
 );

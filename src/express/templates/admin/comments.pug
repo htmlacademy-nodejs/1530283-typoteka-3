@@ -14,7 +14,7 @@ block content
             a.publication__item-text(href=`/articles/${comment.articleId}#comments`)= comment.text
             p.publication__text-strong= comment.article.title
             button.publication__button.button.button--close-item(type='button' data-comment-id=comment.id)
-              span.visually-hidden Закрыть строку списка
+              span.visually-hidden Удалить комментарий
 
 block scripts
   script(src='/js/delete-comment.js')

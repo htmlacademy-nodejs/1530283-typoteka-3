@@ -97,6 +97,7 @@ class ArticleService {
           model: this._Category,
           through: {attributes: []},
           as: `categories`,
+          attributes: [`id`, `name`]
         },
       ],
       where: {id: articleId},
@@ -109,21 +110,26 @@ class ArticleService {
     await this._Article.findByPk(articleId);
   }
 
-  create(article) {
-    const newArticle = Object.assign(
-        {
-          id: 1,
-          comments: [],
-        },
-        article
-    );
+  async create(articleData) {
+    const newArticle = await this._Article.create(articleData);
 
-    this._articles.push(newArticle);
-    return newArticle;
+    await newArticle.setCategories(articleData.categories);
+
+    return await this.findOne(newArticle.id);
   }
 
-  update(oldArticle, newArticle) {
-    return Object.assign(oldArticle, newArticle);
+  async update(articleId, articleData) {
+    await this._Article.update(articleData, {
+      where: {id: articleId},
+    });
+
+    const updatedArticle = await this._Article.findOne({
+      where: {id: articleId},
+    });
+
+    await updatedArticle.setCategories(articleData.categories);
+
+    return await this.findOne(articleId);
   }
 
   async drop(articleId) {

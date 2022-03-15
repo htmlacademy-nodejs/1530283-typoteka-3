@@ -48,7 +48,7 @@ module.exports = (app, articleService, commentService) => {
 
   articlesRoutes.put(`/:articleId`, articleValidator, async (req, res, next) => {
     try {
-      const updatedArticle = articleService.update(Number(req.params.articleId), req.body);
+      const updatedArticle = await articleService.update(Number(req.params.articleId), req.body);
 
       res.status(HttpCode.OK).json(updatedArticle);
     } catch (error) {

@@ -169,7 +169,7 @@ describe(`API returns status code 404 when trying to get comments of non-existen
     expect(response.statusCode).toBe(HttpCode.NOT_FOUND));
 });
 
-describe.skip(`API creates new comment for an article with given id if data is correct`, () => {
+describe(`API creates new comment for an article with given id if data is correct`, () => {
   const newComment = {
     text: `Text`,
   };
@@ -179,7 +179,7 @@ describe.skip(`API creates new comment for an article with given id if data is c
   beforeAll(async () => {
     app = await createAPI();
     response = await request(app)
-      .post(`/articles/P2ytE4/comments`)
+      .post(`/articles/1/comments`)
       .send(newComment);
   });
 
@@ -193,11 +193,11 @@ describe.skip(`API creates new comment for an article with given id if data is c
 
   test(`Comments count is increased`, async () =>
     request(app)
-      .get(`/articles/P2ytE4/comments`)
-      .expect(({body}) => expect(body.length).toBe(5)));
+      .get(`/articles/1/comments`)
+      .expect(({body}) => expect(body.length).toBe(4)));
 });
 
-describe.skip(`API return status code 400 when trying to create new comment if data is incorrect`, () => {
+describe(`API return status code 400 when trying to create new comment if data is incorrect`, () => {
   const newComment = {};
 
   let app;
@@ -205,7 +205,7 @@ describe.skip(`API return status code 400 when trying to create new comment if d
   beforeAll(async () => {
     app = await createAPI();
     response = await request(app)
-      .post(`/articles/P2ytE4/comments`)
+      .post(`/articles/1/comments`)
       .send(newComment);
   });
 
@@ -214,6 +214,6 @@ describe.skip(`API return status code 400 when trying to create new comment if d
 
   test(`Comments count is not changed`, async () =>
     request(app)
-      .get(`/articles/P2ytE4/comments`)
-      .expect(({body}) => expect(body.length).toBe(4)));
+      .get(`/articles/1/comments`)
+      .expect(({body}) => expect(body.length).toBe(3)));
 });

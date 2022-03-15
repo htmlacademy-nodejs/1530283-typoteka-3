@@ -36,22 +36,33 @@ module.exports = (app, articleService, commentService) => {
     }
   });
 
-  articlesRoutes.post(`/`, articleValidator, (req, res) => {
-    const newArticle = articleService.create(req.body);
-    res.status(HttpCode.CREATED).json(newArticle);
+  articlesRoutes.post(`/`, articleValidator, async (req, res, next) => {
+    try {
+      const newArticle = await articleService.create(req.body);
+
+      res.status(HttpCode.CREATED).json(newArticle);
+    } catch (error) {
+      next(error);
+    }
   });
 
-  articlesRoutes.put(`/:articleId`, articleValidator, (req, res) => {
-    const {article} = res.locals;
-    const updatedArticle = articleService.update(article, req.body);
+  articlesRoutes.put(`/:articleId`, articleValidator, async (req, res, next) => {
+    try {
+      const updatedArticle = articleService.update(Number(req.params.articleId), req.body);
 
-    res.status(HttpCode.OK).json(updatedArticle);
+      res.status(HttpCode.OK).json(updatedArticle);
+    } catch (error) {
+      next(next);
+    }
   });
 
-  articlesRoutes.delete(`/:articleId`, (req, res) => {
-    const {article} = res.locals;
-    articleService.drop(article.id);
+  articlesRoutes.delete(`/:articleId`, async (req, res, next) => {
+    try {
+      await articleService.drop(Number(req.params.articleId));
 
-    res.status(HttpCode.NO_CONTENT).end();
+      res.status(HttpCode.NO_CONTENT).end();
+    } catch (error) {
+      next(error);
+    }
   });
 };

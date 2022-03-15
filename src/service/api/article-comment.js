@@ -4,6 +4,8 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 const commentValidator = require(`./middlewares/comment-validator`);
 
+const AUTHOR_ID = 1;
+
 module.exports = (app, commentService) => {
   const articleCommentsRoutes = new Router({mergeParams: true});
 
@@ -21,13 +23,19 @@ module.exports = (app, commentService) => {
     }
   });
 
-  articleCommentsRoutes.post(`/`, commentValidator, (req, res) => {
-    const {articleId} = req.params;
-    const newComment = commentService.create({
-      ...req.body,
-      articleId: Number(articleId)
-    });
+  articleCommentsRoutes.post(`/`, commentValidator, async (req, res, next) => {
+    try {
+      const {articleId} = req.params;
 
-    res.status(HttpCode.CREATED).json(newComment);
+      const newComment = await commentService.create({
+        ...req.body,
+        articleId: Number(articleId),
+        authorId: AUTHOR_ID
+      });
+
+      res.status(HttpCode.CREATED).json(newComment);
+    } catch (error) {
+      next(error);
+    }
   });
 };

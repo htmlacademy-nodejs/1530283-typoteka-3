@@ -126,12 +126,10 @@ class ArticleService {
     return Object.assign(oldArticle, newArticle);
   }
 
-  drop(articleId) {
-    const articleIndex = this._articles.findIndex(
-        (article) => article.id === articleId
-    );
-
-    this._articles.splice(articleIndex, 1);
+  async drop(articleId) {
+    return await this._Article.destroy({
+      where: {id: articleId},
+    });
   }
 }
 

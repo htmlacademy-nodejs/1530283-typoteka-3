@@ -1,14 +1,14 @@
 (() => {
   const SUCCESS_STATUS_CODE = 204;
 
-  const commentsList = document.querySelector(`.publication__list`);
+  const commentsList = document.querySelector(`.notes__list`);
 
   const createError = () => {
      const paragraph = document.createElement('p');
 
      paragraph.style.color = 'red';
 
-     paragraph.innerHTML = 'Произошла ошибка! Не удалось удалить комментарий =(';
+     paragraph.innerHTML = 'Произошла ошибка! Не удалось удалить статью =(';
 
      return paragraph;
   }
@@ -24,23 +24,23 @@
 
     deleteButton.disabled = true;
 
-    const commentContainer = deleteButton.closest(`.publication__list-item`);
+    const articleContainer = deleteButton.closest(`.notes__list-item`);
 
     try {
 
-      const {commentId} = deleteButton.dataset;
+      const {articleId} = deleteButton.dataset;
 
-      const response = await fetch(`/my/comments/${commentId}`, {
+      const response = await fetch(`/my/articles/${articleId}`, {
         method: 'DELETE'
       });
 
       if (response.status !== SUCCESS_STATUS_CODE) {
-        throw new Error('Unable to delete comment')
+        throw new Error('Unable to delete article')
       }
 
-      commentContainer.remove();
+      articleContainer.remove();
     } catch (error) {
-      commentContainer.append(createError(error));
+      articleContainer.append(createError(error));
     }
 
     deleteButton.disabled = false;

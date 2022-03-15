@@ -25,8 +25,14 @@ class API {
     return this._load(`/articles`, {params});
   }
 
-  getArticle(articleId) {
-    return this._load(`/articles/${articleId}`);
+  getArticle(id) {
+    return this._load(`/articles/${id}`);
+  }
+
+  deleteArticle(id) {
+    return this._load(`/articles/${id}`, {
+      method: HttpMethod.DELETE,
+    });
   }
 
   getCategories(params = {}) {

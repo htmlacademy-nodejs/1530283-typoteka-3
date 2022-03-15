@@ -26,6 +26,15 @@ myRoutes.get(`/`, async (_req, res, next) => {
   }
 });
 
+myRoutes.delete(`/articles/:articleId`, async (req, res) => {
+  try {
+    await api.deleteArticle(req.params.articleId);
+    res.status(HttpCode.NO_CONTENT).end();
+  } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).end();
+  }
+});
+
 myRoutes.get(`/comments`, async (_req, res, next) => {
   try {
     const comments = await api.getComments();

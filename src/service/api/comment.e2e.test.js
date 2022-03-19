@@ -129,7 +129,11 @@ const mockArticles = [
 
 const createAPI = async () => {
   const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
-  await initDB(mockDB, {categories: mockCategories, articles: mockArticles, users: mockUsers});
+  await initDB(mockDB, {
+    categories: mockCategories,
+    articles: mockArticles,
+    users: mockUsers,
+  });
 
   const app = express();
   app.use(express.json());
@@ -175,10 +179,13 @@ describe(`API should delete existent comment`, () => {
     response = await request(app).delete(`/comments/1`);
   });
 
-  test(`Status code 204`, () => expect(response.statusCode).toBe(HttpCode.NO_CONTENT));
+  test(`Status code 204`, () =>
+    expect(response.statusCode).toBe(HttpCode.NO_CONTENT));
 
   test(`Should return decreased comments count`, () =>
-    request(app).get(`/comments`).expect(({body}) => expect(body.length).toBe(7)));
+    request(app)
+      .get(`/comments`)
+      .expect(({body}) => expect(body.length).toBe(7)));
 });
 
 describe(`API  refuses to delete non-existent comment`, () => {
@@ -189,8 +196,11 @@ describe(`API  refuses to delete non-existent comment`, () => {
     response = await request(app).delete(`/comments/NON_EXIST`);
   });
 
-  test(`Status code 404`, () => expect(response.statusCode).toBe(HttpCode.NOT_FOUND));
+  test(`Status code 404`, () =>
+    expect(response.statusCode).toBe(HttpCode.NOT_FOUND));
 
   test(`Comments count should not be changed`, () =>
-    request(app).get(`/comments`).expect(({body}) => expect(body.length).toBe(8)));
+    request(app)
+      .get(`/comments`)
+      .expect(({body}) => expect(body.length).toBe(8)));
 });

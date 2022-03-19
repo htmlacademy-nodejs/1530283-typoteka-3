@@ -1,8 +1,7 @@
-'use strict';
+"use strict";
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
-
 
 module.exports = (app, searchService) => {
   const searchRoutes = new Router();
@@ -21,7 +20,9 @@ module.exports = (app, searchService) => {
       const articles = await searchService.findAll(searchText);
 
       if (!articles.length) {
-        res.status(HttpCode.NOT_FOUND).json(`No articles for "${searchText}" query`);
+        res
+          .status(HttpCode.NOT_FOUND)
+          .json(`No articles for "${searchText}" query`);
         return;
       }
 

@@ -172,16 +172,14 @@ describe(`API returns status code 404 when trying to get comments of non-existen
 describe(`API creates new comment for an article with given id if data is correct`, () => {
   const newComment = {
     text: `Text`,
-    authorId: 1
+    authorId: 1,
   };
 
   let app;
 
   beforeAll(async () => {
     app = await createAPI();
-    response = await request(app)
-      .post(`/articles/1/comments`)
-      .send(newComment);
+    response = await request(app).post(`/articles/1/comments`).send(newComment);
   });
 
   test(`Status code 201`, () =>
@@ -205,9 +203,7 @@ describe(`API return status code 400 when trying to create new comment if data i
 
   beforeAll(async () => {
     app = await createAPI();
-    response = await request(app)
-      .post(`/articles/1/comments`)
-      .send(newComment);
+    response = await request(app).post(`/articles/1/comments`).send(newComment);
   });
 
   test(`Status code 400`, () =>

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const {Router} = require(`express`);
 
@@ -11,14 +11,18 @@ const article = require(`./article`);
 const comment = require(`./comment`);
 const search = require(`./search`);
 
-const {ArticleService, CategoryService, SearchService, CommentService} = require(`../data-service`);
+const {
+  ArticleService,
+  CategoryService,
+  SearchService,
+  CommentService,
+} = require(`../data-service`);
 
 const api = new Router();
 
 defineModels(sequelize);
 
 (async () => {
-
   const commentService = new CommentService(sequelize);
   const articleService = new ArticleService(sequelize);
   const categoryService = new CategoryService(sequelize);

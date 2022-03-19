@@ -120,13 +120,14 @@ module.exports = {
       process.exit(ExitCode.ERROR);
     }
 
-    const [titles, categories, sentences, commentTexts, pictures] = await Promise.all([
-      readFile(FilePath.TITLES, FileType.TEXT),
-      readFile(FilePath.CATEGORIES, FileType.TEXT),
-      readFile(FilePath.SENTENCES, FileType.TEXT),
-      readFile(FilePath.COMMENTS, FileType.TEXT),
-      readFile(FilePath.PICTURES, FileType.TEXT),
-    ]);
+    const [titles, categories, sentences, commentTexts, pictures] =
+      await Promise.all([
+        readFile(FilePath.TITLES, FileType.TEXT),
+        readFile(FilePath.CATEGORIES, FileType.TEXT),
+        readFile(FilePath.SENTENCES, FileType.TEXT),
+        readFile(FilePath.COMMENTS, FileType.TEXT),
+        readFile(FilePath.PICTURES, FileType.TEXT),
+      ]);
 
     const articles = generateArticles(count, {titles, sentences, pictures});
 
@@ -170,7 +171,8 @@ module.exports = {
 
     const commentsValues = multiLineJoin(
         comments.map(
-            ({text, articleId, userId, createdDate}) => `('${text}', ${articleId}, ${userId}, '${createdDate}')`
+            ({text, articleId, userId, createdDate}) =>
+              `('${text}', ${articleId}, ${userId}, '${createdDate}')`
         )
     );
 

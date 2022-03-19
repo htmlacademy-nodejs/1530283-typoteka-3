@@ -150,7 +150,7 @@ module.exports = {
       sentences,
       pictures,
       commentTexts,
-      categories
+      categories,
     });
 
     try {

@@ -55,5 +55,5 @@ module.exports = {
   getRandomItem,
   getUniqueArray,
   readFile,
-  multiLineJoin
+  multiLineJoin,
 };

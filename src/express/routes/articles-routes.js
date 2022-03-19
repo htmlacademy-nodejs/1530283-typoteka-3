@@ -13,6 +13,7 @@ const {getCommentTemplateData} = require(`../../utils/comment`);
 
 const {getImageFileName} = require(`../../utils/image`);
 
+const AUTHOR_ID = 1;
 const UPLOAD_DIR = `../upload/img`;
 const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
 
@@ -74,7 +75,10 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
       const {body, file} = req;
       newArticle = parseClientArticle(body, file);
 
-      await api.createArticle(newArticle);
+      await api.createArticle({
+        ...newArticle,
+        authorId: AUTHOR_ID,
+      });
 
       res.redirect(`/my`);
     } catch (error) {
@@ -123,7 +127,7 @@ articlesRoutes.get(`/:articleId`, async (req, res, next) => {
       api.getArticle(req.params.articleId),
       api.getCategories({
         withArticlesCount: true,
-        articleId: req.params.articleId
+        articleId: req.params.articleId,
       }),
       api.getComments({articleId: req.params.articleId}),
     ]);
@@ -138,5 +142,28 @@ articlesRoutes.get(`/:articleId`, async (req, res, next) => {
     next(error);
   }
 });
+
+articlesRoutes.post(
+    `/:articleId/comments`,
+    upload.none(),
+    async (req, res, next) => {
+      const {articleId} = req.params;
+
+      try {
+        await api.createComment({
+          articleId,
+          data: {
+            ...req.body,
+            authorId: AUTHOR_ID
+          }
+        });
+
+        res.redirect(`/articles/${articleId}#comments`);
+      } catch (error) {
+        // Отображение ошибки
+        next(error);
+      }
+    }
+);
 
 module.exports = articlesRoutes;

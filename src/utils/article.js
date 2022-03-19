@@ -22,8 +22,8 @@ const getInitialArticle = () => ({
 
 const parseClientArticle = (clientArticle, file) => ({
   title: clientArticle.title,
-  image: file ? file.filename : ``,
-  createdDate: parseArticleClientDate(clientArticle.date),
+  picture: file ? file.filename : ``,
+  createdAt: parseArticleClientDate(clientArticle.date),
   categories: clientArticle.categories,
   announce: clientArticle.announce,
   fullText: clientArticle[`full-text`],

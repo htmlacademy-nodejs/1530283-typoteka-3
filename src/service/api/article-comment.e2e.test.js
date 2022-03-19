@@ -172,6 +172,7 @@ describe(`API returns status code 404 when trying to get comments of non-existen
 describe(`API creates new comment for an article with given id if data is correct`, () => {
   const newComment = {
     text: `Text`,
+    authorId: 1
   };
 
   let app;

@@ -4,8 +4,6 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 const commentValidator = require(`./middlewares/comment-validator`);
 
-const AUTHOR_ID = 1;
-
 module.exports = (app, commentService) => {
   const articleCommentsRoutes = new Router({mergeParams: true});
 
@@ -15,7 +13,9 @@ module.exports = (app, commentService) => {
     try {
       const {articleId} = req.params;
 
-      const comments = await commentService.findAllByArticleId(Number(articleId));
+      const comments = await commentService.findAllByArticleId(
+          Number(articleId)
+      );
 
       res.status(HttpCode.OK).json(comments);
     } catch (error) {
@@ -30,7 +30,6 @@ module.exports = (app, commentService) => {
       const newComment = await commentService.create({
         ...req.body,
         articleId: Number(articleId),
-        authorId: AUTHOR_ID
       });
 
       res.status(HttpCode.CREATED).json(newComment);

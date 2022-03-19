@@ -91,7 +91,7 @@ class ArticleService {
 
   async findOne(articleId) {
     const article = await this._Article.findOne({
-      attributes: [`title`, `fullText`, `announce`, `picture`, `createdAt`],
+      attributes: [`id`, `title`, `fullText`, `announce`, `picture`, `createdAt`],
       include: [
         {
           model: this._Category,

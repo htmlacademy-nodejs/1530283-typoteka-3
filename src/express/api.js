@@ -66,6 +66,13 @@ class API {
       : this._load(`comments`, {params});
   }
 
+  createComment({articleId, data}) {
+    return this._load(`/articles/${articleId}/comments`, {
+      method: HttpMethod.POST,
+      data,
+    });
+  }
+
   deleteComment(id) {
     return this._load(`/comments/${id}`, {
       method: HttpMethod.DELETE,

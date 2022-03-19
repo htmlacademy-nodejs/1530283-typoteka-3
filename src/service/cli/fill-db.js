@@ -3,6 +3,7 @@
 const initDb = require(`../lib/init-db`);
 const sequelize = require(`../lib/sequelize`);
 
+const {getLogger} = require(`../lib/logger/logger`);
 const {ExitCode, FilePath, FileType} = require(`../../constants`);
 const {
   readFile,
@@ -12,6 +13,8 @@ const {
   getUniqueArray,
 } = require(`../../utils/common`);
 const {formatTimestamp, getRandomPastDate} = require(`../../utils/date`);
+
+const logger = getLogger({name: `fill-db`});
 
 const DEFAULT_COUNT = 3;
 
@@ -125,22 +128,34 @@ module.exports = {
   name: `--fill-db`,
   run: async (args) => {
     try {
-      console.info(`Trying to connect to database...`);
+      logger.info(`Trying to connect to database...`);
       await sequelize.authenticate();
-      console.info(`Connection to database established`);
+      logger.info(`Connection to database established successfully`);
     } catch (err) {
-      console.error(`An error occurred: ${err.message}`);
+      logger.error(
+          `An error occurred during database connection: ${err.message}`
+      );
       process.exit(ExitCode.ERROR);
     }
 
-    const [titles, categories, sentences, commentTexts, pictures] =
-      await Promise.all([
+    let data;
+
+    try {
+      logger.info(`Start data reading...`);
+      data = await Promise.all([
         readFile(FilePath.TITLES, FileType.TEXT),
         readFile(FilePath.CATEGORIES, FileType.TEXT),
         readFile(FilePath.SENTENCES, FileType.TEXT),
         readFile(FilePath.COMMENTS, FileType.TEXT),
         readFile(FilePath.PICTURES, FileType.TEXT),
       ]);
+      logger.info(`Data is read successfully`);
+    } catch (error) {
+      logger.error(`An error occurred during files reading: ${error.message}`);
+      process.exit(ExitCode.ERROR);
+    }
+
+    const [titles, categories, sentences, commentTexts, pictures] = data;
 
     const [rawCount] = args;
     const count = Number.parseInt(rawCount, 10) || DEFAULT_COUNT;
@@ -154,12 +169,12 @@ module.exports = {
     });
 
     try {
-      console.info(`Database initializing...`);
+      logger.info(`Database initializing...`);
       await initDb(sequelize, {users: USERS, categories, articles});
-      console.info(`Database is initialized successfully`);
+      logger.info(`Database is initialized successfully`);
       process.exit(ExitCode.SUCCESS);
     } catch (error) {
-      console.error(`Database initialization failed: ${error}`);
+      logger.error(`An error occurred during database initializing: ${error}`);
       process.exit(ExitCode.ERROR);
     }
   },

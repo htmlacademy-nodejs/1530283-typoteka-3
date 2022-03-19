@@ -43,8 +43,6 @@ rootRoutes.get(`/search`, async (req, res, next) => {
   try {
     const articles = await api.search(query);
 
-    console.log(articles);
-
     res.render(`articles/search`, {
       articles: articles.map(getArticleTemplateData),
       query,

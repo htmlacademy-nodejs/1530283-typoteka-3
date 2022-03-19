@@ -35,7 +35,10 @@ const upload = multer({storage});
 articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
   try {
     const [articles, categories] = await Promise.all([
-      api.getArticles({categoryId: req.params.categoryId}),
+      api.getArticles({
+        categoryId: req.params.categoryId,
+        withCategories: true,
+      }),
       api.getCategories({withArticlesCount: true, havingArticles: true}),
     ]);
 
@@ -70,7 +73,6 @@ articlesRoutes.get(`/add`, async (_req, res, next) => {
 articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
   let newArticle;
 
-
   try {
     try {
       const {body, file} = req;
@@ -90,8 +92,6 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
 
       const categories = await api.getCategories();
 
-      // Отображение ошибки
-
       res.render(`admin/form`, {
         user: {
           isAdmin: true,
@@ -99,6 +99,7 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
         article: newArticle,
         categories,
         isNew: true,
+        error: true
       });
     }
   } catch (error) {
@@ -125,45 +126,48 @@ articlesRoutes.get(`/edit/:articleId`, async (req, res, next) => {
   }
 });
 
-articlesRoutes.post(`/edit/:articleId`, upload.single(`upload`), async (req, res, next) => {
-  let updatedArticle;
+articlesRoutes.post(
+    `/edit/:articleId`,
+    upload.single(`upload`),
+    async (req, res, next) => {
+      let updatedArticle;
 
-  try {
-    try {
-      const {body, file} = req;
-      updatedArticle = parseClientArticle(body, file);
+      try {
+        try {
+          const {body, file} = req;
+          updatedArticle = parseClientArticle(body, file);
 
-      await api.updateArticle({
-        id: req.params.articleId,
-        data: {
-          ...updatedArticle,
-          authorId: AUTHOR_ID,
+          await api.updateArticle({
+            id: req.params.articleId,
+            data: {
+              ...updatedArticle,
+              authorId: AUTHOR_ID,
+            },
+          });
+
+          res.redirect(`/my`);
+        } catch (error) {
+          if (!error.response) {
+            next(error);
+          }
+
+          const categories = await api.getCategories();
+
+          res.render(`admin/form`, {
+            user: {
+              isAdmin: true,
+            },
+            article: updatedArticle,
+            categories,
+            isNew: true,
+            error: true
+          });
         }
-      });
-
-      res.redirect(`/my`);
-    } catch (error) {
-      if (!error.response) {
+      } catch (error) {
         next(error);
       }
-
-      const categories = await api.getCategories();
-
-      // Отображение ошибки
-
-      res.render(`admin/form`, {
-        user: {
-          isAdmin: true,
-        },
-        article: updatedArticle,
-        categories,
-        isNew: true,
-      });
     }
-  } catch (error) {
-    next(error);
-  }
-});
+);
 
 articlesRoutes.get(`/:articleId`, async (req, res, next) => {
   try {
@@ -198,13 +202,13 @@ articlesRoutes.post(
           articleId,
           data: {
             ...req.body,
-            authorId: AUTHOR_ID
-          }
+            authorId: AUTHOR_ID,
+          },
         });
 
         res.redirect(`/articles/${articleId}#comments`);
       } catch (error) {
-        // Отображение ошибки
+      // Отображение ошибки
         next(error);
       }
     }

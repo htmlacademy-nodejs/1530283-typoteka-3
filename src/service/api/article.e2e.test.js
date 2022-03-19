@@ -146,7 +146,7 @@ const createAPI = async () => {
   return app;
 };
 
-describe.skip(`API returns a list of all articles`, () => {
+describe(`API returns a list of all articles`, () => {
   beforeAll(async () => {
     const app = await createAPI();
     response = await request(app).get(`/articles`);
@@ -155,10 +155,7 @@ describe.skip(`API returns a list of all articles`, () => {
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
   test(`Returns a list of correct length`, () =>
-    expect(response.body.length).toBe(mockArticles.length));
-
-  test(`First article's id equals "P2ytE4"`, () =>
-    expect(response.body[0].id).toBe(`P2ytE4`));
+    expect(response.body.length).toBe(3));
 });
 
 describe(`API returns an article with given id`, () => {
@@ -219,10 +216,10 @@ describe(`API creates an article if data is valid`, () => {
     return expect(response.body).toEqual(expect.objectContaining(createdArticle));
   });
 
-  test.skip(`Articles count is increased`, () =>
+  test(`Articles count is increased`, () =>
     request(app)
       .get(`/articles`)
-      .expect(({body}) => expect(body.length).toBe(mockArticles.length + 1)));
+      .expect(({body}) => expect(body.length).toBe(4)));
 });
 
 describe(`API refuses to create an article if data is invalid`, () => {
@@ -254,7 +251,7 @@ describe(`API refuses to create an article if data is invalid`, () => {
     }
   });
 
-  test.skip(`Articles count is not changed`, () =>
+  test(`Articles count is not changed`, () =>
     request(app)
       .get(`/articles`)
       .expect(({body}) => expect(body.length).toBe(3)));
@@ -295,10 +292,10 @@ describe(`API changes existent article with given id`, () => {
     expect(response.body).toEqual(expect.objectContaining(createdArticle));
   });
 
-  test.skip(`Articles count is not changed`, () =>
+  test(`Articles count is not changed`, () =>
     request(app)
       .get(`/articles`)
-      .expect(({body}) => expect(body.length).toBe(mockArticles.length)));
+      .expect(({body}) => expect(body.length).toBe(3)));
 });
 
 describe(`API returns status code 404 when trying to change non-existent article`, () => {
@@ -353,7 +350,7 @@ describe(`API correctly deletes an article with given id`, () => {
 
   test(`Returns no body`, () => expect(response.body).toEqual({}));
 
-  test.skip(`Articles count is decreased`, () =>
+  test(`Articles count is decreased`, () =>
     request(app)
       .get(`/articles`)
       .expect(({body}) => expect(body.length).toBe(2)));
@@ -370,7 +367,7 @@ describe(`API refuses to delete non-existent article`, () => {
   test(`Status code 404`, () =>
     expect(response.statusCode).toBe(HttpCode.NOT_FOUND));
 
-  test.skip(`Articles count is not changed`, () =>
+  test(`Articles count is not changed`, () =>
     request(app)
       .get(`/articles`)
       .expect(({body}) => expect(body.length).toBe(3)));

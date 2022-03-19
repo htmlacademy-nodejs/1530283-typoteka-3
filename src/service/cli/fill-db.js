@@ -1,7 +1,5 @@
 "use strict";
 
-const fs = require(`fs`).promises;
-
 const initDb = require(`../lib/init-db`);
 const sequelize = require(`../lib/sequelize`);
 
@@ -154,8 +152,6 @@ module.exports = {
       commentTexts,
       categories
     });
-
-    await fs.writeFile(FilePath.MOCKS, JSON.stringify(articles, null, 2));
 
     try {
       console.info(`Database initializing...`);

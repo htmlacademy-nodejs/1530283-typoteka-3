@@ -10,46 +10,73 @@ class ArticleService {
     this._ArticleCategory = sequelize.models.Category;
   }
 
-  async findAll({limit, mostCommented, categoryId} = {}) {
-    const articles = await this._Article.findAll({
-      subQuery: false,
-      attributes: [
-        `id`,
-        `title`,
-        `announce`,
-        `createdAt`,
-        `picture`,
-        [
+  async findAll({limit, mostCommented, categoryId, withCategories} = {}) {
+    const baseAttributes = [
+      `id`,
+      `title`,
+      `announce`,
+      `createdAt`,
+      `picture`,
+      [
+        Sequelize.fn(
+            `COUNT`,
+            Sequelize.fn(`DISTINCT`, Sequelize.col(`comments.id`))
+        ),
+        `commentsCount`,
+      ],
+    ];
+
+    const attributes = withCategories ? [...baseAttributes, [
+      Sequelize.fn(
+          `ARRAY_AGG`,
           Sequelize.fn(
+              `DISTINCT`,
+              Sequelize.fn(
+                  `jsonb_build_object`,
+                  `id`,
+                  Sequelize.col(`categories.id`),
+                  `name`,
+                  Sequelize.col(`categories.name`)
+              )
+          )
+      ),
+      `categoryList`,
+    ]] : baseAttributes;
+
+    const order = [
+      [
+        mostCommented
+          ? Sequelize.fn(
               `COUNT`,
               Sequelize.fn(`DISTINCT`, Sequelize.col(`comments.id`))
-          ),
-          `commentsCount`,
-        ],
-        [
+          )
+          : `createdAt`,
+        `DESC`,
+      ],
+    ];
+
+    const havingCategoryId = categoryId
+      ? Sequelize.where(
           Sequelize.fn(
               `ARRAY_AGG`,
-              Sequelize.fn(
-                  `DISTINCT`,
-                  Sequelize.fn(
-                      `jsonb_build_object`,
-                      `id`,
-                      Sequelize.col(`categories.id`),
-                      `name`,
-                      Sequelize.col(`categories.name`)
-                  )
-              )
+              Sequelize.fn(`DISTINCT`, Sequelize.col(`categories.id`))
           ),
-          `categoryList`,
-        ],
-      ],
+          {
+            [Sequelize.Op.contains]: [categoryId],
+          }
+      )
+      : {};
+
+    const articles = await this._Article.findAll({
+      subQuery: false,
+      attributes,
       group: [Sequelize.col(`Article.id`)],
       include: [
         {
           model: this._Comment,
           as: `comments`,
           distinct: true,
-          required: Boolean(mostCommented),
+          required: mostCommented,
           attributes: [],
         },
         {
@@ -61,29 +88,9 @@ class ArticleService {
           attributes: [],
         },
       ],
-      order: [
-        [
-          mostCommented
-            ? Sequelize.fn(
-                `COUNT`,
-                Sequelize.fn(`DISTINCT`, Sequelize.col(`comments.id`))
-            )
-            : `createdAt`,
-          `DESC`,
-        ],
-      ],
-      limit: limit ? Number(limit) : undefined,
-      having: categoryId
-        ? Sequelize.where(
-            Sequelize.fn(
-                `ARRAY_AGG`,
-                Sequelize.fn(`DISTINCT`, Sequelize.col(`categories.id`))
-            ),
-            {
-              [Sequelize.Op.contains]: [Number(categoryId)],
-            }
-        )
-        : {},
+      order,
+      limit,
+      having: havingCategoryId,
     });
 
     return articles.map((article) => article.get());

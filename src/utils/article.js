@@ -16,13 +16,13 @@ const getInitialArticle = () => ({
   title: ``,
   announce: ``,
   fullText: ``,
-  createdDate: new Date().toISOString(),
+  createdAt: new Date().toISOString(),
   categories: [],
 });
 
 const parseClientArticle = (clientArticle, file) => ({
   title: clientArticle.title,
-  picture: file ? file.filename : ``,
+  picture: file ? file.filename : clientArticle.filename,
   createdAt: parseArticleClientDate(clientArticle.date),
   categories: clientArticle.categories,
   announce: clientArticle.announce,

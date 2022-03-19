@@ -29,6 +29,20 @@ class API {
     return this._load(`/articles/${id}`);
   }
 
+  createArticle(data) {
+    return this._load(`/articles`, {
+      method: `POST`,
+      data,
+    });
+  }
+
+  updateArticle({id, data}) {
+    return this._load(`/articles/${id}`, {
+      method: `PUT`,
+      data,
+    });
+  }
+
   deleteArticle(id) {
     return this._load(`/articles/${id}`, {
       method: HttpMethod.DELETE,
@@ -84,13 +98,6 @@ class API {
       params: {
         query,
       },
-    });
-  }
-
-  createArticle(data) {
-    return this._load(`/articles`, {
-      method: `POST`,
-      data,
     });
   }
 }

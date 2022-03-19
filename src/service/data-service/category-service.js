@@ -13,14 +13,22 @@ class CategoryService {
     const basicAttributes = [`id`, `name`];
 
     const attributes = withArticlesCount
-      ? [...basicAttributes, [Sequelize.fn(`COUNT`, Sequelize.col(`articles.id`)),
-        `articlesCount`]]
+      ? [
+        ...basicAttributes,
+        [
+          Sequelize.fn(`COUNT`, Sequelize.col(`articles.id`)),
+          `articlesCount`,
+        ],
+      ]
       : basicAttributes;
 
-    const havingArticleId = articleId ?
-      Sequelize.where(Sequelize.fn(`ARRAY_AGG`, Sequelize.col(`articles.id`)), {
-        [Sequelize.Op.contains]: [articleId]
-      })
+    const havingArticleId = articleId
+      ? Sequelize.where(
+          Sequelize.fn(`ARRAY_AGG`, Sequelize.col(`articles.id`)),
+          {
+            [Sequelize.Op.contains]: [articleId],
+          }
+      )
       : {};
 
     const categories = await this._Category.findAll({
@@ -36,7 +44,7 @@ class CategoryService {
         },
       ],
       order: [[`id`, `DESC`]],
-      having: havingArticleId
+      having: havingArticleId,
     });
 
     return categories.map((category) => category.get());
@@ -53,22 +61,22 @@ class CategoryService {
   async update(categoryId, updatedCategoryData) {
     await this._Category.update(updatedCategoryData, {
       where: {
-        id: categoryId
-      }
+        id: categoryId,
+      },
     });
 
     return await this._Category.findOne({
       where: {
-        id: categoryId
-      }
+        id: categoryId,
+      },
     });
   }
 
   async drop(categoryId) {
     return await this._Category.destroy({
       where: {
-        id: categoryId
-      }
+        id: categoryId,
+      },
     });
   }
 }

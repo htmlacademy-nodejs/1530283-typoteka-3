@@ -11,17 +11,13 @@ class SearchService {
 
   async findAll(searchText) {
     const articles = await this._Article.findAll({
-      attributes: [
-        `id`,
-        `title`,
-        `created_at`
-      ],
+      attributes: [`id`, `title`, `created_at`],
       order: [[`createdAt`, `DESC`]],
       where: {
         title: {
-          [Op.substring]: searchText
-        }
-      }
+          [Op.substring]: searchText,
+        },
+      },
     });
 
     return articles.map((article) => article.get());

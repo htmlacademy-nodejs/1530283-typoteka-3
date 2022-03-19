@@ -26,22 +26,27 @@ class ArticleService {
       ],
     ];
 
-    const attributes = withCategories ? [...baseAttributes, [
-      Sequelize.fn(
-          `ARRAY_AGG`,
+    const attributes = withCategories
+      ? [
+        ...baseAttributes,
+        [
           Sequelize.fn(
-              `DISTINCT`,
+              `ARRAY_AGG`,
               Sequelize.fn(
-                  `jsonb_build_object`,
-                  `id`,
-                  Sequelize.col(`categories.id`),
-                  `name`,
-                  Sequelize.col(`categories.name`)
+                  `DISTINCT`,
+                  Sequelize.fn(
+                      `jsonb_build_object`,
+                      `id`,
+                      Sequelize.col(`categories.id`),
+                      `name`,
+                      Sequelize.col(`categories.name`)
+                  )
               )
-          )
-      ),
-      `categoryList`,
-    ]] : baseAttributes;
+          ),
+          `categoryList`,
+        ],
+      ]
+      : baseAttributes;
 
     const order = [
       [
@@ -98,13 +103,20 @@ class ArticleService {
 
   async findOne(articleId) {
     const article = await this._Article.findOne({
-      attributes: [`id`, `title`, `fullText`, `announce`, `picture`, `createdAt`],
+      attributes: [
+        `id`,
+        `title`,
+        `fullText`,
+        `announce`,
+        `picture`,
+        `createdAt`,
+      ],
       include: [
         {
           model: this._Category,
           through: {attributes: []},
           as: `categories`,
-          attributes: [`id`, `name`]
+          attributes: [`id`, `name`],
         },
       ],
       where: {id: articleId},

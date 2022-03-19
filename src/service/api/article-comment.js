@@ -13,9 +13,9 @@ module.exports = (app, commentService) => {
     try {
       const {articleId} = req.params;
 
-      const comments = await commentService.findAllByArticleId(
-          Number(articleId)
-      );
+      const comments = await commentService.findAll({
+        articleId: articleId ? Number(articleId) : undefined,
+      });
 
       res.status(HttpCode.OK).json(comments);
     } catch (error) {

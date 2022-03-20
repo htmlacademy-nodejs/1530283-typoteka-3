@@ -13,7 +13,7 @@ block content
               time.publication__item-time(datetime=comment.createdCEODate)= comment.createdDate
             a.publication__item-text(href=`/articles/${comment.articleId}#comments`)= comment.text
             p.publication__text-strong= comment.article.title
-            button.publication__button.button.button--close-item(type='button' data-comment-id=comment.id)
+            button.publication__button.button.button--close-item(type='button' data-delete data-comment-id=comment.id)
               span.visually-hidden Удалить комментарий
 
 block scripts

@@ -1,48 +1,51 @@
 (() => {
   const SUCCESS_STATUS_CODE = 204;
+  const DELETE_METHOD = `DELETE`;
 
-  const commentsList = document.querySelector(`.publication__list`);
+  const getApiEndpoint = (id) => `/my/comments/${id}`;
 
-  const createError = () => {
-     const paragraph = document.createElement('p');
+  const commentsListNode = document.querySelector(`.publication__list`);
 
-     paragraph.style.color = 'red';
+  const createErrorNode = () => {
+    const errorNode = document.createElement("p");
 
-     paragraph.innerHTML = 'Произошла ошибка! Не удалось удалить комментарий =(';
+    errorNode.style.color = "red";
 
-     return paragraph;
-  }
+    errorNode.textContent = "Произошла ошибка! Не удалось удалить комментарий =(";
 
-  commentsList.addEventListener('click', async (evt) => {
-    const deleteButton = evt.target.closest(`.button--close-item`);
+    return errorNode;
+  };
 
-    if (!deleteButton || !evt.currentTarget.contains(deleteButton)) {
+  commentsListNode.addEventListener("click", async (evt) => {
+    const deleteButtonNode = evt.target.closest(`.button[data-delete]`);
+
+    if (!deleteButtonNode || !evt.currentTarget.contains(deleteButtonNode)) {
       return;
     }
 
     evt.preventDefault();
 
-    deleteButton.disabled = true;
+    deleteButtonNode.disabled = true;
 
-    const commentContainer = deleteButton.closest(`.publication__list-item`);
+    const commentItemNode = deleteButtonNode.closest(`.publication__list-item`);
+
+    const { commentId } = deleteButtonNode.dataset;
+    const apiEndpoint = getApiEndpoint(commentId);
 
     try {
-
-      const {commentId} = deleteButton.dataset;
-
-      const response = await fetch(`/my/comments/${commentId}`, {
-        method: 'DELETE'
+      const response = await fetch(apiEndpoint, {
+        method: DELETE_METHOD,
       });
 
       if (response.status !== SUCCESS_STATUS_CODE) {
-        throw new Error('Unable to delete comment')
+        throw new Error("Unable to delete comment");
       }
 
-      commentContainer.remove();
+      commentItemNode.remove();
     } catch (error) {
-      commentContainer.append(createError(error));
+      commentItemNode.append(createErrorNode(error));
     }
 
-    deleteButton.disabled = false;
-  })
-})()
+    deleteButtonNode.disabled = false;
+  });
+})();

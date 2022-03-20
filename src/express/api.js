@@ -1,6 +1,7 @@
 "use strict";
 
 const axios = require(`axios`);
+const {HttpMethod} = require(`../constants`);
 
 const TIMEOUT = 1000;
 
@@ -20,30 +21,83 @@ class API {
     return response.data;
   }
 
-  getArticles() {
-    return this._load(`/articles`);
+  getArticles(params) {
+    return this._load(`/articles`, {params});
   }
 
-  getArticle(articleId) {
-    return this._load(`/articles/${articleId}`);
-  }
-
-  getCategories() {
-    return this._load(`/categories`);
-  }
-
-  search(query) {
-    return this._load(`search`, {
-      params: {
-        query
-      }
-    });
+  getArticle(id) {
+    return this._load(`/articles/${id}`);
   }
 
   createArticle(data) {
     return this._load(`/articles`, {
       method: `POST`,
-      data
+      data,
+    });
+  }
+
+  updateArticle({id, data}) {
+    return this._load(`/articles/${id}`, {
+      method: `PUT`,
+      data,
+    });
+  }
+
+  deleteArticle(id) {
+    return this._load(`/articles/${id}`, {
+      method: HttpMethod.DELETE,
+    });
+  }
+
+  getCategories(params = {}) {
+    return this._load(`/categories`, {params});
+  }
+
+  createCategory(data) {
+    return this._load(`/categories`, {
+      method: HttpMethod.POST,
+      data,
+    });
+  }
+
+  updateCategory({id, data}) {
+    return this._load(`/categories/${id}`, {
+      method: HttpMethod.PUT,
+      data,
+    });
+  }
+
+  deleteCategory(id) {
+    return this._load(`/categories/${id}`, {
+      method: HttpMethod.DELETE,
+    });
+  }
+
+
+  getComments({articleId, ...params} = {}) {
+    return articleId
+      ? this._load(`articles/${articleId}/comments`, {params})
+      : this._load(`comments`, {params});
+  }
+
+  createComment({articleId, data}) {
+    return this._load(`/articles/${articleId}/comments`, {
+      method: HttpMethod.POST,
+      data,
+    });
+  }
+
+  deleteComment(id) {
+    return this._load(`/comments/${id}`, {
+      method: HttpMethod.DELETE,
+    });
+  }
+
+  search(query) {
+    return this._load(`search`, {
+      params: {
+        query,
+      },
     });
   }
 }
@@ -52,5 +106,5 @@ const defaultAPI = new API(defaultUrl, TIMEOUT);
 
 module.exports = {
   API,
-  getAPI: () => defaultAPI
+  getAPI: () => defaultAPI,
 };

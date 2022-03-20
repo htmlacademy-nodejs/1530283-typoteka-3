@@ -8,10 +8,13 @@ block content
         each comment in comments
           li.publication__list-item
             .publication__header
-              img.publication__list-image(src='/img/avatar-small-2.png' width='20' height='20' alt='Аватар пользователя')
-              b.publication__list-name Александр Петров
-              time.publication__item-time(datetime='2019-03-21T20:33') 21.03.2019, 20:33
-            a.publication__item-text(href='#')= comment.text
-            p.publication__text-strong «Яндекс.Метрика» запустила бесплатный сервис для оценки эффективности баннеров и видеорекламы в реальном времени
-            button.publication__button.button.button--close-item(type='button')
-              span.visually-hidden Закрыть строку списка
+              img.publication__list-image(src=`/img/${comment.author.avatar}` width='20' height='20' alt='Аватар пользователя')
+              b.publication__list-name #{comment.author.firstName} #{comment.author.lastName}
+              time.publication__item-time(datetime=comment.createdCEODate)= comment.createdDate
+            a.publication__item-text(href=`/articles/${comment.articleId}#comments`)= comment.text
+            p.publication__text-strong= comment.article.title
+            button.publication__button.button.button--close-item(type='button' data-delete data-comment-id=comment.id)
+              span.visually-hidden Удалить комментарий
+
+block scripts
+  script(src='/js/delete-comment.js' type='module')

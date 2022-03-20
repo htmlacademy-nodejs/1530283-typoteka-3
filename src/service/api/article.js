@@ -2,10 +2,9 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
-const comment = require(`./comment`);
+const articleComment = require(`./article-comment`);
 const articleValidator = require(`./middlewares/article-validator`);
 const articleExists = require(`./middlewares/article-exists`);
-
 
 module.exports = (app, articleService, commentService) => {
   const articlesRoutes = new Router();
@@ -14,35 +13,69 @@ module.exports = (app, articleService, commentService) => {
 
   articlesRoutes.use(`/:articleId`, articleExists(articleService));
 
-  comment(articlesRoutes, commentService);
+  articleComment(articlesRoutes, commentService);
 
-  articlesRoutes.get(`/`, (req, res) => {
-    const articles = articleService.findAll();
-    res.status(HttpCode.OK).json(articles);
+  articlesRoutes.get(`/`, async (req, res, next) => {
+    try {
+      const {limit, mostCommented, withCategories, categoryId} = req.query;
+
+      const articles = await articleService.findAll({
+        limit: limit ? Number(limit) : undefined,
+        mostCommented: Boolean(mostCommented),
+        withCategories: Boolean(withCategories),
+        categoryId: categoryId ? Number(categoryId) : undefined,
+      });
+
+      res.status(HttpCode.OK).json(articles);
+    } catch (error) {
+      next(error);
+    }
   });
 
-  articlesRoutes.get(`/:articleId`, (req, res) => {
-    const {article} = res.locals;
+  articlesRoutes.get(`/:articleId`, async (req, res, next) => {
+    try {
+      const article = await articleService.findOne(req.params.articleId);
 
-    res.status(HttpCode.OK).json(article);
+      res.status(HttpCode.OK).json(article);
+    } catch (error) {
+      next(error);
+    }
   });
 
-  articlesRoutes.post(`/`, articleValidator, (req, res) => {
-    const newArticle = articleService.create(req.body);
-    res.status(HttpCode.CREATED).json(newArticle);
+  articlesRoutes.post(`/`, articleValidator, async (req, res, next) => {
+    try {
+      const newArticle = await articleService.create(req.body);
+
+      res.status(HttpCode.CREATED).json(newArticle);
+    } catch (error) {
+      next(error);
+    }
   });
 
-  articlesRoutes.put(`/:articleId`, articleValidator, (req, res) => {
-    const {article} = res.locals;
-    const updatedArticle = articleService.update(article, req.body);
+  articlesRoutes.put(
+      `/:articleId`,
+      articleValidator,
+      async (req, res, next) => {
+        try {
+          const updatedArticle = await articleService.update(
+              Number(req.params.articleId),
+              req.body
+          );
 
-    res.status(HttpCode.OK).json(updatedArticle);
-  });
+          res.status(HttpCode.OK).json(updatedArticle);
+        } catch (error) {
+          next(error);
+        }
+      }
+  );
 
-  articlesRoutes.delete(`/:articleId`, (req, res) => {
-    const {article} = res.locals;
-    articleService.drop(article.id);
+  articlesRoutes.delete(`/:articleId`, async (req, res, next) => {
+    try {
+      await articleService.drop(Number(req.params.articleId));
 
-    res.status(HttpCode.NO_CONTENT).end();
+      res.status(HttpCode.NO_CONTENT).end();
+    } catch (error) {
+      next(error);
+    }
   });
 };

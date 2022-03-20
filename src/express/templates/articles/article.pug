@@ -8,21 +8,15 @@ block content
         h2.visually-hidden Основное содержание
         .post__wrapper
           .post__head
-            a.post__backwards.button.button--backwards(href='#') Назад
+            a.post__backwards.button.button--backwards(href='#' data-back) Назад
             time.post__date(datetime=article.createdCEODate)= article.createdDate
             h2.post__title.title.title--main= article.title
             ul.post__themes.themes
-              each category, index in categories
-                - const href = `/articles/category/${index}`
-                - const isShown = article.categories.includes(category)
-                if isShown
-                  li.themes__item
-                    a.themes__item-link(class={[`themes__item-link--active`]: isActive} href=href)
-                      = category
-                      sup  #{index + 1}
-          if article.image
+              each category in categories
+                +categoryTab(category)
+          if article.picture
             .post__picture(style='height:490px')
-              img(src=`/img/${article.image}` alt='' style='width:100%;height:100%;object-fit:cover')
+              img(src=`/img/${article.picture}` alt='' style='width:100%;height:100%;object-fit:cover')
           .post__text
             h3= article.title
             p= article.announce
@@ -32,34 +26,25 @@ block content
         section#comments.post__comments.comments
           h2.comments__title.title.title--middle Комментарии
           ul.comments__list
-            each comments in article.comments
+            each comment in comments
               li.comments__comment
                 .comments__avatar.avatar
-                  img(src='/img/avatar-1.png' alt='аватар пользователя')
+                  img(src=`/img/${comment.author.avatar}` alt='аватар пользователя')
                 .comments__text
                   .comments__head
-                    p Евгений Петров •
-                    time.comments__date(datetime='2019-03-21T20:33') 21.03.2019, 20:33
-                  p.comments__message= comments.text
+                    p #{comment.author.firstName} #{comment.author.lastName} •
+                    time.comments__date(datetime=comment.createdCEODate)= comment.createdDate
+                  p.comments__message= comment.text
           .comments__footer.comments__footer--user
-            form(action='#' method='POST')
+            form(action=`/articles/${article.id}/comments` method='POST' enctype='multipart/form-data')
               .comments__avatar.avatar
                 img(src='/img/avatar-2.png' alt='аватар пользователя')
               label
-                textarea(rows='1' name='message' placeholder='Присоединиться к обсуждению')
+                textarea(rows='1' name='text' placeholder='Присоединиться к обсуждению')
               button.comments__button.button.button--colored(type='submit') Опубликовать
+            p.comments__error
 
 block scripts
-  script(type='text/javascript').
-    (() => {
-      const backButton = document.querySelector('.post__backwards')
-
-      if (!backButton) {
-        return;
-      }
-
-      backButton.addEventListener('click', (evt) => {
-        evt.preventDefault();
-        history.back();
-      })
-    })()
+  script(src='https://unpkg.com/dayjs@1.8.21/dayjs.min.js' defer)
+  script(src='/js/back-button.js' type='module')
+  script(src='/js/add-comment.js' type='module')

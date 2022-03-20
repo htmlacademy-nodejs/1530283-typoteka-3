@@ -1,6 +1,3 @@
-// eslint-disable-next-line
-'use strict';
-
 // логика выбора даты в календаре
 
 let calendar = document.querySelector('.calendar');

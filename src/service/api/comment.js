@@ -1,40 +1,37 @@
-'use strict';
+"use strict";
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
-const commentValidator = require(`./middlewares/comment-validator`);
-
+const commentExists = require(`./middlewares/comment-exists`);
 
 module.exports = (app, commentService) => {
-  const commentsRoutes = new Router({mergeParams: true});
+  const commentsRoutes = new Router();
 
-  app.use(`/:articleId/comments`, commentsRoutes);
+  app.use(`/comments`, commentsRoutes);
 
-  commentsRoutes.get(`/`, (req, res) => {
-    const {articleId} = req.params;
-    const comments = commentService.findAll(articleId);
+  commentsRoutes.get(`/`, async (req, res, next) => {
+    try {
+      const {limit} = req.query;
 
-    res.status(HttpCode.OK).json(comments);
-  });
+      const comments = await commentService.findAll({
+        limit: limit ? Number(limit) : undefined,
+      });
 
-  commentsRoutes.post(`/`, commentValidator, (req, res) => {
-    const {articleId} = req.params;
-    const newComment = commentService.create(articleId, req.body);
-
-    res.status(HttpCode.CREATED).json(newComment);
-  });
-
-  commentsRoutes.delete(`/:commentId`, (req, res) => {
-    const {article} = res.locals;
-    const {commentId} = req.params;
-
-    const comment = commentService.drop(article, commentId);
-
-    if (!comment) {
-      res.status(HttpCode.NOT_FOUND).send(`No comment with id = ${commentId}`);
-      return;
+      res.status(HttpCode.OK).json(comments);
+    } catch (error) {
+      next(error);
     }
+  });
 
-    res.status(HttpCode.NO_CONTENT).end();
+  commentsRoutes.use(`/:commentId`, commentExists(commentService));
+
+  commentsRoutes.delete(`/:commentId`, async (req, res, next) => {
+    try {
+      await commentService.drop(Number(req.params.commentId));
+
+      res.status(HttpCode.NO_CONTENT).end();
+    } catch (error) {
+      next(error);
+    }
   });
 };

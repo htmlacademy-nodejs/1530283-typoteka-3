@@ -6,8 +6,8 @@ const request = require(`supertest`);
 
 const initDB = require(`../lib/init-db`);
 
-const search = require(`./search`);
-const SearchService = require(`../data-service/search-service`);
+const comment = require(`./comment`);
+const CommentService = require(`../data-service/comment-service`);
 const {HttpCode} = require(`../../constants`);
 
 const mockCategories = [
@@ -127,70 +127,80 @@ const mockArticles = [
   },
 ];
 
-const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
-
-const app = express();
-app.use(express.json());
-
-beforeAll(async () => {
+const createAPI = async () => {
+  const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
   await initDB(mockDB, {
     categories: mockCategories,
     articles: mockArticles,
     users: mockUsers,
   });
-  search(app, new SearchService(mockDB));
-});
 
-describe(`API returns article based on unique search query`, () => {
-  let response;
+  const app = express();
+  app.use(express.json());
 
+  comment(app, new CommentService(mockDB));
+
+  return app;
+};
+
+let response;
+
+describe(`API returns a list of all comments`, () => {
   beforeAll(async () => {
-    response = await request(app).get(`/search`).query({
-      query: `начать жить`,
-    });
+    const app = await createAPI();
+    response = await request(app).get(`/comments`);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(`1 article found`, () => expect(response.body.length).toBe(1));
-
-  test(`Article has correct id`, () => expect(response.body[0].id).toBe(3));
+  test(`Should return correct comments count`, () =>
+    expect(response.body.length).toBe(8));
 });
 
-describe(`API returns articles based on non-unique search query`, () => {
-  let response;
+describe(`API returns limited list of comments`, () => {
+  const LIMIT = 2;
 
   beforeAll(async () => {
-    response = await request(app).get(`/search`).query({
-      query: `о`,
-    });
+    const app = await createAPI();
+    response = await request(app).get(`/comments?limit=${LIMIT}`);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(`2 articles found`, () => expect(response.body.length).toBe(2));
+  test(`Should return correct comments count`, () =>
+    expect(response.body.length).toBe(LIMIT));
 });
 
-describe(`API returns no articles based on non-matched search query`, () => {
-  let response;
+describe(`API should delete existent comment`, () => {
+  let app;
 
   beforeAll(async () => {
-    response = await request(app).get(`/search`).query({
-      query: `абвгдже123456`,
-    });
+    app = await createAPI();
+    response = await request(app).delete(`/comments/1`);
+  });
+
+  test(`Status code 204`, () =>
+    expect(response.statusCode).toBe(HttpCode.NO_CONTENT));
+
+  test(`Should return decreased comments count`, () =>
+    request(app)
+      .get(`/comments`)
+      .expect(({body}) => expect(body.length).toBe(7)));
+});
+
+describe(`API  refuses to delete non-existent comment`, () => {
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).delete(`/comments/NON_EXIST`);
   });
 
   test(`Status code 404`, () =>
     expect(response.statusCode).toBe(HttpCode.NOT_FOUND));
-});
 
-describe(`API returns no articles based on empty search query`, () => {
-  let response;
-
-  beforeAll(async () => {
-    response = await request(app).get(`/search`);
-  });
-
-  test(`Status code 400`, () =>
-    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+  test(`Comments count should not be changed`, () =>
+    request(app)
+      .get(`/comments`)
+      .expect(({body}) => expect(body.length).toBe(8)));
 });

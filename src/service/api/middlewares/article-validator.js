@@ -1,8 +1,15 @@
-'use strict';
+"use strict";
 
 const {HttpCode} = require(`../../../constants`);
 
-const requiredArticleKeys = [`title`, `announce`, `fullText`, `createdDate`, `categories`];
+const requiredArticleKeys = [
+  `title`,
+  `announce`,
+  `fullText`,
+  `createdAt`,
+  `categories`,
+  `authorId`,
+];
 
 const articleValidator = (req, res, next) => {
   const newArticle = req.body;
@@ -18,7 +25,8 @@ const articleValidator = (req, res, next) => {
 
   if (absentKeys.length) {
     const formattedAbsentKeys = absentKeys.join(`, `);
-    res.status(HttpCode.BAD_REQUEST)
+    res
+      .status(HttpCode.BAD_REQUEST)
       .send(`Article does not have required fields: ${formattedAbsentKeys}`);
     return;
   }

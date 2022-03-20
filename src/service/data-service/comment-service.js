@@ -1,43 +1,77 @@
 "use strict";
 
-const {getId} = require(`../../utils/common`);
+const Alias = require(`../models/alias`);
 
 class CommentService {
-  constructor(articles) {
-    this._articles = articles;
+  constructor(sequelize) {
+    this._Comment = sequelize.models.Comment;
+    this._Article = sequelize.models.Article;
+    this._User = sequelize.models.User;
   }
 
-  findAll(articleId) {
-    const article = this._articles.find(({id}) => id === articleId);
+  async findAll({limit, articleId}) {
+    const basicIncludedModels = [
+      {
+        model: this._User,
+        as: Alias.AUTHOR,
+        attributes: [`id`, `firstName`, `lastName`, `avatar`],
+      },
+    ];
 
-    return article.comments;
-  }
+    const whereArticleId = articleId
+      ? {
+        articleId,
+      }
+      : {};
 
-  create(articleId, comment) {
-    const articleIndex = this._articles.findIndex(({id}) => id === articleId);
-    const newComment = Object.assign(
+    const includedModels = articleId
+      ? basicIncludedModels
+      : [
+        ...basicIncludedModels,
         {
-          id: getId(),
+          model: this._Article,
+          as: Alias.ARTICLE,
+          attributes: [`id`, `title`],
         },
-        comment
-    );
+      ];
 
-    this._articles[articleIndex].comments.push(newComment);
-    return newComment;
+    const comments = await this._Comment.findAll({
+      attributes: [`id`, `text`, `createdAt`, `articleId`],
+      include: includedModels,
+      order: [[`createdAt`, `DESC`]],
+      where: whereArticleId,
+      limit,
+    });
+
+    return comments.map((comment) => comment.get());
   }
 
-  drop(article, commentId) {
-    const commentIndex = article.comments.findIndex((comment) => comment.id === commentId);
+  async checkExistence(commentId) {
+    return this._Comment.findByPk(commentId);
+  }
 
-    if (commentIndex === -1) {
-      return null;
-    }
+  async create(commentData) {
+    const createdComment = await this._Comment.create(commentData);
 
-    const comment = article.comments[commentIndex];
+    return await this._Comment.findOne({
+      attributes: [`id`, `text`, `createdAt`, `articleId`],
+      include: {
+        model: this._User,
+        as: Alias.AUTHOR,
+        attributes: [`id`, `firstName`, `lastName`, `avatar`],
+      },
+      where: {
+        id: createdComment.id,
+      },
+    });
+  }
 
-    article.comments.splice(commentIndex, 1);
-
-    return comment;
+  async drop(commentId) {
+    return await this._Comment.destroy({
+      where: {
+        id: commentId,
+      },
+    });
   }
 }
 

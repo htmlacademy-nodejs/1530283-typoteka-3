@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 const {nanoid} = require(`nanoid`);
 
@@ -13,5 +13,5 @@ const getImageFileName = (file) => {
 };
 
 module.exports = {
-  getImageFileName
+  getImageFileName,
 };

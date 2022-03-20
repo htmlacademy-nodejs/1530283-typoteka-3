@@ -6,9 +6,9 @@ block content
     section.articles-category__theme-list
       h2.visually-hidden Список тем
       ul.themes
-        each category, index in categories
-          - const isActive = index === 0
-          +categoryTab(category, index + 1, isActive)
+        each category in categories
+          - const isActive = category.id === currentCategoryId
+          +categoryTab(category, isActive)
     section.articles-category__list.preview
       h2.visually-hidden Список превью статей
       ul.preview__list

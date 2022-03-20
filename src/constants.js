@@ -1,6 +1,4 @@
-'use strict';
-
-const MAX_ID_LENGTH = 6;
+"use strict";
 
 const DEFAULT_COMMAND = `--help`;
 
@@ -33,13 +31,20 @@ const FilePath = {
 const HttpError = {
   CLIENT: {
     code: HttpCode.NOT_FOUND,
-    title: `Похоже ошиблись адресом`
+    title: `Похоже ошиблись адресом`,
   },
   SERVER: {
     code: HttpCode.INTERNAL_SERVER_ERROR,
     title: `Что-то пошло не так`,
-    text: `Причин может быть много: сервер не выдержал нагрузку или в коде ошибка. Попробуйте повторить попытку позже.`
-  }
+    text: `Причин может быть много: сервер не выдержал нагрузку или в коде ошибка. Попробуйте повторить попытку позже.`,
+  },
+};
+
+const HttpMethod = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`,
 };
 
 const FileType = {
@@ -49,16 +54,16 @@ const FileType = {
 
 const Environment = {
   DEVELOPMENT: `development`,
-  PRODUCTION: `production`
+  PRODUCTION: `production`,
 };
 
 module.exports = {
   DEFAULT_COMMAND,
-  MAX_ID_LENGTH,
   FilePath,
   ExitCode,
   HttpCode,
   HttpError,
+  HttpMethod,
   FileType,
-  Environment
+  Environment,
 };

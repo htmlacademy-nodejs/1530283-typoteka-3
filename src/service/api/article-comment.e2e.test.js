@@ -6,8 +6,9 @@ const request = require(`supertest`);
 
 const initDB = require(`../lib/init-db`);
 
-const search = require(`./search`);
-const SearchService = require(`../data-service/search-service`);
+const article = require(`./article`);
+const ArticleService = require(`../data-service/article-service`);
+const CommentService = require(`../data-service/comment-service`);
 const {HttpCode} = require(`../../constants`);
 
 const mockCategories = [
@@ -127,70 +128,99 @@ const mockArticles = [
   },
 ];
 
-const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
+let response;
 
-const app = express();
-app.use(express.json());
-
-beforeAll(async () => {
+const createAPI = async () => {
+  const mockDB = new Sequelize(`sqlite::memory:`, {logging: false});
   await initDB(mockDB, {
     categories: mockCategories,
     articles: mockArticles,
     users: mockUsers,
   });
-  search(app, new SearchService(mockDB));
-});
 
-describe(`API returns article based on unique search query`, () => {
-  let response;
+  const app = express();
+  app.use(express.json());
+
+  article(app, new ArticleService(mockDB), new CommentService(mockDB));
+
+  return app;
+};
+
+describe(`API returns all comments of an article with given id`, () => {
+  const ARTICLE_ID = 1;
 
   beforeAll(async () => {
-    response = await request(app).get(`/search`).query({
-      query: `начать жить`,
-    });
+    const app = await createAPI();
+    response = await request(app).get(`/articles/${ARTICLE_ID}/comments`);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
-  test(`1 article found`, () => expect(response.body.length).toBe(1));
-
-  test(`Article has correct id`, () => expect(response.body[0].id).toBe(3));
+  test(`Comments count is correct`, () => expect(response.body.length).toBe(3));
 });
 
-describe(`API returns articles based on non-unique search query`, () => {
-  let response;
-
+describe(`API returns status code 404 when trying to get comments of non-existent article`, () => {
   beforeAll(async () => {
-    response = await request(app).get(`/search`).query({
-      query: `о`,
-    });
-  });
-
-  test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
-
-  test(`2 articles found`, () => expect(response.body.length).toBe(2));
-});
-
-describe(`API returns no articles based on non-matched search query`, () => {
-  let response;
-
-  beforeAll(async () => {
-    response = await request(app).get(`/search`).query({
-      query: `абвгдже123456`,
-    });
+    const app = await createAPI();
+    response = await request(app).get(`/articles/NON_EXIST/comments`);
   });
 
   test(`Status code 404`, () =>
     expect(response.statusCode).toBe(HttpCode.NOT_FOUND));
 });
 
-describe(`API returns no articles based on empty search query`, () => {
-  let response;
+describe(`API creates new comment for an article with given id if data is correct`, () => {
+  const newComment = {
+    text: `Text`,
+    authorId: 1,
+  };
+
+  const createdComment = {
+    text: `Text`,
+    author: {
+      id: 1,
+      firstName: `Иван`,
+      lastName: `Иванов`,
+      avatar: `avatar-1.png`,
+    },
+  };
+
+  let app;
 
   beforeAll(async () => {
-    response = await request(app).get(`/search`);
+    app = await createAPI();
+    response = await request(app).post(`/articles/1/comments`).send(newComment);
+  });
+
+  test(`Status code 201`, () =>
+    expect(response.statusCode).toBe(HttpCode.CREATED));
+
+  test(`Created comment has id`, () => expect(response.body.id).toBeDefined());
+
+  test(`Created comment contains post data`, () =>
+    expect(response.body).toEqual(expect.objectContaining(createdComment)));
+
+  test(`Comments count is increased`, async () =>
+    request(app)
+      .get(`/articles/1/comments`)
+      .expect(({body}) => expect(body.length).toBe(4)));
+});
+
+describe(`API return status code 400 when trying to create new comment if data is incorrect`, () => {
+  const newComment = {};
+
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).post(`/articles/1/comments`).send(newComment);
   });
 
   test(`Status code 400`, () =>
     expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Comments count is not changed`, async () =>
+    request(app)
+      .get(`/articles/1/comments`)
+      .expect(({body}) => expect(body.length).toBe(3)));
 });

@@ -2,6 +2,8 @@
 
 const {Model} = require(`sequelize`);
 
+const Alias = require(`./alias`);
+
 const defineUser = require(`./user`);
 const defineCategory = require(`./category`);
 const defineArticle = require(`./article`);
@@ -16,7 +18,7 @@ const define = (sequelize) => {
   const Comment = defineComment(sequelize);
 
   User.hasMany(Article, {
-    as: `articles`,
+    as: Alias.ARTICLES,
     foreignKey: {
       name: `authorId`,
       allowNull: false,
@@ -26,12 +28,12 @@ const define = (sequelize) => {
   });
 
   Article.belongsTo(User, {
-    as: `author`,
+    as: Alias.AUTHOR,
     foreignKey: `authorId`,
   });
 
   Article.hasMany(Comment, {
-    as: `comments`,
+    as: Alias.COMMENTS,
     foreignKey: {
       name: `articleId`,
       allowNull: false,
@@ -41,12 +43,12 @@ const define = (sequelize) => {
   });
 
   Comment.belongsTo(Article, {
-    as: `article`,
+    as: Alias.ARTICLE,
     foreignKey: `articleId`,
   });
 
   User.hasMany(Comment, {
-    as: `comments`,
+    as: Alias.COMMENTS,
     foreignKey: {
       name: `authorId`,
       allowNull: false,
@@ -56,7 +58,7 @@ const define = (sequelize) => {
   });
 
   Comment.belongsTo(User, {
-    as: `author`,
+    as: Alias.AUTHOR,
     foreignKey: `authorId`,
   });
 
@@ -72,7 +74,7 @@ const define = (sequelize) => {
 
   Article.belongsToMany(Category, {
     through: ArticleCategory,
-    as: `categories`,
+    as: Alias.CATEGORIES,
     foreignKey: {
       name: `articleId`,
       allowNull: false,
@@ -83,7 +85,7 @@ const define = (sequelize) => {
 
   Category.belongsToMany(Article, {
     through: ArticleCategory,
-    as: `articles`,
+    as: Alias.ARTICLES,
     foreignKey: {
       name: `categoryId`,
       allowNull: false,

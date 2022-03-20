@@ -1,5 +1,7 @@
 "use strict";
 
+const Alias = require(`../models/alias`);
+
 class CommentService {
   constructor(sequelize) {
     this._Comment = sequelize.models.Comment;
@@ -11,7 +13,7 @@ class CommentService {
     const basicIncludedModels = [
       {
         model: this._User,
-        as: `author`,
+        as: Alias.AUTHOR,
         attributes: [`id`, `firstName`, `lastName`, `avatar`],
       },
     ];
@@ -27,7 +29,7 @@ class CommentService {
         ...basicIncludedModels,
         {
           model: this._Article,
-          as: `article`,
+          as: Alias.ARTICLE,
           attributes: [`id`, `title`],
         },
       ]

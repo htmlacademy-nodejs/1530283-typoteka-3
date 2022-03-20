@@ -2,6 +2,8 @@
 
 const Sequelize = require(`sequelize`);
 
+const Alias = require(`../models/alias`);
+
 class ArticleService {
   constructor(sequelize) {
     this._Article = sequelize.models.Article;
@@ -80,14 +82,14 @@ class ArticleService {
         include: [
           {
             model: this._Comment,
-            as: `comments`,
+            as: Alias.COMMENTS,
             distinct: true,
             required: mostCommented,
             attributes: [],
           },
           {
             model: this._Category,
-            as: `categories`,
+            as: Alias.CATEGORIES,
             through: {
               attributes: [],
             },
@@ -124,7 +126,7 @@ class ArticleService {
         {
           model: this._Category,
           through: {attributes: []},
-          as: `categories`,
+          as: Alias.CATEGORIES,
           attributes: [`id`, `name`],
         },
       ],

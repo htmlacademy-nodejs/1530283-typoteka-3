@@ -2,6 +2,8 @@
 
 const Sequelize = require(`sequelize`);
 
+const Alias = require(`../models/alias`);
+
 class CategoryService {
   constructor(sequelize) {
     this._Category = sequelize.models.Category;
@@ -37,7 +39,7 @@ class CategoryService {
       include: [
         {
           model: this._Article,
-          as: `articles`,
+          as: Alias.ARTICLES,
           required: havingArticles,
           attributes: [],
           through: {attributes: []},

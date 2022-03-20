@@ -1,7 +1,7 @@
 mixin previewArticle(article)
   li.preview__item(class={[`preview__item--noimage`]: !article.picture})
     ul.preview__breadcrumbs(style=`flex-wrap:wrap`)
-      each category in article.categoryList
+      each category in article.categories
         li.preview__breadcrumbs-item
           a.preview__breadcrumbs-link(href=`/articles/category/${category.id}`)= category.name
     if article.picture

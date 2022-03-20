@@ -43,7 +43,7 @@ class ArticleService {
                   )
               )
           ),
-          `categoryList`,
+          `categoryObjects`,
         ],
       ]
       : baseAttributes;
@@ -72,33 +72,42 @@ class ArticleService {
       )
       : {};
 
-    const articles = await this._Article.findAll({
-      subQuery: false,
-      attributes,
-      group: [Sequelize.col(`Article.id`)],
-      include: [
-        {
-          model: this._Comment,
-          as: `comments`,
-          distinct: true,
-          required: mostCommented,
-          attributes: [],
-        },
-        {
-          model: this._Category,
-          as: `categories`,
-          through: {
+    const articles = (
+      await this._Article.findAll({
+        subQuery: false,
+        attributes,
+        group: [Sequelize.col(`Article.id`)],
+        include: [
+          {
+            model: this._Comment,
+            as: `comments`,
+            distinct: true,
+            required: mostCommented,
             attributes: [],
           },
-          attributes: [],
-        },
-      ],
-      order,
-      limit,
-      having: havingCategoryId,
-    });
+          {
+            model: this._Category,
+            as: `categories`,
+            through: {
+              attributes: [],
+            },
+            attributes: [],
+          },
+        ],
+        order,
+        limit,
+        having: havingCategoryId,
+      })
+    ).map((article) => article.get());
 
-    return articles.map((article) => article.get());
+    if (withCategories) {
+      articles.forEach((article) => {
+        article.categories = [...article.categoryObjects];
+        delete article.categoryObjects;
+      });
+    }
+
+    return articles;
   }
 
   async findOne(articleId) {

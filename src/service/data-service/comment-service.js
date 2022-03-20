@@ -25,15 +25,15 @@ class CommentService {
       : {};
 
     const includedModels = articleId
-      ? [
+      ? basicIncludedModels
+      : [
         ...basicIncludedModels,
         {
           model: this._Article,
           as: Alias.ARTICLE,
           attributes: [`id`, `title`],
         },
-      ]
-      : basicIncludedModels;
+      ];
 
     const comments = await this._Comment.findAll({
       attributes: [`id`, `text`, `createdAt`, `articleId`],

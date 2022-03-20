@@ -1,5 +1,3 @@
-"use strict";
-
 (() => {
   const POST_METHOD = `POST`;
   const CREATED_STATUS_CODE = 201;

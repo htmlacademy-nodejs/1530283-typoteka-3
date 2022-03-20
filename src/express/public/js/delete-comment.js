@@ -1,5 +1,3 @@
-"use strict";
-
 (() => {
   const NO_CONTENT_STATUS_CODE = 204;
   const DELETE_METHOD = `DELETE`;

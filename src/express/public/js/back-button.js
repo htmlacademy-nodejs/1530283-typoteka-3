@@ -1,5 +1,3 @@
-"use strict";
-
 (() => {
   const backButtonNode = document.querySelector(".button[data-back]");
 

@@ -1,5 +1,3 @@
-"use strict";
-
 (() => {
   const PUBLICATION_DATE_INPUT_ID = `#publication-date`;
 

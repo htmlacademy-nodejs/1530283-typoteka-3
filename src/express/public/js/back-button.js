@@ -1,5 +1,5 @@
 (() => {
-  const backButton = document.querySelector('.post__backwards')
+  const backButton = document.querySelector('.button[data-back]')
 
   if (!backButton) {
     return;

@@ -9,7 +9,7 @@ block content
           li.notes__list-item
             time.notes__item-time(datetime=article.createdCEODate)= article.createdDate
             a.notes__item-text(href=`/articles/edit/${article.id}`)= article.title
-            button.notes__button.button.button--close-item(type='button' style=`background-position:calc(50% + 1px) 50%` data-article-id=article.id)
+            button.notes__button.button.button--close-item(type='button' style=`background-position:calc(50% + 1px) 50%` data-delete data-article-id=article.id)
               span.visually-hidden Удалить статью
 
 block scripts

@@ -1,48 +1,51 @@
 (() => {
   const SUCCESS_STATUS_CODE = 204;
+  const DELETE_METHOD = `DELETE`;
 
-  const commentsList = document.querySelector(`.notes__list`);
+  const getApiEndpoint = (id) => `/my/articles/${id}`;
 
-  const createError = () => {
-     const paragraph = document.createElement('p');
+  const commentsListNode = document.querySelector(`.notes__list`);
 
-     paragraph.style.color = 'red';
+  const createErrorNode = () => {
+     const errorNode = document.createElement('p');
 
-     paragraph.innerHTML = 'Произошла ошибка! Не удалось удалить статью =(';
+     errorNode.style.color = 'red';
 
-     return paragraph;
+     errorNode.textContent = 'Произошла ошибка! Не удалось удалить статью =(';
+
+     return errorNode;
   }
 
-  commentsList.addEventListener('click', async (evt) => {
-    const deleteButton = evt.target.closest(`.button--close-item`);
+  commentsListNode.addEventListener('click', async (evt) => {
+    const deleteButtonNode = evt.target.closest(`.button[data-delete]`);
 
-    if (!deleteButton || !evt.currentTarget.contains(deleteButton)) {
+    if (!deleteButtonNode || !evt.currentTarget.contains(deleteButtonNode)) {
       return;
     }
 
     evt.preventDefault();
 
-    deleteButton.disabled = true;
+    deleteButtonNode.disabled = true;
 
-    const articleContainer = deleteButton.closest(`.notes__list-item`);
+    const articleItemNode = deleteButtonNode.closest(`.notes__list-item`);
+
+    const {articleId} = deleteButtonNode.dataset;
+    const apiEndpoint = getApiEndpoint(articleId);
 
     try {
-
-      const {articleId} = deleteButton.dataset;
-
-      const response = await fetch(`/my/articles/${articleId}`, {
-        method: 'DELETE'
+      const response = await fetch(apiEndpoint, {
+        method: DELETE_METHOD
       });
 
       if (response.status !== SUCCESS_STATUS_CODE) {
         throw new Error('Unable to delete article')
       }
 
-      articleContainer.remove();
+      articleItemNode.remove();
     } catch (error) {
-      articleContainer.append(createError(error));
+      articleItemNode.append(createErrorNode(error));
     }
 
-    deleteButton.disabled = false;
+    deleteButtonNode.disabled = false;
   })
 })()

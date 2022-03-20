@@ -12,6 +12,7 @@ const {
 const {getCommentTemplateData} = require(`../../utils/comment`);
 
 const {getImageFileName} = require(`../../utils/image`);
+const {HttpCode} = require(`../../constants`);
 
 const AUTHOR_ID = 1;
 const UPLOAD_DIR = `../upload/img`;
@@ -194,11 +195,11 @@ articlesRoutes.get(`/:articleId`, async (req, res, next) => {
 articlesRoutes.post(
     `/:articleId/comments`,
     upload.none(),
-    async (req, res, next) => {
+    async (req, res) => {
       const {articleId} = req.params;
 
       try {
-        await api.createComment({
+        const createdComment = await api.createComment({
           articleId,
           data: {
             ...req.body,
@@ -206,10 +207,9 @@ articlesRoutes.post(
           },
         });
 
-        res.redirect(`/articles/${articleId}#comments`);
+        res.status(HttpCode.CREATED).json(createdComment);
       } catch (error) {
-      // Отображение ошибки
-        next(error);
+        res.status(HttpCode.INTERNAL_SERVER_ERROR).end();
       }
     }
 );

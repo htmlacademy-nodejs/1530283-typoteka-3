@@ -51,7 +51,19 @@ class CommentService {
   }
 
   async create(commentData) {
-    return await this._Comment.create(commentData);
+    const createdComment = await this._Comment.create(commentData);
+
+    return await this._Comment.findOne({
+      attributes: [`id`, `text`, `createdAt`, `articleId`],
+      include: {
+        model: this._User,
+        as: Alias.AUTHOR,
+        attributes: [`id`, `firstName`, `lastName`, `avatar`],
+      },
+      where: {
+        id: createdComment.id,
+      },
+    });
   }
 
   async drop(commentId) {

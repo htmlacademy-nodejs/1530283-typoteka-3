@@ -42,6 +42,9 @@ block content
               label
                 textarea(rows='1' name='text' placeholder='Присоединиться к обсуждению')
               button.comments__button.button.button--colored(type='submit') Опубликовать
+            p.comments__error
 
 block scripts
+  script(src='https://unpkg.com/dayjs@1.8.21/dayjs.min.js')
   script(src='/js/back-button.js')
+  script(src='/js/add-comment.js')

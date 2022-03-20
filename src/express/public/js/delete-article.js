@@ -1,7 +1,7 @@
 "use strict";
 
 (() => {
-  const SUCCESS_STATUS_CODE = 204;
+  const NO_CONTENT_STATUS_CODE = 204;
   const DELETE_METHOD = `DELETE`;
 
   const getApiEndpoint = (id) => `/my/articles/${id}`;
@@ -39,7 +39,7 @@
         method: DELETE_METHOD,
       });
 
-      if (response.status !== SUCCESS_STATUS_CODE) {
+      if (response.status !== NO_CONTENT_STATUS_CODE) {
         throw new Error("Unable to delete article");
       }
 

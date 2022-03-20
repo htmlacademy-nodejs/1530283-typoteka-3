@@ -175,6 +175,16 @@ describe(`API creates new comment for an article with given id if data is correc
     authorId: 1,
   };
 
+  const createdComment = {
+    text: `Text`,
+    author: {
+      id: 1,
+      firstName: `Иван`,
+      lastName: `Иванов`,
+      avatar: `avatar-1.png`,
+    },
+  };
+
   let app;
 
   beforeAll(async () => {
@@ -188,7 +198,7 @@ describe(`API creates new comment for an article with given id if data is correc
   test(`Created comment has id`, () => expect(response.body.id).toBeDefined());
 
   test(`Created comment contains post data`, () =>
-    expect(response.body).toEqual(expect.objectContaining(newComment)));
+    expect(response.body).toEqual(expect.objectContaining(createdComment)));
 
   test(`Comments count is increased`, async () =>
     request(app)

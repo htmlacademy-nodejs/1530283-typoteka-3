@@ -36,7 +36,7 @@ block content
               li.last__list-item
                 img.last__list-image(src=`/img/${comment.author.avatar}` width='20' height='20' alt='Аватар пользователя')
                 b.last__list-name #{comment.author.firstName} #{comment.author.lastName}
-                a.last__list-link(href=`/articles/${comment.articleId}`)= comment.text
+                a.last__list-link(href=`/articles/${comment.articleId}#comments`)= comment.text
           else
             p Здесь пока ничего нет
 

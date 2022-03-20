@@ -21,7 +21,7 @@ block content
               button.category__button.button.button--category(type='submit') Сохранить
 
             if Number(category.articlesCount) === 0
-              button.category__button.button.button--category(type='button' data-category-id=category.id) Удалить
+              button.category__button.button.button--category(type='button' data-delete data-category-id=category.id) Удалить
 
 block scripts
   script(src='/js/categories.js')

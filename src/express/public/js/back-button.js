@@ -1,11 +1,11 @@
 (() => {
-  const backButton = document.querySelector('.button[data-back]')
+  const backButtonNode = document.querySelector('.button[data-back]')
 
-  if (!backButton) {
+  if (!backButtonNode) {
     return;
   }
 
-  backButton.addEventListener('click', (evt) => {
+  backButtonNode.addEventListener('click', (evt) => {
     evt.preventDefault();
     history.back();
   })

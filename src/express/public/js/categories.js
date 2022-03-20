@@ -1,95 +1,115 @@
 (() => {
-  const categoriesContainer = document.querySelector(`.category__list`);
-
-  const createErrorContainer = () => {
-    const errorContainer = document.createElement(`p`);
-
-    errorContainer.classList.add(`category-item-error`);
-
-    errorContainer.style.color = `red`;
-    errorContainer.style.position = `absolute`;
-    errorContainer.style.bottom = `-20px`;
-    errorContainer.style.left = `40px`;
-    errorContainer.style.right = `0`;
-
-    return errorContainer;
+  const HttpMethod = {
+    PUT: `PUT`,
+    DELETE: `DELETE`,
   };
 
-  categoriesContainer.addEventListener(`submit`, async (evt) => {
-    const updateForm = evt.target.closest(`form`);
+  const HttpSuccessCode = {
+    OK: 200,
+    NO_CONTENT: 204,
+  };
 
-    if (!updateForm || !evt.currentTarget.contains(updateForm)) {
+  const getApiEndpoint = (id) => `/my/categories/${id}`;
+
+  const categoriesListNode = document.querySelector(`.category__list`);
+
+  const createErrorNode = () => {
+    const errorNode = document.createElement(`p`);
+
+    errorNode.classList.add(`category-item-error`);
+
+    errorNode.style.color = `red`;
+    errorNode.style.position = `absolute`;
+    errorNode.style.bottom = `-20px`;
+    errorNode.style.left = `40px`;
+    errorNode.style.right = `0`;
+
+    return errorNode;
+  };
+
+  categoriesListNode.addEventListener(`submit`, async (evt) => {
+    const updateFormNode = evt.target.closest(`form`);
+
+    if (!updateFormNode || !evt.currentTarget.contains(updateFormNode)) {
       return;
     }
 
     evt.preventDefault();
 
-    let errorContainer = document.querySelector(`.category-item-error`);
+    const categoryItemNode = updateFormNode.closest(`.category__list-item`);
 
-    if (!errorContainer) {
-      errorContainer = createErrorContainer();
-      updateForm.append(errorContainer);
+    let errorNode = document.querySelector(`.category-item-error`);
+
+    if (!errorNode) {
+      errorNode = createErrorNode();
+      categoryItemNode.append(errorNode);
     }
 
-    const input = updateForm.querySelector(`input[name='name']`);
-    const submitButton = updateForm.querySelector(`button[type='submit']`);
+    const inputNode = updateFormNode.querySelector(`input[name='name']`);
+    const submitButtonNode = updateFormNode.querySelector(
+      `button[type='submit']`
+    );
 
-    const formData = new FormData(updateForm);
+    const formData = new FormData(updateFormNode);
 
-    input.disabled = true;
-    submitButton.disabled = true;
+    inputNode.disabled = true;
+    submitButtonNode.disabled = true;
+
+    const apiEndpoint = getApiEndpoint(updateFormNode.dataset.categoryId);
 
     try {
-      const response = await fetch(`/my/categories/${updateForm.dataset.categoryId}`, {
-        method: `PUT`,
-        body: formData
-      })
+      const response = await fetch(apiEndpoint, {
+        method: HttpMethod.PUT,
+        body: formData,
+      });
 
-      if (response.status !== 200) {
-        throw new Error(`Category update failed`)
+      if (response.status !== HttpSuccessCode.OK) {
+        throw new Error(`Category update failed`);
       }
 
-      errorContainer.textContent = ``;
+      errorNode.textContent = ``;
     } catch (error) {
-      errorContainer.textContent = `Произошла ошибка! Не удалось сохранить изменения =(`;
+      errorNode.textContent = `Произошла ошибка! Не удалось сохранить изменения =(`;
     }
 
-    input.disabled = false;
-    submitButton.disabled = false;
-  })
+    inputNode.disabled = false;
+    submitButtonNode.disabled = false;
+  });
 
-  categoriesContainer.addEventListener(`click`, async (evt) => {
-    const deleteButton = evt.target.closest(`.button--category[type='button']`);
+  categoriesListNode.addEventListener(`click`, async (evt) => {
+    const deleteButtonNode = evt.target.closest(`.button[data-delete]`);
 
-    if (!deleteButton || !evt.currentTarget.contains(deleteButton)) {
+    if (!deleteButtonNode || !evt.currentTarget.contains(deleteButtonNode)) {
       return;
     }
 
-    const categoryContainer = deleteButton.closest(`.category__list-item`);
+    const categoryItemNode = deleteButtonNode.closest(`.category__list-item`);
 
-    let errorContainer = document.querySelector(`.category-item-error`);
+    let errorNode = document.querySelector(`.category-item-error`);
 
-    if (!errorContainer) {
-      errorContainer = createErrorContainer();
-      categoryContainer.append(errorContainer);
+    if (!errorNode) {
+      errorNode = createErrorNode();
+      categoryItemNode.append(errorNode);
     }
 
-    deleteButton.disabled = true;
+    deleteButtonNode.disabled = true;
+
+    const apiEndpoint = getApiEndpoint(deleteButtonNode.dataset.categoryId);
 
     try {
-      const response = await fetch(`/my/categories/${deleteButton.dataset.categoryId}`, {
-        method: `DELETE`,
-      })
+      const response = await fetch(apiEndpoint, {
+        method: HttpMethod.DELETE,
+      });
 
-      if (response.status !== 204) {
-        throw new Error(`Category deletion failed`)
+      if (response.status !== HttpSuccessCode.NO_CONTENT) {
+        throw new Error(`Category deletion failed`);
       }
 
-      categoryContainer.remove();
+      categoryItemNode.remove();
     } catch (error) {
-      errorContainer.textContent = `Произошла ошибка! Не удалось удалить категорию =(`;
+      errorNode.textContent = `Произошла ошибка! Не удалось удалить категорию =(`;
     }
 
-    deleteButton.disabled = false;
-  })
+    deleteButtonNode.disabled = false;
+  });
 })();

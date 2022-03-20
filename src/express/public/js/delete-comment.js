@@ -11,7 +11,8 @@
 
     errorNode.style.color = "red";
 
-    errorNode.textContent = "Произошла ошибка! Не удалось удалить комментарий =(";
+    errorNode.textContent =
+      "Произошла ошибка! Не удалось удалить комментарий =(";
 
     return errorNode;
   };

@@ -12,8 +12,8 @@ block content
                 h3 Дата публикации
                 .new-publication__date-form-division
                   .new-publication__date-block
-                    label(for='new-publication-date' aria-label='Календарь')
-                    input#new-publication-date(type='text' name='date' placeholder=article.createdAt value=article.createdAt style='width:90px')
+                    label(for='publication-date' aria-label='Календарь')
+                    input#publication-date(type='text' name='date' data-default-value=article.createdAt style='width:90px')
               button.new-publication__button.button.button--colored(type='submit')= isNew ? `Опубликовать` : `Сохранить`
 
             if error
@@ -56,18 +56,4 @@ block content
                       = article.fullText
 
 block scripts
-  script(type='text/javascript').
-    flatpickr('#new-publication-date', {
-      defaultDate: `#{article.createdAt}`,
-      dateFormat: `d-m-Y`,
-    })
-
-    const clearFileButton = document.querySelector(`.button[data-delete]`);
-    const fileInput = document.querySelector(`input[name="upload"]`);
-    const fileNameInput = document.querySelector(`input[name="filename"]`);
-
-    clearFileButton.addEventListener(`click`, () => {
-      fileInput.value = ``;
-      fileNameInput.value = ``;
-    });
-
+  script(src='/js/article-form.js' type="module")

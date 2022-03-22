@@ -21,7 +21,7 @@ module.exports = (app, articleService, commentService) => {
 
       const articles = await articleService.findAndCountAll({
         limit: limit ? Number(limit) : undefined,
-        offset: offset ? Number(limit) : undefined,
+        offset: offset ? Number(offset) : undefined,
         mostCommented: Boolean(mostCommented),
         withCategories: Boolean(withCategories),
         categoryId: categoryId ? Number(categoryId) : undefined,

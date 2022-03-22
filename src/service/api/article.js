@@ -17,10 +17,11 @@ module.exports = (app, articleService, commentService) => {
 
   articlesRoutes.get(`/`, async (req, res, next) => {
     try {
-      const {limit, mostCommented, withCategories, categoryId} = req.query;
+      const {limit, offset, mostCommented, withCategories, categoryId} = req.query;
 
-      const articles = await articleService.findAll({
+      const articles = await articleService.findAndCountAll({
         limit: limit ? Number(limit) : undefined,
+        offset: offset ? Number(limit) : undefined,
         mostCommented: Boolean(mostCommented),
         withCategories: Boolean(withCategories),
         categoryId: categoryId ? Number(categoryId) : undefined,

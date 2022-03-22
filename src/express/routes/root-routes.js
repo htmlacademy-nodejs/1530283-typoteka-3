@@ -14,18 +14,18 @@ const LATEST_COMMENTS_LIMIT = 4;
 
 rootRoutes.get(`/`, async (_req, res, next) => {
   try {
-    const [articles, categories, mostCommentedArticles, latestComments] =
+    const [articles, mostCommentedArticles, categories, latestComments] =
       await Promise.all([
-        api.getArticles({withCategories: true}),
+        api.getAndCountArticles({withCategories: true}),
+        api.getAndCountArticles({limit: MOST_COMMENTED_ARTICLES_LIMIT, mostCommented: true}),
         api.getCategories({withArticlesCount: true, havingArticles: true}),
-        api.getArticles({limit: MOST_COMMENTED_ARTICLES_LIMIT, mostCommented: true}),
         api.getComments({limit: LATEST_COMMENTS_LIMIT}),
       ]);
 
     res.render(`articles/all-articles`, {
-      articles: articles.map(getArticleTemplateData),
+      articles: articles.rows.map(getArticleTemplateData),
       categories,
-      mostCommentedArticles: mostCommentedArticles.map(getArticleTemplateData),
+      mostCommentedArticles: mostCommentedArticles.rows.map(getArticleTemplateData),
       latestComments: latestComments.map(getCommentTemplateData),
     });
   } catch (error) {

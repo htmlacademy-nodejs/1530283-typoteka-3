@@ -13,13 +13,13 @@ const api = getAPI();
 
 myRoutes.get(`/`, async (_req, res, next) => {
   try {
-    const articles = await api.getArticles();
+    const articles = await api.getAndCountArticles();
 
     res.render(`admin/articles`, {
       user: {
         isAdmin: true,
       },
-      articles: articles.map(getArticleTemplateData),
+      articles: articles.rows.map(getArticleTemplateData),
     });
   } catch (error) {
     next(error);

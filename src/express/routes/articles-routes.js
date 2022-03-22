@@ -36,7 +36,7 @@ const upload = multer({storage});
 articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
   try {
     const [articles, categories] = await Promise.all([
-      api.getArticles({
+      api.getAndCountArticles({
         categoryId: req.params.categoryId,
         withCategories: true,
       }),
@@ -45,7 +45,7 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
 
     res.render(`articles/articles-by-category`, {
       user: {},
-      articles: articles.map(getArticleTemplateData),
+      articles: articles.rows.map(getArticleTemplateData),
       categories,
       currentCategoryId: Number(req.params.categoryId),
     });

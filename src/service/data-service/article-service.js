@@ -12,7 +12,13 @@ class ArticleService {
     this._ArticleCategory = sequelize.models.Category;
   }
 
-  async findAll({limit, mostCommented, categoryId, withCategories} = {}) {
+  async findAndCountAll({
+    limit,
+    mostCommented,
+    categoryId,
+    withCategories,
+    offset = 0,
+  } = {}) {
     const baseAttributes = [
       `id`,
       `title`,
@@ -74,42 +80,44 @@ class ArticleService {
       )
       : {};
 
-    const articles = (
-      await this._Article.findAll({
-        subQuery: false,
-        attributes,
-        group: [Sequelize.col(`Article.id`)],
-        include: [
-          {
-            model: this._Comment,
-            as: Alias.COMMENTS,
-            distinct: true,
-            required: mostCommented,
+    const result = await this._Article.findAndCountAll({
+      subQuery: false,
+      attributes,
+      group: [Sequelize.col(`Article.id`)],
+      include: [
+        {
+          model: this._Comment,
+          as: Alias.COMMENTS,
+          distinct: true,
+          required: mostCommented,
+          attributes: [],
+        },
+        {
+          model: this._Category,
+          as: Alias.CATEGORIES,
+          through: {
             attributes: [],
           },
-          {
-            model: this._Category,
-            as: Alias.CATEGORIES,
-            through: {
-              attributes: [],
-            },
-            attributes: [],
-          },
-        ],
-        order,
-        limit,
-        having: havingCategoryId,
-      })
-    ).map((article) => article.get());
+          attributes: [],
+        },
+      ],
+      order,
+      limit,
+      offset,
+      having: havingCategoryId,
+    });
+
+    result.rows = result.rows.map((row) => row.get());
+    result.count = result.count.length;
 
     if (withCategories) {
-      articles.forEach((article) => {
+      result.rows.forEach((article) => {
         article.categories = [...article.categoryObjects];
         delete article.categoryObjects;
       });
     }
 
-    return articles;
+    return result;
   }
 
   async findOne(articleId) {

@@ -1,4 +1,4 @@
-mixin pagination(page, totalPages)
+mixin pagination(currentPage, totalPages)
   -
     const DISABLED_BUTTON_CLASS = `button--disabled`;
     const ACTIVE_ITEM_CLASS = `pagination__item--active`;
@@ -9,36 +9,36 @@ mixin pagination(page, totalPages)
 
     const getPageUrl = (page) => `?page=${page}`;
 
-    let start = page - WIDTH;
-    let end = page + WIDTH;
+    let startPage = currentPage - WIDTH;
+    let endPage = currentPage + WIDTH;
 
-    if (start < 1) {
-      end += 1 - start;
-      start = 1;
+    if (startPage < MIN_PAGE) {
+      endPage += MIN_PAGE - startPage;
+      startPage = MIN_PAGE;
     }
 
-    if (end > totalPages) {
-      start -= end - totalPages;
-      end = totalPages;
+    if (endPage > MAX_PAGE) {
+      startPage -= endPage - MAX_PAGE;
+      endPage = MAX_PAGE;
     }
 
-    if (start < 1) {
-      start = 1;
+    if (startPage < MIN_PAGE) {
+      startPage = MIN_PAGE;
     }
 
-    let i = start - 1
+    let page = startPage - 1
 
   .preview__toggle-wrapper
     ul.preview__pagination.pagination
       li
-        a.pagination__button.button.button--backwards(class={[DISABLED_BUTTON_CLASS]: page <= MIN_PAGE} href=getPageUrl(page - 1) aria-label='Страница назад') Назад
+        a.pagination__button.button.button--backwards(class={[DISABLED_BUTTON_CLASS]: currentPage <= MIN_PAGE} href=getPageUrl(currentPage - 1) aria-label='Страница назад') Назад
 
-      while i++ < end
-        li.pagination__item(class={[ACTIVE_ITEM_CLASS]: i === page})
-          if i !== page
-            a(href=getPageUrl(i))= i
+      while page++ < endPage
+        li.pagination__item(class={[ACTIVE_ITEM_CLASS]: page === currentPage})
+          if page !== currentPage
+            a(href=getPageUrl(page))= page
           else
-            a= i
+            a= page
 
       li
-        a.pagination__button.button.button--forward(class={[DISABLED_BUTTON_CLASS]: page >= MAX_PAGE} href=getPageUrl(page + 1) aria-label='Страница вперед') Вперед
+        a.pagination__button.button.button--forward(class={[DISABLED_BUTTON_CLASS]: currentPage >= MAX_PAGE} href=getPageUrl(currentPage + 1) aria-label='Страница вперед') Вперед

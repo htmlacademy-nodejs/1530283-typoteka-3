@@ -17,7 +17,7 @@ class ArticleService {
     mostCommented,
     categoryId,
     withCategories,
-    offset = 0,
+    offset,
   } = {}) {
     const baseAttributes = [
       `id`,

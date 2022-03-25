@@ -158,17 +158,17 @@ describe(`API returns a list of all comments`, () => {
 });
 
 describe(`API returns limited list of comments`, () => {
-  const LIMIT = 2;
+  const limit = 2;
 
   beforeAll(async () => {
     const app = await createAPI();
-    response = await request(app).get(`/comments?limit=${LIMIT}`);
+    response = await request(app).get(`/comments?limit=${limit}`);
   });
 
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
   test(`Should return correct comments count`, () =>
-    expect(response.body.length).toBe(LIMIT));
+    expect(response.body.length).toBe(limit));
 });
 
 describe(`API should delete existent comment`, () => {

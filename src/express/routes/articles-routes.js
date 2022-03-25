@@ -14,6 +14,9 @@ const {getCommentTemplateData} = require(`../../utils/comment`);
 const {getImageFileName} = require(`../../utils/image`);
 const {HttpCode} = require(`../../constants`);
 
+const DEFAULT_ARTICLES_PAGE = 1;
+const ARTICLES_LIMIT = 8;
+
 const AUTHOR_ID = 1;
 const UPLOAD_DIR = `../upload/img`;
 const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
@@ -34,20 +37,26 @@ const storage = multer.diskStorage({
 const upload = multer({storage});
 
 articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
+  const page = req.query.page ? Number(req.query.page) : DEFAULT_ARTICLES_PAGE;
+
   try {
     const [articles, categories] = await Promise.all([
-      api.getArticles({
+      api.getAndCountArticles({
         categoryId: req.params.categoryId,
         withCategories: true,
+        limit: ARTICLES_LIMIT,
+        offset: (page - 1) * ARTICLES_LIMIT,
       }),
       api.getCategories({withArticlesCount: true, havingArticles: true}),
     ]);
 
     res.render(`articles/articles-by-category`, {
       user: {},
-      articles: articles.map(getArticleTemplateData),
+      articles: articles.rows.map(getArticleTemplateData),
       categories,
       currentCategoryId: Number(req.params.categoryId),
+      page,
+      totalPages: Math.ceil(articles.count / ARTICLES_LIMIT),
     });
   } catch (error) {
     next(error);

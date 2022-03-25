@@ -1,0 +1,44 @@
+mixin pagination(currentPage, totalPages)
+  -
+    const DISABLED_BUTTON_CLASS = `button--disabled`;
+    const ACTIVE_ITEM_CLASS = `pagination__item--active`;
+
+    const WIDTH = 2;
+    const MIN_PAGE = 1;
+    const MAX_PAGE = totalPages;
+
+    const getPageUrl = (page) => `?page=${page}`;
+
+    let startPage = currentPage - WIDTH;
+    let endPage = currentPage + WIDTH;
+
+    if (startPage < MIN_PAGE) {
+      endPage += MIN_PAGE - startPage;
+      startPage = MIN_PAGE;
+    }
+
+    if (endPage > MAX_PAGE) {
+      startPage -= endPage - MAX_PAGE;
+      endPage = MAX_PAGE;
+    }
+
+    if (startPage < MIN_PAGE) {
+      startPage = MIN_PAGE;
+    }
+
+    let page = startPage - 1
+
+  .preview__toggle-wrapper
+    ul.preview__pagination.pagination
+      li
+        a.pagination__button.button.button--backwards(class={[DISABLED_BUTTON_CLASS]: currentPage <= MIN_PAGE} href=getPageUrl(currentPage - 1) aria-label='Страница назад') Назад
+
+      while page++ < endPage
+        li.pagination__item(class={[ACTIVE_ITEM_CLASS]: page === currentPage})
+          if page !== currentPage
+            a(href=getPageUrl(page))= page
+          else
+            a= page
+
+      li
+        a.pagination__button.button.button--forward(class={[DISABLED_BUTTON_CLASS]: currentPage >= MAX_PAGE} href=getPageUrl(currentPage + 1) aria-label='Страница вперед') Вперед

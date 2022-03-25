@@ -21,7 +21,7 @@ class API {
     return response.data;
   }
 
-  getArticles(params) {
+  getAndCountArticles(params) {
     return this._load(`/articles`, {params});
   }
 

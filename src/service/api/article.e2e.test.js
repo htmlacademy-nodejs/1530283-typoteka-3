@@ -155,7 +155,10 @@ describe(`API returns a list of all articles`, () => {
   test(`Status code 200`, () => expect(response.statusCode).toBe(HttpCode.OK));
 
   test(`Returns a list of correct length`, () =>
-    expect(response.body.length).toBe(3));
+    expect(response.body.rows.length).toBe(3));
+
+  test(`Returns correct total count`, () =>
+    expect(response.body.count).toBe(3));
 });
 
 describe(`API returns an article with given id`, () => {
@@ -219,7 +222,7 @@ describe(`API creates an article if data is valid`, () => {
   test(`Articles count is increased`, () =>
     request(app)
       .get(`/articles`)
-      .expect(({body}) => expect(body.length).toBe(4)));
+      .expect(({body}) => expect(body.count).toBe(4)));
 });
 
 describe(`API refuses to create an article if data is invalid`, () => {
@@ -252,7 +255,7 @@ describe(`API refuses to create an article if data is invalid`, () => {
   test(`Articles count is not changed`, () =>
     request(app)
       .get(`/articles`)
-      .expect(({body}) => expect(body.length).toBe(3)));
+      .expect(({body}) => expect(body.count).toBe(3)));
 });
 
 describe(`API changes existent article with given id`, () => {
@@ -291,7 +294,7 @@ describe(`API changes existent article with given id`, () => {
   test(`Articles count is not changed`, () =>
     request(app)
       .get(`/articles`)
-      .expect(({body}) => expect(body.length).toBe(3)));
+      .expect(({body}) => expect(body.count).toBe(3)));
 });
 
 describe(`API returns status code 404 when trying to change non-existent article`, () => {
@@ -347,7 +350,7 @@ describe(`API correctly deletes an article with given id`, () => {
   test(`Articles count is decreased`, () =>
     request(app)
       .get(`/articles`)
-      .expect(({body}) => expect(body.length).toBe(2)));
+      .expect(({body}) => expect(body.count).toBe(2)));
 });
 
 describe(`API refuses to delete non-existent article`, () => {
@@ -364,5 +367,5 @@ describe(`API refuses to delete non-existent article`, () => {
   test(`Articles count is not changed`, () =>
     request(app)
       .get(`/articles`)
-      .expect(({body}) => expect(body.length).toBe(3)));
+      .expect(({body}) => expect(body.count).toBe(3)));
 });

@@ -3,14 +3,18 @@ extends ../layout.pug
 block content
   main.articles-category
     h1 Бизнес
+
     section.articles-category__theme-list
       h2.visually-hidden Список тем
       ul.themes
         each category in categories
           - const isActive = category.id === currentCategoryId
           +categoryTab(category, isActive)
+
     section.articles-category__list.preview
       h2.visually-hidden Список превью статей
       ul.preview__list
         each article in articles
           +previewArticle(article)
+
+    +pagination(page, totalPages)

@@ -1,8 +1,8 @@
 "use strict";
 
 const {Router} = require(`express`);
-const categoryExists = require(`./middlewares/category-exists`);
 const {HttpCode} = require(`../../constants`);
+const categoryExists = require(`./middlewares/category-exists`);
 const categoryValidator = require(`./middlewares/category-validator`);
 
 module.exports = (app, categoryService) => {
@@ -26,21 +26,25 @@ module.exports = (app, categoryService) => {
     }
   });
 
-  categoriesRoutes.post(`/`, categoryValidator, async (req, res, next) => {
-    try {
-      const newCategory = await categoryService.create(req.body);
+  categoriesRoutes.post(
+      `/`,
+      categoryValidator(categoryService),
+      async (req, res, next) => {
+        try {
+          const newCategory = await categoryService.create(req.body);
 
-      res.status(HttpCode.CREATED).json(newCategory);
-    } catch (error) {
-      next(error);
-    }
-  });
+          res.status(HttpCode.CREATED).json(newCategory);
+        } catch (error) {
+          next(error);
+        }
+      }
+  );
 
   categoriesRoutes.use(`/:categoryId`, categoryExists(categoryService));
 
   categoriesRoutes.put(
       `/:categoryId`,
-      categoryValidator,
+      categoryValidator(categoryService),
       async (req, res, next) => {
         try {
           const updatedCategory = await categoryService.update(

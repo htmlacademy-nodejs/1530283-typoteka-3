@@ -4,21 +4,26 @@ block content
   main.main-page.main-page--padding
     section.main-page__category.category
       h1.category__title Категории
+
       .category__add-form
-        form(action='/my/categories' method='POST' enctype='multipart/form-data')
-          input#add-form-add-category(type='text' name='name' placeholder='Новая категория')
+        form(action='/my/categories' method='POST' enctype='multipart/form-data' autocomplete='off')
+          input#add-form-add-category(type='text' name='name' value=addFormData.name placeholder='Новая категория')
           label(for='add-form-add-category')
             span.visually-hidden Добавить категорию
           button.category__button.button.button--category(type='submit') Добавить
+        p.category__error.category__error--add-form= addFormErrors.name
+
       ul.category__list
         each category in categories
           - const id = `modify-form-category-${category.id}`
           li.category__list-item
-            form(action='#' method='POST' enctype='multipart/form-data' data-category-id=category.id)
-              input(id=id type='text' name='name' value=category.name)
+            form(action='#' method='POST' enctype='multipart/form-data' autocomplete='off' data-category-id=category.id)
+              input(id=id type='text' name='name' value=category.name data-value=category.name)
               label(for=id)
                 span.visually-hidden Редактировать категорию
               button.category__button.button.button--category(type='submit') Сохранить
+
+            p.category__error
 
             if Number(category.articlesCount) === 0
               button.category__button.button.button--category(type='button' data-delete data-category-id=category.id) Удалить

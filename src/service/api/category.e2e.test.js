@@ -239,6 +239,69 @@ describe(`API refuses to create a category if data is invalid`, () => {
       .expect(({body}) => expect(body.length).toBe(13)));
 });
 
+describe(`API refuses to create a category if name is empty`, () => {
+  const invalidNewCategory = {
+    name: ``,
+  };
+
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).post(`/categories`).send(invalidNewCategory);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Categories count is not changed`, () =>
+    request(app)
+      .get(`/categories`)
+      .expect(({body}) => expect(body.length).toBe(13)));
+});
+
+describe(`API refuses to create a category if name is too short`, () => {
+  const invalidNewCategory = {
+    name: `Де`,
+  };
+
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).post(`/categories`).send(invalidNewCategory);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Categories count is not changed`, () =>
+    request(app)
+      .get(`/categories`)
+      .expect(({body}) => expect(body.length).toBe(13)));
+});
+
+describe(`API refuses to create a category if name is too long`, () => {
+  const invalidNewCategory = {
+    name: `ДеревьяДеревьяДеревьяДеревьяДеревьяДеревьяДеревьяДеревьяДеревьяДеревья`,
+  };
+
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).post(`/categories`).send(invalidNewCategory);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Categories count is not changed`, () =>
+    request(app)
+      .get(`/categories`)
+      .expect(({body}) => expect(body.length).toBe(13)));
+});
+
 describe(`API refuses to create a category if name exists already`, () => {
   const invalidNewCategory = {
     name: `Деревья`,
@@ -251,8 +314,8 @@ describe(`API refuses to create a category if name exists already`, () => {
     response = await request(app).post(`/categories`).send(invalidNewCategory);
   });
 
-  test(`Status code 500`, () =>
-    expect(response.statusCode).toBe(HttpCode.INTERNAL_SERVER_ERROR));
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
 
   test(`Categories count is not changed`, () =>
     request(app)
@@ -304,6 +367,75 @@ describe(`API refuses to update a category if data is invalid`, () => {
       .expect(({body}) => expect(body[12].name).toBe(`Деревья`)));
 });
 
+describe(`API refuses to update a category if name is empty`, () => {
+  const invalidUpdatedCategory = {
+    name: ``,
+  };
+
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app)
+      .put(`/categories/7`)
+      .send(invalidUpdatedCategory);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Categories count is not changed`, () =>
+    request(app)
+      .get(`/categories`)
+      .expect(({body}) => expect(body.length).toBe(13)));
+});
+
+describe(`API refuses to update a category if name is too short`, () => {
+  const invalidUpdatedCategory = {
+    name: `Де`,
+  };
+
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app)
+      .put(`/categories/7`)
+      .send(invalidUpdatedCategory);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Categories count is not changed`, () =>
+    request(app)
+      .get(`/categories`)
+      .expect(({body}) => expect(body.length).toBe(13)));
+});
+
+describe(`API refuses to update a category if name is too long`, () => {
+  const invalidUpdatedCategory = {
+    name: `ДеревьяДеревьяДеревьяДеревьяДеревьяДеревьяДеревьяДеревьяДеревьяДеревья`,
+  };
+
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app)
+      .put(`/categories/7`)
+      .send(invalidUpdatedCategory);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Categories count is not changed`, () =>
+    request(app)
+      .get(`/categories`)
+      .expect(({body}) => expect(body.length).toBe(13)));
+});
+
 describe(`API refuses to update a category if name exists already`, () => {
   const invalidUpdatedCategory = {
     name: `Деревья`,
@@ -318,8 +450,8 @@ describe(`API refuses to update a category if name exists already`, () => {
       .send(invalidUpdatedCategory);
   });
 
-  test(`Status code 500`, () =>
-    expect(response.statusCode).toBe(HttpCode.INTERNAL_SERVER_ERROR));
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
 
   test(`Categories count is not changed`, () =>
     request(app)

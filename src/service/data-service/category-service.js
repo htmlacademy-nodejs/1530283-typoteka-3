@@ -56,6 +56,12 @@ class CategoryService {
     await this._Category.findByPk(categoryId);
   }
 
+  async findByName(name) {
+    const category = await this._Category.findOne({where: {name}});
+
+    return category && category.get();
+  }
+
   async create(newCategoryData) {
     return await this._Category.create(newCategoryData);
   }

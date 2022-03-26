@@ -7,25 +7,12 @@
   const HttpSuccessCode = {
     OK: 200,
     NO_CONTENT: 204,
+    BAD_REQUEST: 400,
   };
 
   const getApiEndpoint = (id) => `/my/categories/${id}`;
 
   const categoriesListNode = document.querySelector(`.category__list`);
-
-  const createErrorNode = () => {
-    const errorNode = document.createElement(`p`);
-
-    errorNode.classList.add(`category-item-error`);
-
-    errorNode.style.color = `red`;
-    errorNode.style.position = `absolute`;
-    errorNode.style.bottom = `-20px`;
-    errorNode.style.left = `40px`;
-    errorNode.style.right = `0`;
-
-    return errorNode;
-  };
 
   categoriesListNode.addEventListener(`submit`, async (evt) => {
     const updateFormNode = evt.target.closest(`form`);
@@ -37,23 +24,21 @@
     evt.preventDefault();
 
     const categoryItemNode = updateFormNode.closest(`.category__list-item`);
-
-    let errorNode = document.querySelector(`.category-item-error`);
-
-    if (!errorNode) {
-      errorNode = createErrorNode();
-      categoryItemNode.append(errorNode);
-    }
-
+    const errorNode = categoryItemNode.querySelector(`.category__error`);
     const inputNode = updateFormNode.querySelector(`input[name='name']`);
     const submitButtonNode = updateFormNode.querySelector(
       `button[type='submit']`
     );
 
+    if (inputNode.value === inputNode.dataset.value) {
+      return;
+    }
+
     const formData = new FormData(updateFormNode);
 
     inputNode.disabled = true;
     submitButtonNode.disabled = true;
+    errorNode.textContent = ``;
 
     const apiEndpoint = getApiEndpoint(updateFormNode.dataset.categoryId);
 
@@ -63,13 +48,24 @@
         body: formData,
       });
 
-      if (response.status !== HttpSuccessCode.OK) {
-        throw new Error(`Category update failed`);
+      if (response.status === HttpSuccessCode.BAD_REQUEST) {
+        const errorMessage = (await response.json()).name;
+
+        if (errorMessage) {
+          throw new Error(errorMessage);
+        }
       }
 
-      errorNode.textContent = ``;
+      if (response.status !== HttpSuccessCode.OK) {
+        throw new Error(`Произошла ошибка! Не удалось сохранить изменения =(`);
+      }
+
+      const {name: updatedName} = await response.json();
+      inputNode.value = updatedName;
+      inputNode.dataset.value = updatedName;
     } catch (error) {
-      errorNode.textContent = `Произошла ошибка! Не удалось сохранить изменения =(`;
+      console.log(error);
+      errorNode.textContent = error.message;
     }
 
     inputNode.disabled = false;
@@ -84,15 +80,10 @@
     }
 
     const categoryItemNode = deleteButtonNode.closest(`.category__list-item`);
-
-    let errorNode = document.querySelector(`.category-item-error`);
-
-    if (!errorNode) {
-      errorNode = createErrorNode();
-      categoryItemNode.append(errorNode);
-    }
+    const errorNode = categoryItemNode.querySelector(`.category__error`);
 
     deleteButtonNode.disabled = true;
+    errorNode.textContent = ``;
 
     const apiEndpoint = getApiEndpoint(deleteButtonNode.dataset.categoryId);
 
@@ -102,12 +93,12 @@
       });
 
       if (response.status !== HttpSuccessCode.NO_CONTENT) {
-        throw new Error(`Category deletion failed`);
+        throw new Error(`Произошла ошибка! Не удалось удалить категорию =(`);
       }
 
       categoryItemNode.remove();
     } catch (error) {
-      errorNode.textContent = `Произошла ошибка! Не удалось удалить категорию =(`;
+      errorNode.textContent = error.message;
     }
 
     deleteButtonNode.disabled = false;

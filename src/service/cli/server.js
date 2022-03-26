@@ -3,7 +3,7 @@
 const express = require(`express`);
 const requestId = require(`express-request-id`);
 
-const {HttpCode, ExitCode} = require(`../../constants`);
+const {HttpCode, ExitCode, HttpMethod} = require(`../../constants`);
 const apiRoutes = require(`../api/api`);
 const {getLogger} = require(`../lib/logger/logger`);
 const sequelize = require(`../lib/sequelize`);
@@ -23,6 +23,22 @@ const logEveryRequest = (req, res, next) => {
   res.on(`finish`, () => {
     logger.info(`${req.id}: Response status code ${res.statusCode}`);
   });
+
+  next();
+};
+
+const trimBody = (req, _res, next) => {
+  const {method} = req;
+
+  if (method === HttpMethod.POST || method === HttpMethod.PUT) {
+    for (const [key, value] of Object.entries(req.body)) {
+      if (typeof value === `string`) {
+        req.body[key] = value.trim();
+      }
+    }
+
+    console.log(req.body);
+  }
 
   next();
 };
@@ -57,10 +73,13 @@ app.use(requestId());
 
 app.use(logEveryRequest);
 
+app.use(trimBody);
+
 app.use(API_PREFIX, apiRoutes);
 
 app.use(logUnhandledRequest);
 app.use(logInternalError);
+
 
 app.use(sendNotFoundResponse);
 app.use(sendServerErrorResponse);

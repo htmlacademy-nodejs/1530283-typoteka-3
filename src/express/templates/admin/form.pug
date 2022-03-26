@@ -13,7 +13,7 @@ block content
                 .new-publication__date-form-division
                   .new-publication__date-block
                     label(for='publication-date' aria-label='Календарь')
-                    input#publication-date(type='text' name='date' data-default-value=article.createdAt style='width:90px')
+                    input#publication-date(type='text' name='date' data-default-value=article.createdAt)
               button.new-publication__button.button.button--colored(type='submit')= isNew ? `Опубликовать` : `Сохранить`
 
             if error

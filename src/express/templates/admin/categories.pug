@@ -7,11 +7,11 @@ block content
 
       .category__add-form
         form(action='/my/categories' method='POST' enctype='multipart/form-data' autocomplete='off')
-          input#add-form-add-category(type='text' name='name' value=addFormData.name placeholder='Новая категория')
+          input#add-form-add-category(type='text' name='name' value=addCategoryFormData.name placeholder='Новая категория')
           label(for='add-form-add-category')
             span.visually-hidden Добавить категорию
           button.category__button.button.button--category(type='submit') Добавить
-        p.category__error.category__error--add-form= addFormErrors.name
+        p.category__error.category__error--add-form= addCategoryFormErrors.name
 
       ul.category__list
         each category in categories

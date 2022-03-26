@@ -68,8 +68,8 @@ myRoutes.get(`/categories`, async (_req, res, next) => {
         isAdmin: true,
       },
       categories,
-      addFormData: {},
-      addFormErrors: {}
+      addCategoryFormData: {},
+      addCategoryFormErrors: {}
     });
   } catch (error) {
     next(error);
@@ -77,10 +77,10 @@ myRoutes.get(`/categories`, async (_req, res, next) => {
 });
 
 myRoutes.post(`/categories`, upload.none(), async (req, res, next) => {
-  const addFormData = req.body;
+  const addCategoryFormData = req.body;
 
   try {
-    await api.createCategory(addFormData);
+    await api.createCategory(addCategoryFormData);
 
     res.redirect(`/my/categories`);
   } catch (error) {
@@ -99,8 +99,8 @@ myRoutes.post(`/categories`, upload.none(), async (req, res, next) => {
           isAdmin: true,
         },
         categories,
-        addFormData,
-        addFormErrors: response.data
+        addCategoryFormData,
+        addCategoryFormErrors: response.data
       });
     } catch (secondaryError) {
       next(secondaryError);

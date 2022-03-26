@@ -218,6 +218,17 @@ articlesRoutes.post(
 
         res.status(HttpCode.CREATED).json(createdComment);
       } catch (error) {
+        const {response} = error;
+
+        if (response) {
+          res
+            .set(response.headers)
+            .status(response.status)
+            .send(response.data)
+            .end();
+          return;
+        }
+
         res.status(HttpCode.INTERNAL_SERVER_ERROR).end();
       }
     }

@@ -31,9 +31,7 @@ const schema = Joi.object({
 const commentValidator = (req, res, next) => {
   const newСomment = req.body;
 
-  const validationResult = schema.validate(newСomment, {abortEarly: false});
-
-  const {error} = validationResult;
+  const {error} = schema.validate(newСomment, {abortEarly: false});
 
   if (error) {
     res.status(HttpCode.BAD_REQUEST).json(prepareErrors(error));

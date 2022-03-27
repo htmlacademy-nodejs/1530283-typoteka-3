@@ -159,10 +159,20 @@ describe(`API returns all comments of an article with given id`, () => {
   test(`Comments count is correct`, () => expect(response.body.length).toBe(3));
 });
 
+describe(`API returns status code 404 when trying to get comments of article by invalid id`, () => {
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app).get(`/articles/INVALID/comments`);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+});
+
 describe(`API returns status code 404 when trying to get comments of non-existent article`, () => {
   beforeAll(async () => {
     const app = await createAPI();
-    response = await request(app).get(`/articles/NON_EXIST/comments`);
+    response = await request(app).get(`/articles/300/comments`);
   });
 
   test(`Status code 404`, () =>

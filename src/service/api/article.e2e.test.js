@@ -179,10 +179,20 @@ describe(`API returns an article with given id`, () => {
     expect(response.body.title).toBe(`Учим HTML и CSS`));
 });
 
+describe(`API returns status code 404 when trying to get article by invalid id`, () => {
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app).get(`/articles/INVALID`);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+});
+
 describe(`API returns status code 404 when trying to get non-existent article`, () => {
   beforeAll(async () => {
     const app = await createAPI();
-    response = await request(app).get(`/articles/NON_EXIST`);
+    response = await request(app).get(`/articles/300`);
   });
 
   test(`Status code 404`, () =>
@@ -461,12 +471,24 @@ describe(`API changes existent article with given id`, () => {
       .expect(({body}) => expect(body.count).toBe(3)));
 });
 
+describe(`API returns status code 404 when trying to change article with invalid id`, () => {
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).put(`/articles/INVALID`).send(validArticle);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+});
+
 describe(`API returns status code 404 when trying to change non-existent article`, () => {
   let app;
 
   beforeAll(async () => {
     app = await createAPI();
-    response = await request(app).put(`/articles/NON_EXIST`).send(validArticle);
+    response = await request(app).put(`/articles/300`).send(validArticle);
   });
 
   test(`Status code 404`, () =>
@@ -508,12 +530,29 @@ describe(`API correctly deletes an article with given id`, () => {
       .expect(({body}) => expect(body.count).toBe(2)));
 });
 
+describe(`API refuses to delete article by invalid id`, () => {
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).delete(`/articles/INVALID`);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Articles count is not changed`, () =>
+    request(app)
+      .get(`/articles`)
+      .expect(({body}) => expect(body.count).toBe(3)));
+});
+
 describe(`API refuses to delete non-existent article`, () => {
   let app;
 
   beforeAll(async () => {
     app = await createAPI();
-    response = await request(app).delete(`/articles/NON_EXIST`);
+    response = await request(app).delete(`/articles/300`);
   });
 
   test(`Status code 404`, () =>

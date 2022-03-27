@@ -31,9 +31,7 @@ const schema = Joi.object({
 const categoryValidator = (categoryService) => async (req, res, next) => {
   const newCategory = req.body;
 
-  const validationResult = schema.validate(newCategory, {abortEarly: false});
-
-  const {error} = validationResult;
+  const {error} = schema.validate(newCategory, {abortEarly: false});
 
   if (error) {
     res.status(HttpCode.BAD_REQUEST).json(prepareErrors(error));

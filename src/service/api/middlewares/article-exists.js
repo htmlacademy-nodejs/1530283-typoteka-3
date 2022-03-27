@@ -6,11 +6,15 @@ const articleExists = (articleService) => async (req, res, next) => {
   const {articleId} = req.params;
 
   try {
-    await articleService.checkExistence(Number(articleId));
+    const isExist = await articleService.checkExistence(Number(articleId));
+
+    if (!isExist) {
+      throw new Error(`No article with id = ${articleId}`);
+    }
 
     next();
   } catch (error) {
-    res.status(HttpCode.NOT_FOUND).send(`No article with id = ${articleId}`);
+    res.status(HttpCode.NOT_FOUND).send(error.message);
   }
 };
 

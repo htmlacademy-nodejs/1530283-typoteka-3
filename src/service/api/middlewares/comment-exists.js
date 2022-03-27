@@ -6,11 +6,15 @@ const commentExists = (commentService) => async (req, res, next) => {
   const {commentId} = req.params;
 
   try {
-    await commentService.checkExistence(Number(commentId));
+    const isExist = await commentService.checkExistence(Number(commentId));
+
+    if (!isExist) {
+      throw new Error(`No comment with id = ${commentId}`);
+    }
 
     next();
   } catch (error) {
-    res.status(HttpCode.NOT_FOUND).send(`No comment with id = ${commentId}`);
+    res.status(HttpCode.NOT_FOUND).send(error.message);
   }
 };
 

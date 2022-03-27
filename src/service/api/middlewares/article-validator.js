@@ -59,7 +59,7 @@ const schema = Joi.object({
   }),
   categories: Joi.array()
     .required()
-    .items(Joi.number())
+    .items(Joi.number().integer())
     .unique()
     .min(ArticleRestriction.CATEGORIES_COUNT_MIN)
     .messages({
@@ -81,9 +81,7 @@ const schema = Joi.object({
 const articleValidator = (categoryService) => async (req, res, next) => {
   const newArticle = req.body;
 
-  const validationResult = schema.validate(newArticle, {abortEarly: false});
-
-  const {error} = validationResult;
+  const {error} = schema.validate(newArticle, {abortEarly: false});
 
   if (error) {
     res.status(HttpCode.BAD_REQUEST).json(prepareErrors(error));

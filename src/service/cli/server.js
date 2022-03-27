@@ -2,7 +2,7 @@
 
 const express = require(`express`);
 const requestId = require(`express-request-id`);
-
+const helmet = require(`helmet`);
 const {HttpCode, ExitCode, HttpMethod} = require(`../../constants`);
 const apiRoutes = require(`../api/api`);
 const {getLogger} = require(`../lib/logger/logger`);
@@ -66,6 +66,8 @@ const sendServerErrorResponse = (_err, _req, res, _next) => {
 };
 
 const app = express();
+
+app.use(helmet());
 
 app.use(express.json());
 

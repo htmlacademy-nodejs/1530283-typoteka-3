@@ -1,5 +1,6 @@
 "use strict";
 
+const {ensureArray} = require(`./common`);
 const {
   formatCEODate,
   formatArticleDate,
@@ -22,19 +23,13 @@ const getInitialArticleFormData = () => ({
 
 const getArticleFormData = (article) => ({
   ...article,
-  categories: article.categories.map(({id}) => id)
+  categories: article.categories.map(({id}) => id),
 });
 
 const parseClientArticle = (clientArticle, file) => {
-  const categories = (() => {
-    if (!clientArticle.categories) {
-      return [];
-    }
-
-    return (Array.isArray(clientArticle.categories)
-      ? clientArticle.categories
-      : [clientArticle.categories]).map((textId) => Number(textId));
-  })();
+  const categories = clientArticle.categories
+    ? ensureArray(clientArticle.categories).map((id) => Number(id))
+    : [];
 
   return {
     title: clientArticle.title,

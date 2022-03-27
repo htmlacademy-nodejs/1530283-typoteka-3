@@ -1,6 +1,6 @@
 "use strict";
 
-const {HttpCode} = require(`../../../constants`);
+const {HttpCode} = require(`../../constants`);
 
 const categoryExists = (categoryService) => async (req, res, next) => {
   const {categoryId} = req.params;

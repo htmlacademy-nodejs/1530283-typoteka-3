@@ -1,8 +1,8 @@
 "use strict";
 
 const Joi = require(`joi`);
-const {HttpCode} = require(`../../../constants`);
-const {prepareErrors} = require(`../../../utils/common`);
+const {HttpCode} = require(`../../constants`);
+const {prepareErrors} = require(`../../utils/common`);
 
 const ArticleRestriction = {
   TITLE_MIN: 30,

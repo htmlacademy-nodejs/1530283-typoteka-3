@@ -2,8 +2,8 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
-const categoryExists = require(`./middlewares/category-exists`);
-const categoryValidator = require(`./middlewares/category-validator`);
+const categoryExists = require(`../middlewares/category-exists`);
+const categoryValidator = require(`../middlewares/category-validator`);
 
 module.exports = (app, categoryService) => {
   const categoriesRoutes = new Router();

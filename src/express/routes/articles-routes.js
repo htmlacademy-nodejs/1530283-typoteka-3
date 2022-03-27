@@ -43,6 +43,7 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
       currentCategoryId: Number(req.params.categoryId),
       page,
       totalPages: Math.ceil(articles.count / ARTICLES_LIMIT),
+      withPagination: articles.count > ARTICLES_LIMIT
     });
   } catch (error) {
     next(error);

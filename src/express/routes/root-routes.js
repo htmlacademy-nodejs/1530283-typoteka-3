@@ -42,6 +42,7 @@ rootRoutes.get(`/`, async (req, res, next) => {
       latestComments: latestComments.map(getCommentTemplateData),
       page,
       totalPages: Math.ceil(articles.count / ARTICLES_LIMIT),
+      withPagination: articles.count > ARTICLES_LIMIT
     });
   } catch (error) {
     next(error);

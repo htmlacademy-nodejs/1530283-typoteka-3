@@ -6,17 +6,6 @@
 
   const commentsListNode = document.querySelector(`.publication__list`);
 
-  const createErrorNode = () => {
-    const errorNode = document.createElement("p");
-
-    errorNode.style.color = "red";
-
-    errorNode.textContent =
-      "Произошла ошибка! Не удалось удалить комментарий =(";
-
-    return errorNode;
-  };
-
   commentsListNode.addEventListener("click", async (evt) => {
     const deleteButtonNode = evt.target.closest(`.button[data-delete]`);
 
@@ -26,9 +15,11 @@
 
     evt.preventDefault();
 
-    deleteButtonNode.disabled = true;
-
     const commentItemNode = deleteButtonNode.closest(`.publication__list-item`);
+    const errorNode = commentItemNode.querySelector(`.publication__error`);
+
+    errorNode.textContent = ``;
+    deleteButtonNode.disabled = true;
 
     const { commentId } = deleteButtonNode.dataset;
     const apiEndpoint = getApiEndpoint(commentId);
@@ -39,12 +30,12 @@
       });
 
       if (response.status !== NO_CONTENT_STATUS_CODE) {
-        throw new Error("Unable to delete comment");
+        throw new Error(`Не удалось удалить комментарий`);
       }
 
       commentItemNode.remove();
     } catch (error) {
-      commentItemNode.append(createErrorNode(error));
+      errorNode.textContent = error.message;
     }
 
     deleteButtonNode.disabled = false;

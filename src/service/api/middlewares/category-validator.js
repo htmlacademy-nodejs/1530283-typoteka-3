@@ -17,7 +17,6 @@ const CategoryErrorMessage = {
 
 const schema = Joi.object({
   name: Joi.string()
-    .trim()
     .min(CategoryRestriction.NAME_MIN)
     .max(CategoryRestriction.NAME_MAX)
     .required()

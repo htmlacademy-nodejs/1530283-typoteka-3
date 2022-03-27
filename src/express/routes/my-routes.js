@@ -80,18 +80,18 @@ myRoutes.post(`/categories`, upload.none(), async (req, res, next) => {
   const addCategoryFormData = req.body;
 
   try {
-    await api.createCategory(addCategoryFormData);
-
-    res.redirect(`/my/categories`);
-  } catch (error) {
-    const {response} = error;
-
-    if (!response || response.status !== HttpCode.BAD_REQUEST) {
-      next(error);
-      return;
-    }
-
     try {
+      await api.createCategory(addCategoryFormData);
+
+      res.redirect(`/my/categories`);
+    } catch (error) {
+      const {response} = error;
+
+      if (!response || response.status !== HttpCode.BAD_REQUEST) {
+        next(error);
+        return;
+      }
+
       const categories = await api.getCategories({withArticlesCount: true});
 
       res.render(`admin/categories`, {
@@ -102,9 +102,9 @@ myRoutes.post(`/categories`, upload.none(), async (req, res, next) => {
         addCategoryFormData,
         addCategoryFormErrors: response.data
       });
-    } catch (secondaryError) {
-      next(secondaryError);
     }
+  } catch (error) {
+    next(error);
   }
 });
 

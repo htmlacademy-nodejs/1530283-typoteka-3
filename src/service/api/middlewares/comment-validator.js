@@ -16,7 +16,6 @@ const CommentErrorMessage = {
 
 const schema = Joi.object({
   text: Joi.string()
-    .trim()
     .min(CommentRestriction.TEXT_MIN)
     .max(CommentRestriction.TEXT_MAX)
     .required()
@@ -25,7 +24,7 @@ const schema = Joi.object({
       "string.max": CommentErrorMessage.TEXT_MAX,
       "string.empty": CommentErrorMessage.TEXT_EMPTY,
     }),
-  authorId: Joi.number().min(1)
+  authorId: Joi.number()
 });
 
 const commentValidator = (req, res, next) => {

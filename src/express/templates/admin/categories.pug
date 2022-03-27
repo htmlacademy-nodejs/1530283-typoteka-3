@@ -11,7 +11,7 @@ block content
           label(for='add-form-add-category')
             span.visually-hidden Добавить категорию
           button.category__button.button.button--category(type='submit') Добавить
-        p.category__error.category__error--add-form= addCategoryFormErrors.name
+        p.category__error.category__error--add-form.error-text= addCategoryFormErrors.name
 
       ul.category__list
         each category in categories
@@ -23,7 +23,7 @@ block content
                 span.visually-hidden Редактировать категорию
               button.category__button.button.button--category(type='submit') Сохранить
 
-            p.category__error
+            p.category__error.error-text
 
             if Number(category.articlesCount) === 0
               button.category__button.button.button--category(type='button' data-delete data-category-id=category.id) Удалить

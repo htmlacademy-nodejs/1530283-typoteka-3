@@ -1,6 +1,9 @@
 extends ../layout.pug
 
 block content
+  - const errorMessages = Object.values(articleFormErrors)
+  - const isFormInvalid = Boolean(errorMessages.length)
+  - const submitAction = isNew ? `Опубликовать` : `Сохранить`
   main
     section
       .popup.popup--new-publication.popup--anti
@@ -13,47 +16,55 @@ block content
                 .new-publication__date-form-division
                   .new-publication__date-block
                     label(for='publication-date' aria-label='Календарь')
-                    input#publication-date(type='text' name='date' data-default-value=article.createdAt)
-              button.new-publication__button.button.button--colored(type='submit')= isNew ? `Опубликовать` : `Сохранить`
+                    input#publication-date(type='text' name='date' data-default-value=articleFormData.createdAt)
+                  p.new-publication__error--date.error-text= articleFormErrors.createdAt
+              button.new-publication__button.button.button--colored(type='submit')= submitAction
 
-            if error
-              div(style="text-align:center;color:red;font-weight:700")
-                p
-                  | Произошла ошибка
-                  br
-                  | Не удалось #{isNew ? `опубликовать` : `сохранить`} публикацию
+            if isFormInvalid
+              a(href='#errors')
+                p.new-publication__error.error-text Не удалось #{submitAction.toLowerCase()} публикацию
 
             a.popup__button.button.button--popup-close(href="/my" aria-label='Закрыть окно') Закрыть окно
             .new-publication__form.form
               .form__wrapper.form__wrapper--intro
                 .form__field
                   label
-                    input(type='text' name='title' placeholder='Заголовок' value=article.title required)
+                    input(type='text' name='title' placeholder='Заголовок' value=articleFormData.title)
+                    p.error-text= articleFormErrors.title
                 .form__field.form__field--post-image
                   label
-                    input#image-name-field(type='text' name='filename' placeholder='Фотография' readonly value=article.picture)
+                    input#image-name-field(type='text' name='filename' placeholder='Фотография' readonly value=articleFormData.picture)
+                    p.error-text= articleFormErrors.picture
                   .form__image-loader.form__image-loader--publication
                     label
-                      input.visually-hidden(type='file' name='upload')
+                      input.visually-hidden(type='file' name='upload' accept="image/jpeg,image/jpg,image/png")
                       | Обзор
                     button.button.button--transparent(type="button" data-delete) Удалить
                 .new-publication__category-wrapper
                   each category in categories
                     .new-publication__checkbox
                       - const checkboxId = `category-${category.id}-checkbox`
-                      - const isChecked = Boolean(article.categories && article.categories.find(({id}) => id === category.id))
+                      - const isChecked = Boolean(articleFormData.categories.find((id) => id === category.id))
                       input(id=checkboxId type='checkbox' name='categories' value=category.id checked=isChecked)
                       label(for=checkboxId)= category.name
                   a.new-publication__form-link.button.button--transparent(href='/my/categories') Добавить категорию
+                p.error-text= articleFormErrors.categories
               .form__wrapper.form__wrapper--text
                 .form__field.form__field--publication-text
                   label
-                    textarea(rows='5' name='announce' placeholder='Анонс публикации' required)
-                      = article.announce
+                    textarea(rows='5' name='announce' placeholder='Анонс публикации')
+                      = articleFormData.announce
+                    p.error-text= articleFormErrors.announce
                 .form__field.form__field--publication-text
                   label
                     textarea(rows='10' name='full-text' placeholder='Полный текст публикации')
-                      = article.fullText
+                      = articleFormData.fullText
+                    p.error-text= articleFormErrors.fullText
+
+          if isFormInvalid
+            ul#errors.error-text
+              each errorMessage in errorMessages
+                li= errorMessage
 
 block scripts
   script(src='/js/article-form.js' type='module')

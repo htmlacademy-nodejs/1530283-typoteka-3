@@ -1,40 +1,26 @@
 "use strict";
 
-const path = require(`path`);
 const {Router} = require(`express`);
-const multer = require(`multer`);
 const {getAPI} = require(`../api`);
 const {
   getArticleTemplateData,
-  getInitialArticle,
+  getArticleFormData,
+  getInitialArticleFormData,
   parseClientArticle,
 } = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
+const upload = require(`../middlewares/upload`);
 
-const {getImageFileName} = require(`../../utils/image`);
 const {HttpCode} = require(`../../constants`);
 
 const DEFAULT_ARTICLES_PAGE = 1;
 const ARTICLES_LIMIT = 8;
 
 const AUTHOR_ID = 1;
-const UPLOAD_DIR = `../upload/img`;
-const uploadDirAbsolute = path.resolve(__dirname, UPLOAD_DIR);
 
 const articlesRoutes = new Router();
 
 const api = getAPI();
-
-const storage = multer.diskStorage({
-  destination: uploadDirAbsolute,
-  filename: (_req, file, callback) => {
-    const error = null;
-    const fileName = getImageFileName(file);
-    callback(error, fileName);
-  },
-});
-
-const upload = multer({storage});
 
 articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
   const page = req.query.page ? Number(req.query.page) : DEFAULT_ARTICLES_PAGE;
@@ -71,7 +57,8 @@ articlesRoutes.get(`/add`, async (_req, res, next) => {
       user: {
         isAdmin: true,
       },
-      article: getInitialArticle(),
+      articleFormData: getInitialArticleFormData(),
+      articleFormErrors: {},
       categories,
       isNew: true,
     });
@@ -96,7 +83,9 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
 
       res.redirect(`/my`);
     } catch (error) {
-      if (!error.response) {
+      const {response} = error;
+
+      if (!response || response.status !== HttpCode.BAD_REQUEST) {
         next(error);
       }
 
@@ -106,10 +95,10 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
         user: {
           isAdmin: true,
         },
-        article: newArticle,
+        articleFormData: newArticle,
+        articleFormErrors: response.data,
         categories,
         isNew: true,
-        error: true
       });
     }
   } catch (error) {
@@ -128,7 +117,8 @@ articlesRoutes.get(`/edit/:articleId`, async (req, res, next) => {
       user: {
         isAdmin: true,
       },
-      article,
+      articleFormData: getArticleFormData(article),
+      articleFormErrors: {},
       categories,
     });
   } catch (error) {
@@ -157,7 +147,9 @@ articlesRoutes.post(
 
           res.redirect(`/my`);
         } catch (error) {
-          if (!error.response) {
+          const {response} = error;
+
+          if (!response || response.status !== HttpCode.BAD_REQUEST) {
             next(error);
           }
 
@@ -167,7 +159,8 @@ articlesRoutes.post(
             user: {
               isAdmin: true,
             },
-            article: updatedArticle,
+            articleFormData: updatedArticle,
+            articleFormErrors: response.data,
             categories,
             isNew: true,
             error: true

@@ -47,6 +47,14 @@ const readFile = async (filePath, fileType, fallbackContent = []) => {
   }
 };
 
+const prepareErrors = (error) => error.details.reduce(
+    (errors, {message, context}) => ({
+      ...errors,
+      [context.key]: message,
+    }),
+    {}
+);
+
 const multiLineJoin = (items) => items.join(`,\n`);
 
 module.exports = {
@@ -55,5 +63,6 @@ module.exports = {
   getRandomItem,
   getUniqueArray,
   readFile,
+  prepareErrors,
   multiLineJoin,
 };

@@ -9,6 +9,7 @@ const initDB = require(`../lib/init-db`);
 const article = require(`./article`);
 const ArticleService = require(`../data-service/article-service`);
 const CommentService = require(`../data-service/comment-service`);
+const CategoryService = require(`../data-service/category-service`);
 const {HttpCode} = require(`../../constants`);
 
 const mockCategories = [
@@ -141,7 +142,12 @@ const createAPI = async () => {
   const app = express();
   app.use(express.json());
 
-  article(app, new ArticleService(mockDB), new CommentService(mockDB));
+  article(
+      app,
+      new ArticleService(mockDB),
+      new CommentService(mockDB),
+      new CategoryService(mockDB)
+  );
 
   return app;
 };
@@ -183,16 +189,18 @@ describe(`API returns status code 404 when trying to get non-existent article`, 
     expect(response.statusCode).toBe(HttpCode.NOT_FOUND));
 });
 
+const validArticle = {
+  title: `Обзор новейшего смартфона. Не стоит идти в программисты, если вам нравятся только игры.`,
+  announce: `Теперь на счету 36-летнего россиянина 759 шайб в карьере в НХЛ. Это один из лучших рок-музыкантов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем. Программировать не настолько сложно, как об этом говорят.`,
+  fullText: `Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Рок-музыка всегда ассоциировалась с протестами. Так ли это на самом деле? Собрать камни бесконечности легко, если вы прирожденный герой. Из под его пера вышло 8 платиновых альбомов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем.`,
+  createdAt: `2022-01-09T08:08:28.115Z`,
+  categories: [1, 2, 5, 7],
+  authorId: 1,
+  picture: `picture.png`,
+};
+
 describe(`API creates an article if data is valid`, () => {
-  const newArticle = {
-    title: `Обзор новейшего смартфона. Не стоит идти в программисты, если вам нравятся только игры.`,
-    announce: `Теперь на счету 36-летнего россиянина 759 шайб в карьере в НХЛ. Это один из лучших рок-музыкантов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем. Программировать не настолько сложно, как об этом говорят.`,
-    fullText: `Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Рок-музыка всегда ассоциировалась с протестами. Так ли это на самом деле? Собрать камни бесконечности легко, если вы прирожденный герой. Из под его пера вышло 8 платиновых альбомов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем.`,
-    createdAt: `2022-01-09T08:08:28.115Z`,
-    categories: [1, 2, 5, 7],
-    authorId: 1,
-    picture: `picture.png`
-  };
+  const newArticle = {...validArticle};
 
   let app;
 
@@ -234,6 +242,7 @@ describe(`API refuses to create an article if data is invalid`, () => {
     createdAt: `2022-01-09T08:08:28.115Z`,
     categories: [1, 2, 5, 7],
     authorId: 1,
+    picture: `picture.png`,
   };
 
   let app;
@@ -261,12 +270,8 @@ describe(`API refuses to create an article if data is invalid`, () => {
 
 describe(`API refuses to create an article if title is invalid`, () => {
   const newArticle = {
+    ...validArticle,
     title: `Обзор новейшего смартфона`,
-    announce: `Теперь на счету 36-летнего россиянина 759 шайб в карьере в НХЛ. Это один из лучших рок-музыкантов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем. Программировать не настолько сложно, как об этом говорят.`,
-    fullText: `Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Рок-музыка всегда ассоциировалась с протестами. Так ли это на самом деле? Собрать камни бесконечности легко, если вы прирожденный герой. Из под его пера вышло 8 платиновых альбомов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем.`,
-    createdAt: `2022-01-09T08:08:28.115Z`,
-    categories: [1, 2, 5, 7],
-    authorId: 1,
   };
 
   let app;
@@ -287,12 +292,8 @@ describe(`API refuses to create an article if title is invalid`, () => {
 
 describe(`API refuses to create an article if created date is invalid`, () => {
   const newArticle = {
-    title: `Обзор новейшего смартфона. Не стоит идти в программисты, если вам нравятся только игры.`,
-    announce: `Теперь на счету 36-летнего россиянина 759 шайб в карьере в НХЛ. Это один из лучших рок-музыкантов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем. Программировать не настолько сложно, как об этом говорят.`,
-    fullText: `Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Рок-музыка всегда ассоциировалась с протестами. Так ли это на самом деле? Собрать камни бесконечности легко, если вы прирожденный герой. Из под его пера вышло 8 платиновых альбомов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем.`,
+    ...validArticle,
     createdAt: `20220109T08:08:28.115Z`,
-    categories: [1, 2, 5, 7],
-    authorId: 1,
   };
 
   let app;
@@ -313,12 +314,8 @@ describe(`API refuses to create an article if created date is invalid`, () => {
 
 describe(`API refuses to create an article if announce is invalid`, () => {
   const newArticle = {
-    title: `Обзор новейшего смартфона. Не стоит идти в программисты, если вам нравятся только игры.`,
+    ...validArticle,
     announce: `Теперь на счету`,
-    fullText: `Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Рок-музыка всегда ассоциировалась с протестами. Так ли это на самом деле? Собрать камни бесконечности легко, если вы прирожденный герой. Из под его пера вышло 8 платиновых альбомов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем.`,
-    createdAt: `2022-01-09T08:08:28.115Z`,
-    categories: [1, 2, 5, 7],
-    authorId: 1,
   };
 
   let app;
@@ -337,14 +334,54 @@ describe(`API refuses to create an article if announce is invalid`, () => {
       .expect(({body}) => expect(body.count).toBe(3)));
 });
 
-describe(`API refuses to create an article if categories is invalid`, () => {
+describe(`API refuses to create an article if categories are not provided`, () => {
   const newArticle = {
-    title: `Обзор новейшего смартфона. Не стоит идти в программисты, если вам нравятся только игры.`,
-    announce: `Теперь на счету 36-летнего россиянина 759 шайб в карьере в НХЛ. Это один из лучших рок-музыкантов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем. Программировать не настолько сложно, как об этом говорят.`,
-    fullText: `Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Рок-музыка всегда ассоциировалась с протестами. Так ли это на самом деле? Собрать камни бесконечности легко, если вы прирожденный герой. Из под его пера вышло 8 платиновых альбомов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем.`,
-    createdAt: `2022-01-09T08:08:28.115Z`,
+    ...validArticle,
     categories: [],
-    authorId: 1,
+  };
+
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).post(`/articles`).send(newArticle);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Articles count is not changed`, () =>
+    request(app)
+      .get(`/articles`)
+      .expect(({body}) => expect(body.count).toBe(3)));
+});
+
+describe(`API refuses to create an article if categories are not unique`, () => {
+  const newArticle = {
+    ...validArticle,
+    categories: [1, 1],
+  };
+
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).post(`/articles`).send(newArticle);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Articles count is not changed`, () =>
+    request(app)
+      .get(`/articles`)
+      .expect(({body}) => expect(body.count).toBe(3)));
+});
+
+describe(`API refuses to create an article if some category does not exist`, () => {
+  const newArticle = {
+    ...validArticle,
+    categories: [1, 2, 3, 300],
   };
 
   let app;
@@ -365,13 +402,8 @@ describe(`API refuses to create an article if categories is invalid`, () => {
 
 describe(`API refuses to create an article if picture is invalid`, () => {
   const newArticle = {
-    title: `Обзор новейшего смартфона. Не стоит идти в программисты, если вам нравятся только игры.`,
-    announce: `Теперь на счету 36-летнего россиянина 759 шайб в карьере в НХЛ. Это один из лучших рок-музыкантов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем. Программировать не настолько сложно, как об этом говорят.`,
-    fullText: `Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Рок-музыка всегда ассоциировалась с протестами. Так ли это на самом деле? Собрать камни бесконечности легко, если вы прирожденный герой. Из под его пера вышло 8 платиновых альбомов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем.`,
-    createdAt: `2022-01-09T08:08:28.115Z`,
-    categories: [1],
-    authorId: 1,
-    picture: `invalid.txt`
+    ...validArticle,
+    picture: `invalid.txt`,
   };
 
   let app;
@@ -431,15 +463,6 @@ describe(`API changes existent article with given id`, () => {
 
 describe(`API returns status code 404 when trying to change non-existent article`, () => {
   let app;
-
-  const validArticle = {
-    title: `Обновленный заголовок`,
-    announce: `Теперь на счету 36-летнего россиянина 759 шайб в карьере в НХЛ. Это один из лучших рок-музыкантов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем. Программировать не настолько сложно, как об этом говорят.`,
-    fullText: `Игры и программирование разные вещи. Не стоит идти в программисты, если вам нравятся только игры. Вы можете достичь всего. Стоит только немного постараться и запастись книгами. Рок-музыка всегда ассоциировалась с протестами. Так ли это на самом деле? Собрать камни бесконечности легко, если вы прирожденный герой. Из под его пера вышло 8 платиновых альбомов. Процессор заслуживает особого внимания. Он обязательно понравится геймерам со стажем.`,
-    createdAt: `2022-01-09T08:08:28.115Z`,
-    categories: [1, 9],
-    authorId: 1,
-  };
 
   beforeAll(async () => {
     app = await createAPI();

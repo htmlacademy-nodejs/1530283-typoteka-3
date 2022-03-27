@@ -2,6 +2,7 @@
 
 const Joi = require(`joi`);
 const {HttpCode} = require(`../../../constants`);
+const {prepareErrors} = require(`../../../utils/common`);
 
 const ArticleRestriction = {
   TITLE_MIN: 30,
@@ -46,7 +47,7 @@ const schema = Joi.object({
         return true;
       }
 
-      const [extension] = value.split(`.`).reverse();
+      const extension = value.split(`.`).pop();
 
       return (
         ArticleRestriction.PICTURE_EXTENSIONS.includes(extension) ||
@@ -77,7 +78,7 @@ const schema = Joi.object({
   authorId: Joi.number(),
 });
 
-const articleValidator = (req, res, next) => {
+const articleValidator = (categoryService) => async (req, res, next) => {
   const newArticle = req.body;
 
   const validationResult = schema.validate(newArticle, {abortEarly: false});
@@ -85,16 +86,23 @@ const articleValidator = (req, res, next) => {
   const {error} = validationResult;
 
   if (error) {
-    res.status(HttpCode.BAD_REQUEST).json(
-        error.details.reduce(
-            (errors, {message, context}) => ({
-              ...errors,
-              [context.key]: message,
-            }),
-            {}
-        )
-    );
+    res.status(HttpCode.BAD_REQUEST).json(prepareErrors(error));
     return;
+  }
+
+  for (const categoryId of newArticle.categories) {
+    try {
+      const isCategoryExist = await categoryService.checkExistence(categoryId);
+
+      if (!isCategoryExist) {
+        throw new Error(`Как минимум одна выбранная категория не существует`);
+      }
+    } catch (categoryError) {
+      res.status(HttpCode.BAD_REQUEST).json({
+        categories: categoryError.message,
+      });
+      return;
+    }
   }
 
   next();

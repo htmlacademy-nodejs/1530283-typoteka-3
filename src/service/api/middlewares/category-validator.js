@@ -2,6 +2,7 @@
 
 const Joi = require(`joi`);
 const {HttpCode} = require(`../../../constants`);
+const {prepareErrors} = require(`../../../utils/common`);
 
 const CategoryRestriction = {
   NAME_MIN: 5,
@@ -27,7 +28,7 @@ const schema = Joi.object({
     }),
 });
 
-const categoryValidator = (service) => async (req, res, next) => {
+const categoryValidator = (categoryService) => async (req, res, next) => {
   const newCategory = req.body;
 
   const validationResult = schema.validate(newCategory, {abortEarly: false});
@@ -35,19 +36,11 @@ const categoryValidator = (service) => async (req, res, next) => {
   const {error} = validationResult;
 
   if (error) {
-    res
-      .status(HttpCode.BAD_REQUEST)
-      .json(error.details.reduce(
-          (errors, {message, context}) => ({
-            ...errors,
-            [context.key]: message,
-          }),
-          {}
-      ));
+    res.status(HttpCode.BAD_REQUEST).json(prepareErrors(error));
     return;
   }
 
-  const isNonUnique = Boolean(await service.findByName(req.body.name));
+  const isNonUnique = Boolean(await categoryService.findByName(req.body.name));
 
   if (isNonUnique) {
     res

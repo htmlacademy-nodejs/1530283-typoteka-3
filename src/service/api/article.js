@@ -6,7 +6,7 @@ const articleComment = require(`./article-comment`);
 const articleValidator = require(`./middlewares/article-validator`);
 const articleExists = require(`./middlewares/article-exists`);
 
-module.exports = (app, articleService, commentService) => {
+module.exports = (app, articleService, commentService, categoryService) => {
   const articlesRoutes = new Router();
 
   app.use(`/articles`, articlesRoutes);
@@ -43,7 +43,7 @@ module.exports = (app, articleService, commentService) => {
     }
   });
 
-  articlesRoutes.post(`/`, articleValidator, async (req, res, next) => {
+  articlesRoutes.post(`/`, articleValidator(categoryService), async (req, res, next) => {
     try {
       const newArticle = await articleService.create(req.body);
 
@@ -55,7 +55,7 @@ module.exports = (app, articleService, commentService) => {
 
   articlesRoutes.put(
       `/:articleId`,
-      articleValidator,
+      articleValidator(categoryService),
       async (req, res, next) => {
         try {
           const updatedArticle = await articleService.update(

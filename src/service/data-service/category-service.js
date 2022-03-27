@@ -53,7 +53,7 @@ class CategoryService {
   }
 
   async checkExistence(categoryId) {
-    await this._Category.findByPk(categoryId);
+    return await this._Category.findByPk(categoryId);
   }
 
   async findByName(name) {

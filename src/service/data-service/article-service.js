@@ -145,7 +145,7 @@ class ArticleService {
   }
 
   async checkExistence(articleId) {
-    await this._Article.findByPk(articleId);
+    return await this._Article.findByPk(articleId);
   }
 
   async create(articleData) {

@@ -2,6 +2,7 @@
 
 const Joi = require(`joi`);
 const {HttpCode} = require(`../../../constants`);
+const {prepareErrors} = require(`../../../utils/common`);
 
 const CommentRestriction = {
   TEXT_MIN: 20,
@@ -35,15 +36,7 @@ const commentValidator = (req, res, next) => {
   const {error} = validationResult;
 
   if (error) {
-    res
-      .status(HttpCode.BAD_REQUEST)
-      .json(error.details.reduce(
-          (errors, {message, context}) => ({
-            ...errors,
-            [context.key]: message,
-          }),
-          {}
-      ));
+    res.status(HttpCode.BAD_REQUEST).json(prepareErrors(error));
     return;
   }
 

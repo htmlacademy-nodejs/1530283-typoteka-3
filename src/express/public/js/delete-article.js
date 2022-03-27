@@ -4,19 +4,9 @@
 
   const getApiEndpoint = (id) => `/my/articles/${id}`;
 
-  const commentsListNode = document.querySelector(`.notes__list`);
+  const articlesListNode = document.querySelector(`.notes__list`);
 
-  const createErrorNode = () => {
-    const errorNode = document.createElement("p");
-
-    errorNode.style.color = "red";
-
-    errorNode.textContent = "Произошла ошибка! Не удалось удалить статью =(";
-
-    return errorNode;
-  };
-
-  commentsListNode.addEventListener("click", async (evt) => {
+  articlesListNode.addEventListener("click", async (evt) => {
     const deleteButtonNode = evt.target.closest(`.button[data-delete]`);
 
     if (!deleteButtonNode || !evt.currentTarget.contains(deleteButtonNode)) {
@@ -28,9 +18,12 @@
     deleteButtonNode.disabled = true;
 
     const articleItemNode = deleteButtonNode.closest(`.notes__list-item`);
+    const errorNode = articleItemNode.querySelector(`.notes__error`);
 
     const { articleId } = deleteButtonNode.dataset;
     const apiEndpoint = getApiEndpoint(articleId);
+
+    errorNode.textContent = ``;
 
     try {
       const response = await fetch(apiEndpoint, {
@@ -38,12 +31,12 @@
       });
 
       if (response.status !== NO_CONTENT_STATUS_CODE) {
-        throw new Error("Unable to delete article");
+        throw new Error("Не удалось удалить публикацию");
       }
 
       articleItemNode.remove();
     } catch (error) {
-      articleItemNode.append(createErrorNode(error));
+      errorNode.textContent = error.message;
     }
 
     deleteButtonNode.disabled = false;

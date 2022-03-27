@@ -11,6 +11,7 @@ block content
             a.notes__item-text(href=`/articles/edit/${article.id}`)= article.title
             button.notes__button.button.button--close-item(type='button' data-delete data-article-id=article.id)
               span.visually-hidden Удалить статью
+            p.notes__error.error-text
 
 block scripts
   script(src='/js/delete-article.js' type='module')

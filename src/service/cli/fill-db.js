@@ -2,6 +2,7 @@
 
 const initDb = require(`../lib/init-db`);
 const sequelize = require(`../lib/sequelize`);
+const passwordService = require(`../lib/password-service`);
 
 const {getLogger} = require(`../lib/logger/logger`);
 const {ExitCode, FilePath, FileType} = require(`../../constants`);
@@ -41,7 +42,7 @@ const DayRestrict = {
 const USERS = [
   {
     email: `ivanov@example.com`,
-    passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
+    passwordHash: passwordService.hashSync(`ivanov`),
     firstName: `Иван`,
     lastName: `Иванов`,
     avatar: `avatar-1.png`,
@@ -49,14 +50,14 @@ const USERS = [
   },
   {
     email: `petrov@example.com`,
-    passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
+    passwordHash: passwordService.hashSync(`petrov`),
     firstName: `Пётр`,
     lastName: `Петров`,
     avatar: `avatar-2.png`,
   },
   {
     email: `sidorov@example.com`,
-    passwordHash: `5f4fcc3b5aa56fd61j832ud6be82cf99`,
+    passwordHash: passwordService.hashSync(`sidorov`),
     firstName: `Сидор`,
     lastName: `Сидоров`,
     avatar: `avatar-3.png`,

@@ -159,24 +159,78 @@ describe(`API returns all comments of an article with given id`, () => {
   test(`Comments count is correct`, () => expect(response.body.length).toBe(3));
 });
 
+describe(`API returns status code 404 when trying to get comments of article by invalid id`, () => {
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app).get(`/articles/INVALID/comments`);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+});
+
 describe(`API returns status code 404 when trying to get comments of non-existent article`, () => {
   beforeAll(async () => {
     const app = await createAPI();
-    response = await request(app).get(`/articles/NON_EXIST/comments`);
+    response = await request(app).get(`/articles/300/comments`);
   });
 
   test(`Status code 404`, () =>
     expect(response.statusCode).toBe(HttpCode.NOT_FOUND));
 });
 
-describe(`API creates new comment for an article with given id if data is correct`, () => {
+describe(`API refuses to create new comment for an article with given id if text is empty`, () => {
   const newComment = {
     text: `Text`,
     authorId: 1,
   };
 
-  const createdComment = {
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).post(`/articles/1/comments`).send(newComment);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Comments count is not changed`, async () =>
+    request(app)
+      .get(`/articles/1/comments`)
+      .expect(({body}) => expect(body.length).toBe(3)));
+});
+
+describe(`API refuses to create new comment for an article with given id if text is too short`, () => {
+  const newComment = {
     text: `Text`,
+    authorId: 1,
+  };
+
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).post(`/articles/1/comments`).send(newComment);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Comments count is not changed`, async () =>
+    request(app)
+      .get(`/articles/1/comments`)
+      .expect(({body}) => expect(body.length).toBe(3)));
+});
+
+describe(`API creates new comment for an article with given id if data is correct`, () => {
+  const newComment = {
+    text: `Text Text Text Text Text Text Text Text Text Text`,
+    authorId: 1,
+  };
+
+  const createdComment = {
+    text: `Text Text Text Text Text Text Text Text Text Text`,
     author: {
       id: 1,
       firstName: `Иван`,

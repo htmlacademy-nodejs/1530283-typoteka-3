@@ -15,6 +15,7 @@ block content
             p.publication__text-strong= comment.article.title
             button.publication__button.button.button--close-item(type='button' data-delete data-comment-id=comment.id)
               span.visually-hidden Удалить комментарий
+            p.publication__error.error-text
 
 block scripts
   script(src='/js/delete-comment.js' type='module')

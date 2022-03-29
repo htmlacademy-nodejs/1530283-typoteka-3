@@ -3,6 +3,7 @@
 const path = require(`path`);
 const chalk = require(`chalk`);
 const express = require(`express`);
+const helmet = require(`helmet`);
 const {HttpCode, HttpMethod} = require(`../constants`);
 const rootRoutes = require(`./routes/root-routes`);
 const errorRoutes = require(`./routes/error-routes`);
@@ -36,6 +37,14 @@ const handleServerError = (err, req, res, _next) => {
 };
 
 const app = express();
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      scriptSrc: [`'self' 'unsafe-eval'`, `https://unpkg.com/dayjs@1.8.21/dayjs.min.js`]
+    }
+  },
+}));
 
 app.set(`views`, path.resolve(__dirname, Dir.TEMPLATES));
 app.set(`view engine`, `pug`);

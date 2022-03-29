@@ -188,12 +188,29 @@ describe(`API should delete existent comment`, () => {
       .expect(({body}) => expect(body.length).toBe(7)));
 });
 
+describe(`API  refuses to delete comment by invalid id`, () => {
+  let app;
+
+  beforeAll(async () => {
+    app = await createAPI();
+    response = await request(app).delete(`/comments/INVALID`);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+
+  test(`Comments count should not be changed`, () =>
+    request(app)
+      .get(`/comments`)
+      .expect(({body}) => expect(body.length).toBe(8)));
+});
+
 describe(`API  refuses to delete non-existent comment`, () => {
   let app;
 
   beforeAll(async () => {
     app = await createAPI();
-    response = await request(app).delete(`/comments/NON_EXIST`);
+    response = await request(app).delete(`/comments/300`);
   });
 
   test(`Status code 404`, () =>

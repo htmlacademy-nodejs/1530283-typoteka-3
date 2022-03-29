@@ -1,12 +1,12 @@
 mixin previewArticle(article)
   li.preview__item(class={[`preview__item--noimage`]: !article.picture})
-    ul.preview__breadcrumbs(style=`flex-wrap:wrap`)
+    ul.preview__breadcrumbs
       each category in article.categories
         li.preview__breadcrumbs-item
           a.preview__breadcrumbs-link(href=`/articles/category/${category.id}`)= category.name
     if article.picture
       .preview__background
-        img.preview__background-image(src=`/img/${article.picture}` width='460' height='240' alt='' style="height:100%")
+        img.preview__background-image(src=`/img/${article.picture}` width='460' height='240' alt='')
     time.preview__time(datetime=article.createdCEODate)= article.createdDate
     h3.preview__name
       a.preview__name-link(href=`/articles/${article.id}`)= article.title

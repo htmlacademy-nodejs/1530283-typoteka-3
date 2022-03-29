@@ -11,7 +11,7 @@ class SearchService {
 
   async findAll(searchText) {
     const articles = await this._Article.findAll({
-      attributes: [`id`, `title`, `created_at`],
+      attributes: [`id`, `title`, `createdAt`],
       order: [[`createdAt`, `DESC`]],
       where: {
         title: {

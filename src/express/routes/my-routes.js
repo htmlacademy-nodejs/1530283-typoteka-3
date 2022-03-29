@@ -68,6 +68,8 @@ myRoutes.get(`/categories`, async (_req, res, next) => {
         isAdmin: true,
       },
       categories,
+      addCategoryFormData: {},
+      addCategoryFormErrors: {}
     });
   } catch (error) {
     next(error);
@@ -75,44 +77,69 @@ myRoutes.get(`/categories`, async (_req, res, next) => {
 });
 
 myRoutes.post(`/categories`, upload.none(), async (req, res, next) => {
-  try {
-    await api.createCategory(req.body);
+  const addCategoryFormData = req.body;
 
-    res.redirect(`/my/categories`);
+  try {
+    try {
+      await api.createCategory(addCategoryFormData);
+
+      res.redirect(`/my/categories`);
+    } catch (error) {
+      const {response} = error;
+
+      if (!response || response.status !== HttpCode.BAD_REQUEST) {
+        next(error);
+        return;
+      }
+
+      const categories = await api.getCategories({withArticlesCount: true});
+
+      res.render(`admin/categories`, {
+        user: {
+          isAdmin: true,
+        },
+        categories,
+        addCategoryFormData,
+        addCategoryFormErrors: response.data
+      });
+    }
   } catch (error) {
     next(error);
   }
 });
 
-myRoutes.put(
-    `/categories/:categoryId`,
-    upload.none(),
-    async (req, res) => {
-      try {
-        const updatedCategory = await api.updateCategory({
-          id: req.params.categoryId,
-          data: req.body,
-        });
+myRoutes.put(`/categories/:categoryId`, upload.none(), async (req, res) => {
+  try {
+    const updatedCategory = await api.updateCategory({
+      id: req.params.categoryId,
+      data: req.body,
+    });
 
-        res.json(updatedCategory);
-      } catch (error) {
-        res.status(HttpCode.INTERNAL_SERVER_ERROR).end();
-      }
+    res.json(updatedCategory);
+  } catch (error) {
+    const {response} = error;
+
+    if (response) {
+      res
+        .set(response.headers)
+        .status(response.status)
+        .send(response.data)
+        .end();
+      return;
     }
-);
 
-myRoutes.delete(
-    `/categories/:categoryId`,
-    async (req, res) => {
-      try {
-        await api.deleteCategory(req.params.categoryId);
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).end();
+  }
+});
 
-        res.status(HttpCode.NO_CONTENT).end();
-      } catch (error) {
-        res.status(HttpCode.INTERNAL_SERVER_ERROR).end();
-      }
-    }
-);
+myRoutes.delete(`/categories/:categoryId`, async (req, res) => {
+  try {
+    await api.deleteCategory(req.params.categoryId);
 
+    res.status(HttpCode.NO_CONTENT).end();
+  } catch (error) {
+    res.status(HttpCode.INTERNAL_SERVER_ERROR).end();
+  }
+});
 
 module.exports = myRoutes;

@@ -14,7 +14,7 @@ block content
             if articles.length
               each article in articles
                 .search__result
-                  time.search__date(datetime=article.createdCEOData)= article.createdDate
+                  time.search__date(datetime=article.createdCEODate)= article.createdDate
                   a.search__link(href=`/articles/${article.id}`)= article.title
             else
               .search__result Ничего не найдено

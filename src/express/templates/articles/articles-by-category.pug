@@ -17,4 +17,5 @@ block content
         each article in articles
           +previewArticle(article)
 
-    +pagination(page, totalPages)
+    if withPagination
+      +pagination(page, totalPages)

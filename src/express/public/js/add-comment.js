@@ -1,6 +1,9 @@
 (() => {
   const POST_METHOD = `POST`;
-  const CREATED_STATUS_CODE = 201;
+  const HttpStatusCode = {
+    CREATED: 201,
+    BAD_REQUEST: 400
+  };
 
   const commentsSectionNode = document.querySelector(`#comments`);
   const commentsListNode = commentsSectionNode.querySelector(`.comments__list`);
@@ -51,6 +54,7 @@
 
     textAreaNode.disabled = true;
     submitButtonNode.disabled = true;
+    errorNode.textContent = ``;
 
     try {
       const response = await fetch(apiEndpoint, {
@@ -58,8 +62,16 @@
         body: formData,
       });
 
-      if (response.status !== CREATED_STATUS_CODE) {
-        throw new Error(`Comment creation failed`);
+      if (response.status === HttpStatusCode.BAD_REQUEST) {
+        const errorMessage = (await response.json()).text;
+
+        if (errorMessage) {
+          throw new Error(errorMessage);
+        }
+      }
+
+      if (response.status !== HttpStatusCode.CREATED) {
+        throw new Error(`Произошла ошибка! Не удалось отправить комментарий =(`);
       }
 
       const createdComment = await response.json();
@@ -70,10 +82,8 @@
 
       commentsSectionNode.scrollIntoView();
       formNode.reset();
-
-      errorNode.textContent = ``;
     } catch (error) {
-      errorNode.textContent = `Произошла ошибка! Не удалось отправить комментарий =(`;
+      errorNode.textContent = error.message;
     }
 
     textAreaNode.disabled = false;

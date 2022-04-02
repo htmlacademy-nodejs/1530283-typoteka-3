@@ -37,8 +37,12 @@ block content
 
             .form__image-loader
               a.form__avatar.avatar
-                img(src='img/icons/smile.svg' alt='аватар пользователя')
+                img(src=(`/img/${registerFormData.avatar || `icons/smile.svg`}`) alt='аватар пользователя')
               label
                 input.visually-hidden(type='file' name='upload')
                 | Загрузить фото профиля
+              input(type='hidden' name='filename' value=registerFormData.avatar)
             button.form__submit-btn.form__submit-btn--register.button.button--colored(type='submit') Зарегистрироваться
+
+block scripts
+  script(src='/js/register-form.js' type='module')

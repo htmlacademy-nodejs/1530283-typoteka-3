@@ -64,7 +64,7 @@ const schema = Joi.object({
 
       return (
         UserRestriction.PICTURE_EXTENSIONS.includes(extension) ||
-        helper.message(UserErrorMessage.PICTURE_EXTENSIONS)
+        helper.message(UserErrorMessage.AVATAR_EXTENSIONS)
       );
     }),
 });

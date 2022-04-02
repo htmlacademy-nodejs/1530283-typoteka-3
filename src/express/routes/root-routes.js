@@ -58,11 +58,7 @@ rootRoutes.get(`/register`, (_req, res) => res.render(`auth/register`, {
 
 rootRoutes.post(`/register`, upload.single(`upload`), async (req, res, next) => {
   const {body, file} = req;
-  console.log(body);
-  console.log(file);
   const userData = parseClientUser(body, file);
-
-  console.log(userData);
 
   try {
     await api.createUser(userData);

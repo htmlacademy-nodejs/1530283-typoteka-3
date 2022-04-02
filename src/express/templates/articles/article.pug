@@ -36,7 +36,7 @@ block content
                     time.comments__date(datetime=comment.createdCEODate)= comment.createdDate
                   p.comments__message= comment.text
           .comments__footer.comments__footer--user
-            form(action=`/articles/${article.id}/comments` method='POST' enctype='multipart/form-data')
+            form(action=`/articles/${article.id}/comments` method='POST' enctype='multipart/form-data' autocomplete='off')
               .comments__avatar.avatar
                 img(src='/img/avatar-2.png' alt='аватар пользователя')
               label

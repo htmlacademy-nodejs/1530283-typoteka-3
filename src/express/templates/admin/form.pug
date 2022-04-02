@@ -8,7 +8,7 @@ block content
     section
       .popup.popup--new-publication.popup--anti
         .new-publication
-          form(action='#' method='POST' enctype='multipart/form-data')
+          form(method='POST' enctype='multipart/form-data' autocomplete='off')
             .new-publication__header
               h1= isNew ? `Новая публикация` : `Редактирование публикации`
               .new-publication__date-form

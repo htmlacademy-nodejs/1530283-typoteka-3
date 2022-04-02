@@ -6,7 +6,7 @@ block content
       .search-page__wrapper
         h1 Поиск
         .search.search-page__form
-          form(action='#' method='get')
+          form(autocomplete='off')
             label
               input(type='text' name='query' placeholder='Что ищем?' value=query)
             button.search__button.button.button--transparent(type='submit') Найти

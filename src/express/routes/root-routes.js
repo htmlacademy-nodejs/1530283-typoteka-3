@@ -4,7 +4,9 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 const {getArticleTemplateData} = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
+const {parseClientUser} = require(`../../utils/user`);
 const {getAPI} = require(`../api`);
+const upload = require(`../middlewares/upload`);
 
 const rootRoutes = new Router();
 const api = getAPI();
@@ -49,7 +51,36 @@ rootRoutes.get(`/`, async (req, res, next) => {
   }
 });
 
-rootRoutes.get(`/register`, (_req, res) => res.render(`auth/register`));
+rootRoutes.get(`/register`, (_req, res) => res.render(`auth/register`, {
+  registerFormData: {},
+  registerFormErrors: {}
+}));
+
+rootRoutes.post(`/register`, upload.single(`upload`), async (req, res, next) => {
+  const {body, file} = req;
+  console.log(body);
+  console.log(file);
+  const userData = parseClientUser(body, file);
+
+  console.log(userData);
+
+  try {
+    await api.createUser(userData);
+
+    res.redirect(`/login`);
+  } catch (error) {
+    const {response} = error;
+
+    if (!response || response.status !== HttpCode.BAD_REQUEST) {
+      next(error);
+    }
+
+    res.render(`auth/register`, {
+      registerFormData: userData,
+      registerFormErrors: response.data
+    });
+  }
+});
 
 rootRoutes.get(`/login`, (_req, res) => res.render(`auth/login`));
 

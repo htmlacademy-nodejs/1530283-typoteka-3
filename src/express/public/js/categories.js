@@ -64,7 +64,6 @@
       inputNode.value = updatedName;
       inputNode.dataset.value = updatedName;
     } catch (error) {
-      console.log(error);
       errorNode.textContent = error.message;
     }
 

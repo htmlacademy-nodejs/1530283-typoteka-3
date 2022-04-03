@@ -1,7 +1,7 @@
 extends ../layout.pug
 
 block content
-  - const noArticles = !articles.length;
+  - const noArticles = Boolean(articles) && !articles.length;
   main
     section.search-page
       .search-page__wrapper(class={[`search-page__wrapper--empty`]: noArticles})

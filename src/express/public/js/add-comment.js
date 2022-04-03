@@ -4,6 +4,7 @@
     CREATED: 201,
     BAD_REQUEST: 400
   };
+  const AVATAR_PLACEHOLDER = `icons/smile.svg`;
 
   const commentsSectionNode = document.querySelector(`#comments`);
   const commentsListNode = commentsSectionNode.querySelector(`.comments__list`);
@@ -33,7 +34,7 @@
     const dateNode = commentItemNode.querySelector(`.comments__date`);
     const textNode = commentItemNode.querySelector(`.comments__message`);
 
-    avatarNode.src = `/img/${author.avatar}`;
+    avatarNode.src = `/img/${author.avatar || AVATAR_PLACEHOLDER}`;
     authorNameNode.textContent = `${author.firstName} ${author.lastName} •`;
     dateNode.dateTime = createdAt;
     dateNode.textContent = dayjs(createdAt).format(`DD.MM.YYYY, HH:mm`);

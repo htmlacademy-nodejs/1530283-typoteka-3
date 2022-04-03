@@ -29,7 +29,7 @@ block content
             each comment in comments
               li.comments__comment
                 .comments__avatar.avatar
-                  img(src=`/img/${comment.author.avatar}` alt='аватар пользователя')
+                  +avatarImage(comment.author.avatar)
                 .comments__text
                   .comments__head
                     p #{comment.author.firstName} #{comment.author.lastName} •
@@ -38,7 +38,7 @@ block content
           .comments__footer.comments__footer--user
             form(action=`/articles/${article.id}/comments` method='POST' enctype='multipart/form-data' autocomplete='off')
               .comments__avatar.avatar
-                img(src='/img/avatar-2.png' alt='аватар пользователя')
+                +avatarImage(`avatar-2.png`)
               label
                 textarea(rows='1' name='text' placeholder='Присоединиться к обсуждению')
               button.comments__button.button.button--colored(type='submit') Опубликовать

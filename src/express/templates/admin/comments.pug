@@ -10,7 +10,7 @@ block content
           each comment in comments
             li.publication__list-item
               .publication__header
-                img.publication__list-image(src=`/img/${comment.author.avatar}` width='20' height='20' alt='Аватар пользователя')
+                +avatarImage(comment.author.avatar)
                 b.publication__list-name #{comment.author.firstName} #{comment.author.lastName}
                 time.publication__item-time(datetime=comment.createdCEODate)= comment.createdDate
               a.publication__item-text(href=`/articles/${comment.articleId}#comments`)= comment.text

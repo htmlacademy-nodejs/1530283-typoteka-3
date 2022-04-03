@@ -33,7 +33,7 @@ block content
 
             .form__image-loader
               a.form__avatar.avatar
-                img(src=(`/img/${registerFormData.avatar || `icons/smile.svg`}`) alt='аватар пользователя')
+                +avatarImage(registerFormData.avatar)
               label
                 input.visually-hidden(type='file' name='upload')
                 | Загрузить фото профиля

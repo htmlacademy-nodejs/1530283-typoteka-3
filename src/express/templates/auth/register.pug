@@ -29,11 +29,7 @@ block content
                 input(type='password' name='repeat-password' placeholder='Повтор пароля'  value=registerFormData.passwordRepeated)
 
             if isFormInvalid
-              .form__validation-error
-                p.form__error-message При регистрации произошли ошибки:
-                ul.form__errors
-                  each errorMessage in errorMessages
-                    li.form__error= errorMessage
+              +errorList(errorMessages, `При регистрации произошли ошибки:`)
 
             .form__image-loader
               a.form__avatar.avatar

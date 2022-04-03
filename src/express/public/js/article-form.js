@@ -23,3 +23,11 @@
     fileNameInputNode.value = ``;
   });
 })();
+
+(() => {
+  const errorListNode = document.querySelector(`#errors`);
+
+  if (errorListNode) {
+    errorListNode.scrollIntoView();
+  }
+})();

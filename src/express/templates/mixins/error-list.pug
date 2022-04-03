@@ -1,0 +1,6 @@
+mixin errorList(messages, title)
+  #errors.form__validation-error
+    p.form__error-message= title
+    ul.form__errors
+      each message in messages
+        li.form__error= message

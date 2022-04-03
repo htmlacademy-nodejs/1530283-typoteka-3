@@ -2,10 +2,16 @@
 
 const defineModels = require(`../models`);
 
-module.exports = async (sequelize, {categories, users, articles}) => {
+module.exports = async (sequelize, data) => {
   const {Category, User, Article} = defineModels(sequelize);
 
   await sequelize.sync({force: true});
+
+  if (!data) {
+    return;
+  }
+
+  const {categories, users, articles} = data;
 
   const categoryModels = await Category.bulkCreate(
       categories.map((category) => ({name: category}))

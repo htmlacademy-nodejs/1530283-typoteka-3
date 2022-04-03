@@ -34,6 +34,13 @@
       }
 
       commentItemNode.remove();
+
+      const isListEmpty = !commentsListNode.querySelectorAll(`.publication__list-item`).length;
+
+      if (isListEmpty) {
+        window.location.reload();
+        return;
+      }
     } catch (error) {
       errorNode.textContent = error.message;
     }

@@ -4,14 +4,18 @@ block content
   main.main-page.main-page--padding
     section.main-page__notes.notes
       h1.notes__title Мои записи
-      ul.notes__list
-        each article in articles
-          li.notes__list-item
-            time.notes__item-time(datetime=article.createdCEODate)= article.createdDate
-            a.notes__item-text(href=`/articles/edit/${article.id}`)= article.title
-            button.notes__button.button.button--close-item(type='button' data-delete data-article-id=article.id)
-              span.visually-hidden Удалить статью
-            p.notes__error.error-text
+
+      if articles.length
+        ul.notes__list
+          each article in articles
+            li.notes__list-item
+              time.notes__item-time(datetime=article.createdCEODate)= article.createdDate
+              a.notes__item-text(href=`/articles/edit/${article.id}`)= article.title
+              button.notes__button.button.button--close-item(type='button' data-delete data-article-id=article.id)
+                span.visually-hidden Удалить статью
+              p.notes__error.error-text
+      else
+        p.admin-empty-text Записи отсутствуют
 
 block scripts
   script(src='/js/delete-article.js' type='module')

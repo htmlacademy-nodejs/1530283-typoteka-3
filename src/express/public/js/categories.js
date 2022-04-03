@@ -96,6 +96,13 @@
       }
 
       categoryItemNode.remove();
+
+      const isListEmpty = !categoriesListNode.querySelectorAll(`.category__list-item`).length;
+
+      if (isListEmpty) {
+        window.location.reload();
+        return;
+      }
     } catch (error) {
       errorNode.textContent = error.message;
     }

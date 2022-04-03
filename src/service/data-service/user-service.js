@@ -11,7 +11,15 @@ class UserService {
   }
 
   async create(userData) {
-    const user = await this._User.create(userData);
+    const count = await this._User.count();
+
+    const isFirstUser = !count;
+
+    const user = await this._User.create({
+      ...userData,
+      isAdmin: isFirstUser
+    });
+
     return user.get();
   }
 }

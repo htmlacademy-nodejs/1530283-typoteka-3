@@ -1,14 +1,19 @@
 "use strict";
 
-const {ensureArray} = require(`./common`);
+const {ensureArray, truncateText} = require(`./common`);
 const {
   formatCEODate,
   formatArticleDate,
   parseArticleClientDate,
 } = require(`./date`);
 
-const getArticleTemplateData = (article) => ({
+const TRUNCATED_ANNOUNCE_LENGTH = 100;
+
+const getArticleTemplateData = (article, {truncate} = {}) => ({
   ...article,
+  announce: truncate
+    ? truncateText(article.announce, TRUNCATED_ANNOUNCE_LENGTH)
+    : article.announce,
   createdDate: formatArticleDate(article.createdAt),
   createdCEODate: formatCEODate(article.createdAt),
 });

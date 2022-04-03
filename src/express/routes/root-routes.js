@@ -38,45 +38,53 @@ rootRoutes.get(`/`, async (req, res, next) => {
     res.render(`articles/all-articles`, {
       articles: articles.rows.map(getArticleTemplateData),
       categories,
-      mostCommentedArticles: mostCommentedArticles.rows.map(
-          getArticleTemplateData
+      mostCommentedArticles: mostCommentedArticles.rows.map((article) =>
+        getArticleTemplateData(article, {truncate: true})
       ),
-      latestComments: latestComments.map(getCommentTemplateData),
+      latestComments: latestComments.map((comment) =>
+        getCommentTemplateData(comment, {truncate: true})
+      ),
       page,
       totalPages: Math.ceil(articles.count / ARTICLES_LIMIT),
-      withPagination: articles.count > ARTICLES_LIMIT
+      withPagination: articles.count > ARTICLES_LIMIT,
     });
   } catch (error) {
     next(error);
   }
 });
 
-rootRoutes.get(`/register`, (_req, res) => res.render(`auth/register`, {
-  registerFormData: {},
-  registerFormErrors: {}
-}));
+rootRoutes.get(`/register`, (_req, res) =>
+  res.render(`auth/register`, {
+    registerFormData: {},
+    registerFormErrors: {},
+  })
+);
 
-rootRoutes.post(`/register`, upload.single(`upload`), async (req, res, next) => {
-  const {body, file} = req;
-  const userData = parseClientUser(body, file);
+rootRoutes.post(
+    `/register`,
+    upload.single(`upload`),
+    async (req, res, next) => {
+      const {body, file} = req;
+      const userData = parseClientUser(body, file);
 
-  try {
-    await api.createUser(userData);
+      try {
+        await api.createUser(userData);
 
-    res.redirect(`/login`);
-  } catch (error) {
-    const {response} = error;
+        res.redirect(`/login`);
+      } catch (error) {
+        const {response} = error;
 
-    if (!response || response.status !== HttpCode.BAD_REQUEST) {
-      next(error);
+        if (!response || response.status !== HttpCode.BAD_REQUEST) {
+          next(error);
+        }
+
+        res.render(`auth/register`, {
+          registerFormData: userData,
+          registerFormErrors: response.data,
+        });
+      }
     }
-
-    res.render(`auth/register`, {
-      registerFormData: userData,
-      registerFormErrors: response.data
-    });
-  }
-});
+);
 
 rootRoutes.get(`/login`, (_req, res) => res.render(`auth/login`));
 

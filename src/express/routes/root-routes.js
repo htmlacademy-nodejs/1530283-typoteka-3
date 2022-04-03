@@ -20,13 +20,19 @@ rootRoutes.get(`/`, async (req, res, next) => {
   const page = req.query.page ? Number(req.query.page) : DEFAULT_ARTICLES_PAGE;
 
   try {
-    const [articles, mostCommentedArticles, categories, latestComments] =
+    const articles = await api.getAndCountArticles({
+      withCategories: true,
+      limit: ARTICLES_LIMIT,
+      offset: (page - 1) * ARTICLES_LIMIT,
+    });
+
+    if (!articles.count) {
+      res.render(`articles/no-articles`);
+      return;
+    }
+
+    const [mostCommentedArticles, categories, latestComments] =
       await Promise.all([
-        api.getAndCountArticles({
-          withCategories: true,
-          limit: ARTICLES_LIMIT,
-          offset: (page - 1) * ARTICLES_LIMIT,
-        }),
         api.getAndCountArticles({
           limit: MOST_COMMENTED_ARTICLES_LIMIT,
           mostCommented: true,

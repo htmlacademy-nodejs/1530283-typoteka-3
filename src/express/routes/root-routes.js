@@ -4,7 +4,9 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 const {getArticleTemplateData} = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
+const {parseClientUser} = require(`../../utils/user`);
 const {getAPI} = require(`../api`);
+const upload = require(`../middlewares/upload`);
 
 const rootRoutes = new Router();
 const api = getAPI();
@@ -18,13 +20,19 @@ rootRoutes.get(`/`, async (req, res, next) => {
   const page = req.query.page ? Number(req.query.page) : DEFAULT_ARTICLES_PAGE;
 
   try {
-    const [articles, mostCommentedArticles, categories, latestComments] =
+    const articles = await api.getAndCountArticles({
+      withCategories: true,
+      limit: ARTICLES_LIMIT,
+      offset: (page - 1) * ARTICLES_LIMIT,
+    });
+
+    if (!articles.count) {
+      res.render(`articles/no-articles`);
+      return;
+    }
+
+    const [mostCommentedArticles, categories, latestComments] =
       await Promise.all([
-        api.getAndCountArticles({
-          withCategories: true,
-          limit: ARTICLES_LIMIT,
-          offset: (page - 1) * ARTICLES_LIMIT,
-        }),
         api.getAndCountArticles({
           limit: MOST_COMMENTED_ARTICLES_LIMIT,
           mostCommented: true,
@@ -36,20 +44,53 @@ rootRoutes.get(`/`, async (req, res, next) => {
     res.render(`articles/all-articles`, {
       articles: articles.rows.map(getArticleTemplateData),
       categories,
-      mostCommentedArticles: mostCommentedArticles.rows.map(
-          getArticleTemplateData
+      mostCommentedArticles: mostCommentedArticles.rows.map((article) =>
+        getArticleTemplateData(article, {truncate: true})
       ),
-      latestComments: latestComments.map(getCommentTemplateData),
+      latestComments: latestComments.map((comment) =>
+        getCommentTemplateData(comment, {truncate: true})
+      ),
       page,
       totalPages: Math.ceil(articles.count / ARTICLES_LIMIT),
-      withPagination: articles.count > ARTICLES_LIMIT
+      withPagination: articles.count > ARTICLES_LIMIT,
     });
   } catch (error) {
     next(error);
   }
 });
 
-rootRoutes.get(`/register`, (_req, res) => res.render(`auth/register`));
+rootRoutes.get(`/register`, (_req, res) =>
+  res.render(`auth/register`, {
+    registerFormData: {},
+    registerFormErrors: {},
+  })
+);
+
+rootRoutes.post(
+    `/register`,
+    upload.single(`upload`),
+    async (req, res, next) => {
+      const {body, file} = req;
+      const userData = parseClientUser(body, file);
+
+      try {
+        await api.createUser(userData);
+
+        res.redirect(`/login`);
+      } catch (error) {
+        const {response} = error;
+
+        if (!response || response.status !== HttpCode.BAD_REQUEST) {
+          next(error);
+        }
+
+        res.render(`auth/register`, {
+          registerFormData: userData,
+          registerFormErrors: response.data,
+        });
+      }
+    }
+);
 
 rootRoutes.get(`/login`, (_req, res) => res.render(`auth/login`));
 

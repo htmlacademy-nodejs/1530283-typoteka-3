@@ -24,21 +24,25 @@ block content
 
       .post__wrapper.post__wrapper--comments
         section#comments.post__comments.comments
-          h2.comments__title.title.title--middle Комментарии
-          ul.comments__list
-            each comment in comments
-              li.comments__comment
-                .comments__avatar.avatar
-                  img(src=`/img/${comment.author.avatar}` alt='аватар пользователя')
-                .comments__text
-                  .comments__head
-                    p #{comment.author.firstName} #{comment.author.lastName} •
-                    time.comments__date(datetime=comment.createdCEODate)= comment.createdDate
-                  p.comments__message= comment.text
+          - const noComments = !comments.length
+          h2.comments__title.title.title--middle Комментарии#{noComments ? ' отсутствуют' : ''}
+
+          if !noComments
+            ul.comments__list
+              each comment in comments
+                li.comments__comment
+                  .comments__avatar.avatar
+                    +avatarImage(comment.author.avatar)
+                  .comments__text
+                    .comments__head
+                      p #{comment.author.firstName} #{comment.author.lastName} •
+                      time.comments__date(datetime=comment.createdCEODate)= comment.createdDate
+                    p.comments__message= comment.text
+
           .comments__footer.comments__footer--user
-            form(action=`/articles/${article.id}/comments` method='POST' enctype='multipart/form-data')
+            form(action=`/articles/${article.id}/comments` method='POST' enctype='multipart/form-data' autocomplete='off')
               .comments__avatar.avatar
-                img(src='/img/avatar-2.png' alt='аватар пользователя')
+                +avatarImage(`avatar-2.png`)
               label
                 textarea(rows='1' name='text' placeholder='Присоединиться к обсуждению')
               button.comments__button.button.button--colored(type='submit') Опубликовать

@@ -1,0 +1,3 @@
+mixin avatarImage(image)
+  - const AVATAR_PLACEHOLDER = `icons/smile.svg`
+  img(src=(`/img/${image || AVATAR_PLACEHOLDER}`) alt='аватар пользователя')

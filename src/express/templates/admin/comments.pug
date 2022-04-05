@@ -4,18 +4,22 @@ block content
   main.main-page.main-page--padding
     section.main-page__publication.publication
       h1.publication__title Комментарии
-      ul.publication__list
-        each comment in comments
-          li.publication__list-item
-            .publication__header
-              img.publication__list-image(src=`/img/${comment.author.avatar}` width='20' height='20' alt='Аватар пользователя')
-              b.publication__list-name #{comment.author.firstName} #{comment.author.lastName}
-              time.publication__item-time(datetime=comment.createdCEODate)= comment.createdDate
-            a.publication__item-text(href=`/articles/${comment.articleId}#comments`)= comment.text
-            p.publication__text-strong= comment.article.title
-            button.publication__button.button.button--close-item(type='button' data-delete data-comment-id=comment.id)
-              span.visually-hidden Удалить комментарий
-            p.publication__error.error-text
+
+      if comments.length
+        ul.publication__list
+          each comment in comments
+            li.publication__list-item
+              .publication__header
+                +avatarImage(comment.author.avatar)
+                b.publication__list-name #{comment.author.firstName} #{comment.author.lastName}
+                time.publication__item-time(datetime=comment.createdCEODate)= comment.createdDate
+              a.publication__item-text(href=`/articles/${comment.articleId}#comments`)= comment.text
+              p.publication__text-strong= comment.article.title
+              button.publication__button.button.button--close-item(type='button' data-delete data-comment-id=comment.id)
+                span.visually-hidden Удалить комментарий
+              p.publication__error.error-text
+      else
+        p.admin-empty-text Комментарии отсутствуют
 
 block scripts
   script(src='/js/delete-comment.js' type='module')

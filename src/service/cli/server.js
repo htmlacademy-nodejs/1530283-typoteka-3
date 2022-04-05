@@ -36,8 +36,6 @@ const trimBody = (req, _res, next) => {
         req.body[key] = value.trim();
       }
     }
-
-    console.log(req.body);
   }
 
   next();

@@ -1,20 +1,21 @@
 extends ../layout.pug
 
 block content
+  - const noArticles = Boolean(articles) && !articles.length;
   main
     section.search-page
-      .search-page__wrapper
+      .search-page__wrapper(class={[`search-page__wrapper--empty`]: noArticles})
         h1 Поиск
         .search.search-page__form
-          form(action='#' method='get')
+          form(autocomplete='off')
             label
               input(type='text' name='query' placeholder='Что ищем?' value=query)
             button.search__button.button.button--transparent(type='submit') Найти
           if articles
-            if articles.length
+            if !noArticles
               each article in articles
                 .search__result
                   time.search__date(datetime=article.createdCEODate)= article.createdDate
                   a.search__link(href=`/articles/${article.id}`)= article.title
             else
-              .search__result Ничего не найдено
+              .search-page__empty Ничего не нашлось

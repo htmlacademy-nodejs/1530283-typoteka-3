@@ -69,14 +69,11 @@ articlesRoutes.get(`/add`, async (_req, res, next) => {
 });
 
 articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
-  let newArticle;
-
   try {
+    const {body, file} = req;
+    const newArticle = parseClientArticle(body, file);
+
     try {
-      const {body, file} = req;
-
-      newArticle = parseClientArticle(body, file);
-
       await api.createArticle({
         ...newArticle,
         authorId: AUTHOR_ID,
@@ -131,13 +128,11 @@ articlesRoutes.post(
     `/edit/:articleId`,
     upload.single(`upload`),
     async (req, res, next) => {
-      let updatedArticle;
-
       try {
-        try {
-          const {body, file} = req;
-          updatedArticle = parseClientArticle(body, file);
+        const {body, file} = req;
+        const updatedArticle = parseClientArticle(body, file);
 
+        try {
           await api.updateArticle({
             id: req.params.articleId,
             data: {

@@ -60,6 +60,9 @@ const multiLineJoin = (items) => items.join(`,\n`);
 
 const ensureArray = (value) => (Array.isArray(value) ? value : [value]);
 
+const truncateText = (text, maxLength) =>
+  text.length > maxLength ? `${text.slice(0, maxLength).trim()}...` : text;
+
 module.exports = {
   shuffle,
   getRandomInt,
@@ -68,5 +71,6 @@ module.exports = {
   readFile,
   prepareErrors,
   multiLineJoin,
-  ensureArray
+  ensureArray,
+  truncateText
 };

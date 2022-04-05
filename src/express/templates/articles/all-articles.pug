@@ -12,7 +12,9 @@ block content
         each category in categories
           +categoryTab(category)
 
-    .main-page__section-flex
+    - const noComments = !latestComments.length;
+
+    .main-page__section-flex.main-page__section-flex--short
       section.main-page__hot.hot
         h2.hot__name
           | Самое обсуждаемое
@@ -25,7 +27,7 @@ block content
                 a.hot__list-link(href=`/articles/${article.id}`)= article.announce
                   sup.hot__link-sup #{article.commentsCount}
           else
-            p Здесь пока ничего нет
+            p Здесь пока ничего нет...
 
       section.main-page__last.last
         h2.last__name
@@ -33,14 +35,14 @@ block content
           |
           span.last__icon.last__icon--cloud
         ul.last__list
-          if latestComments.length
+          if !noComments
             each comment in latestComments
               li.last__list-item
-                img.last__list-image(src=`/img/${comment.author.avatar}` width='20' height='20' alt='Аватар пользователя')
+                +avatarImage(comment.author.avatar)
                 b.last__list-name #{comment.author.firstName} #{comment.author.lastName}
                 a.last__list-link(href=`/articles/${comment.articleId}#comments`)= comment.text
           else
-            p Здесь пока ничего нет
+            p Здесь пока ничего нет...
 
     section.main-page__list.preview
       h2.visually-hidden Список превью статей

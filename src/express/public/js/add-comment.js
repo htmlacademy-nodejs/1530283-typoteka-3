@@ -4,11 +4,21 @@
     CREATED: 201,
     BAD_REQUEST: 400
   };
+  const AVATAR_PLACEHOLDER = `icons/smile.svg`;
+  const NOT_EMPTY_TITLE = `Комментарии`;
 
   const commentsSectionNode = document.querySelector(`#comments`);
-  const commentsListNode = commentsSectionNode.querySelector(`.comments__list`);
+  const commentsTitle = commentsSectionNode.querySelector(`.comments__title`);
   const formNode = commentsSectionNode.querySelector(`form`);
   const errorNode = commentsSectionNode.querySelector(`.comments__error`);
+
+  const createCommentsListNode = () => {
+    const listNode = document.createElement(`ul`);
+
+    listNode.classList.add(`comments__list`);
+
+    return listNode;
+  }
 
   const createCommentItemNode = ({ createdAt, text, author }) => {
     const commentItemNode = document.createElement(`li`);
@@ -16,36 +26,38 @@
     commentItemNode.classList.add(`comments__comment`);
 
     commentItemNode.innerHTML = `
-      <div class="comments__avatar avatar">
-        <img src="" alt="аватар пользователя" />
+    <div class="comments__avatar avatar">
+    <img src="" alt="аватар пользователя" />
+    </div>
+    <div class="comments__text">
+      <div class="comments__head">
+      <p>Author Name</p>
+      <time class="comments__date" datetime="">Time</time>
       </div>
-      <div class="comments__text">
-        <div class="comments__head">
-          <p>Author Name</p>
-          <time class="comments__date" datetime="">Time</time>
-        </div>
-        <p class="comments__message">Text</p>
+      <p class="comments__message">Text</p>
       </div>
-    `;
+      `;
 
-    const avatarNode = commentItemNode.querySelector(`img`);
-    const authorNameNode = commentItemNode.querySelector(`.comments__head p`);
-    const dateNode = commentItemNode.querySelector(`.comments__date`);
-    const textNode = commentItemNode.querySelector(`.comments__message`);
+      const avatarNode = commentItemNode.querySelector(`img`);
+      const authorNameNode = commentItemNode.querySelector(`.comments__head p`);
+      const dateNode = commentItemNode.querySelector(`.comments__date`);
+      const textNode = commentItemNode.querySelector(`.comments__message`);
 
-    avatarNode.src = `/img/${author.avatar}`;
-    authorNameNode.textContent = `${author.firstName} ${author.lastName} •`;
-    dateNode.dateTime = createdAt;
-    dateNode.textContent = dayjs(createdAt).format(`DD.MM.YYYY, HH:mm`);
-    textNode.textContent = text;
+      avatarNode.src = `/img/${author.avatar || AVATAR_PLACEHOLDER}`;
+      authorNameNode.textContent = `${author.firstName} ${author.lastName} •`;
+      dateNode.dateTime = createdAt;
+      dateNode.textContent = dayjs(createdAt).format(`DD.MM.YYYY, HH:mm`);
+      textNode.textContent = text;
 
-    return commentItemNode;
-  };
+      return commentItemNode;
+    };
 
   const apiEndpoint = formNode.action;
 
   const textAreaNode = formNode.querySelector(`textarea`);
   const submitButtonNode = formNode.querySelector(`.button[type="submit"]`);
+
+  let commentsListNode = commentsSectionNode.querySelector(`.comments__list`);
 
   formNode.addEventListener(`submit`, async (evt) => {
     evt.preventDefault();
@@ -77,6 +89,12 @@
       const createdComment = await response.json();
 
       const commentItemNode = createCommentItemNode(createdComment);
+
+      if (!commentsListNode) {
+        commentsTitle.textContent = NOT_EMPTY_TITLE;
+        commentsListNode = createCommentsListNode();
+        commentsTitle.after(commentsListNode);
+      }
 
       commentsListNode.prepend(commentItemNode);
 

@@ -2,6 +2,7 @@
 
 const initDb = require(`../lib/init-db`);
 const sequelize = require(`../lib/sequelize`);
+const passwordService = require(`../lib/password-service`);
 
 const {getLogger} = require(`../lib/logger/logger`);
 const {ExitCode, FilePath, FileType} = require(`../../constants`);
@@ -14,7 +15,7 @@ const {
 } = require(`../../utils/common`);
 const {formatTimestamp, getRandomPastDate} = require(`../../utils/date`);
 
-const logger = getLogger({name: `fill-db`});
+const mockPassword = process.env.MOCK_PASSWORD;
 
 const DEFAULT_COUNT = 3;
 
@@ -40,28 +41,37 @@ const DayRestrict = {
 
 const USERS = [
   {
-    email: `ivanov@example.com`,
-    passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
-    firstName: `Иван`,
-    lastName: `Иванов`,
+    email: `admin@example.com`,
+    passwordHash: passwordService.hashSync(mockPassword),
+    firstName: `Админ`,
+    lastName: `Админов`,
     avatar: `avatar-1.png`,
     isAdmin: true,
   },
   {
-    email: `petrov@example.com`,
-    passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
-    firstName: `Пётр`,
-    lastName: `Петров`,
+    email: `ivanov@example.com`,
+    passwordHash: passwordService.hashSync(mockPassword),
+    firstName: `Иван`,
+    lastName: `Иванов`,
     avatar: `avatar-2.png`,
   },
   {
-    email: `sidorov@example.com`,
-    passwordHash: `5f4fcc3b5aa56fd61j832ud6be82cf99`,
-    firstName: `Сидор`,
-    lastName: `Сидоров`,
+    email: `petrov@example.com`,
+    passwordHash: passwordService.hashSync(mockPassword),
+    firstName: `Пётр`,
+    lastName: `Петров`,
     avatar: `avatar-3.png`,
   },
+  {
+    email: `sidorov@example.com`,
+    passwordHash: passwordService.hashSync(mockPassword),
+    firstName: `Сидор`,
+    lastName: `Сидоров`,
+    avatar: `avatar-4.png`,
+  },
 ];
+
+const logger = getLogger({name: `fill-db`});
 
 const generateAnnounce = (sentences) => getRandomItem(sentences);
 

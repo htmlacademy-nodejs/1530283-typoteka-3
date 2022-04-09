@@ -5,22 +5,29 @@ const {HttpCode} = require(`../../constants`);
 const passwordService = require(`../lib/password-service`);
 const {prepareErrors} = require(`../../utils/common`);
 
+const AuthRestriction = {
+  PASSWORD_MAX: 72,
+};
+
 const AuthErrorMessage = {
   EMAIL_EMPTY: `Введите адрес электронной почты`,
+  EMAIL_INVALID: `Введите корректный адрес электронной почты`,
   PASSWORD_EMPTY: `Введите пароль`,
-  PASSWORD_INCORRECT: `Неверный пароль`, // todo: change to auth_failed
-  USER_EMPTY: `Пользователь не найден`, // todo: change to auth_failed
+  PASSWORD_MAX: `Пароль должен содержать не более ${AuthRestriction.PASSWORD_MAX} символов`,
   AUTH_FAILED: `Неправильная электронная почта или пароль`
 };
 
 const schema = Joi.object({
-  email: Joi.string().required().messages({
+  email: Joi.string().required().email().messages({
     "string.empty": AuthErrorMessage.EMAIL_EMPTY,
+    "string.email": AuthErrorMessage.EMAIL_INVALID
   }),
   password: Joi.string()
     .required()
+    .max(AuthRestriction.PASSWORD_MAX)
     .messages({
       "string.empty": AuthErrorMessage.PASSWORD_EMPTY,
+      "string.max": AuthErrorMessage.PASSWORD_MAX,
     })
 });
 
@@ -38,7 +45,7 @@ const authValidator = (userService) => async (req, res, next) => {
 
   if (!user) {
     res.status(HttpCode.BAD_REQUEST).json({
-      email: AuthErrorMessage.USER_EMPTY, // todo: change to auth_failed
+      email: AuthErrorMessage.AUTH_FAILED,
     });
     return;
   }
@@ -47,7 +54,7 @@ const authValidator = (userService) => async (req, res, next) => {
 
   if (!passwordIsCorrect) {
     res.status(HttpCode.BAD_REQUEST).json({
-      email: AuthErrorMessage.PASSWORD_INCORRECT, // todo: change to auth_failed
+      email: AuthErrorMessage.AUTH_FAILED,
     });
     return;
   }

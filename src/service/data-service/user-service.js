@@ -7,7 +7,7 @@ class UserService {
 
   async findByEmail(email) {
     const user = await this._User.findOne({
-      attributes: [`id`, `email`, `firstName`, `lastName`, `passwordHash`, `avatar`],
+      attributes: [`id`, `email`, `firstName`, `lastName`, `passwordHash`, `avatar`, `isAdmin`],
       where: {email}});
     return user && user.get();
   }

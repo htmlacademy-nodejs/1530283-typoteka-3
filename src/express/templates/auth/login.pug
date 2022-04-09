@@ -17,7 +17,7 @@ block content
                 input(type='text' name='email' value=authFormData.email placeholder='Электронная почта')
             .form__field
               label
-                input(type='password' name='password' value=authFormData.password placeholder='Пароль')
+                input(type='password' name='password' placeholder='Пароль')
 
             if isFormInvalid
               +errorList(errorMessages, `При входе произошли ошибки:`)

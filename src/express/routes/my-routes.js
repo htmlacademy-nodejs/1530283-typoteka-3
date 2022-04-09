@@ -1,15 +1,19 @@
 "use strict";
 
 const {Router} = require(`express`);
+const multer = require(`multer`);
+const {getAPI} = require(`../api`);
+const {HttpCode} = require(`../../constants`);
+const admin = require(`../middlewares/admin`);
 const {getArticleTemplateData} = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
-const {getAPI} = require(`../api`);
-const multer = require(`multer`);
-const {HttpCode} = require(`../../constants`);
+
 const upload = multer();
 
 const myRoutes = new Router();
 const api = getAPI();
+
+myRoutes.use(admin);
 
 myRoutes.get(`/`, async (req, res, next) => {
   try {

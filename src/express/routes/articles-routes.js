@@ -10,13 +10,13 @@ const {
 } = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
 const upload = require(`../middlewares/upload`);
+const admin = require(`../middlewares/admin`);
+const auth = require(`../middlewares/auth`);
 
 const {HttpCode} = require(`../../constants`);
 
 const DEFAULT_ARTICLES_PAGE = 1;
 const ARTICLES_LIMIT = 8;
-
-const AUTHOR_ID = 1;
 
 const articlesRoutes = new Router();
 
@@ -50,7 +50,7 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
   }
 });
 
-articlesRoutes.get(`/add`, async (req, res, next) => {
+articlesRoutes.get(`/add`, admin, async (req, res, next) => {
   try {
     const categories = await api.getCategories();
 
@@ -66,7 +66,7 @@ articlesRoutes.get(`/add`, async (req, res, next) => {
   }
 });
 
-articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
+articlesRoutes.post(`/add`, admin, upload.single(`upload`), async (req, res, next) => {
   try {
     const {body, file} = req;
     const newArticle = parseClientArticle(body, file);
@@ -74,7 +74,7 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
     try {
       await api.createArticle({
         ...newArticle,
-        authorId: AUTHOR_ID,
+        authorId: req.session.user.id,
       });
 
       res.redirect(`/my`);
@@ -100,7 +100,7 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
   }
 });
 
-articlesRoutes.get(`/edit/:articleId`, async (req, res, next) => {
+articlesRoutes.get(`/edit/:articleId`, admin, async (req, res, next) => {
   try {
     const [article, categories] = await Promise.all([
       api.getArticle(req.params.articleId),
@@ -120,6 +120,7 @@ articlesRoutes.get(`/edit/:articleId`, async (req, res, next) => {
 
 articlesRoutes.post(
     `/edit/:articleId`,
+    admin,
     upload.single(`upload`),
     async (req, res, next) => {
       try {
@@ -131,7 +132,7 @@ articlesRoutes.post(
             id: req.params.articleId,
             data: {
               ...updatedArticle,
-              authorId: AUTHOR_ID,
+              authorId: req.session.user.id, // todo: add hidden field
             },
           });
 
@@ -184,6 +185,7 @@ articlesRoutes.get(`/:articleId`, async (req, res, next) => {
 
 articlesRoutes.post(
     `/:articleId/comments`,
+    auth,
     upload.none(),
     async (req, res) => {
       const {articleId} = req.params;
@@ -193,7 +195,7 @@ articlesRoutes.post(
           articleId,
           data: {
             ...req.body,
-            authorId: AUTHOR_ID,
+            authorId: req.session.user.id,
           },
         });
 

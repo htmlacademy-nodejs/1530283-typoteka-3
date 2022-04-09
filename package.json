@@ -13,7 +13,8 @@
     "generate": "node ./src/service/service.js --generate",
     "test": "npm run eslint && npm run jest",
     "eslint": "eslint --ext .js src/",
-    "jest": "jest"
+    "jest": "jest",
+    "jest::debug": "jest --watchAll --coverage"
   },
   "repository": {
     "type": "git",

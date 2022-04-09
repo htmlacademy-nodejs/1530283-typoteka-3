@@ -59,7 +59,6 @@ articlesRoutes.get(`/add`, admin, async (req, res, next) => {
       articleFormData: getInitialArticleFormData(),
       articleFormErrors: {},
       categories,
-      isNew: true,
     });
   } catch (error) {
     next(error);
@@ -130,10 +129,7 @@ articlesRoutes.post(
         try {
           await api.updateArticle({
             id: req.params.articleId,
-            data: {
-              ...updatedArticle,
-              authorId: req.session.user.id, // todo: add hidden field
-            },
+            data: updatedArticle,
           });
 
           res.redirect(`/my`);

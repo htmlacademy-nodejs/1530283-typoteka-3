@@ -1,9 +1,11 @@
 extends ../layout.pug
 
 block content
+  - const isNew = !articleFormData.id
   - const errorMessages = Object.values(articleFormErrors)
   - const isFormInvalid = Boolean(errorMessages.length)
   - const submitAction = isNew ? `Опубликовать` : `Сохранить`
+
   main
     section
       .popup.popup--new-publication.popup--anti

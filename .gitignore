@@ -9,6 +9,7 @@ Thumbs.db
 
 # Вспомогательные файлы
 *.log*
+spec.md
 node_modules/
 coverage/
 

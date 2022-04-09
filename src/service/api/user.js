@@ -4,6 +4,7 @@ const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
 const passwordService = require(`../lib/password-service`);
 const userValidator = require(`../middlewares/user-validator`);
+const authValidator = require(`../middlewares/auth-validator`);
 
 module.exports = (app, userService) => {
   const userRoutes = new Router();
@@ -25,5 +26,9 @@ module.exports = (app, userService) => {
     } catch (error) {
       next(error);
     }
+  });
+
+  userRoutes.post(`/auth`, authValidator(userService), async (req, res) => {
+    res.json(req.locals);
   });
 };

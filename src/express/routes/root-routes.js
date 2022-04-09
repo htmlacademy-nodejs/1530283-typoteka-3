@@ -45,10 +45,10 @@ rootRoutes.get(`/`, async (req, res, next) => {
       articles: articles.rows.map(getArticleTemplateData),
       categories,
       mostCommentedArticles: mostCommentedArticles.rows.map((article) =>
-        getArticleTemplateData(article, {truncate: true})
+        getArticleTemplateData(article, {truncate: true}),
       ),
       latestComments: latestComments.map((comment) =>
-        getCommentTemplateData(comment, {truncate: true})
+        getCommentTemplateData(comment, {truncate: true}),
       ),
       page,
       totalPages: Math.ceil(articles.count / ARTICLES_LIMIT),
@@ -63,7 +63,7 @@ rootRoutes.get(`/register`, (_req, res) =>
   res.render(`auth/register`, {
     registerFormData: {},
     registerFormErrors: {},
-  })
+  }),
 );
 
 rootRoutes.post(
@@ -89,10 +89,40 @@ rootRoutes.post(
           registerFormErrors: response.data,
         });
       }
-    }
+    },
 );
 
-rootRoutes.get(`/login`, (_req, res) => res.render(`auth/login`));
+rootRoutes.get(`/login`, (_req, res) => {
+  return res.render(`auth/login`, {
+    authFormData: {},
+    authFormErrors: {},
+  });
+});
+
+rootRoutes.post(`/login`, upload.none(), async (req, res, next) => {
+  const authData = req.body;
+
+  try {
+    const user = await api.auth(authData);
+
+    req.session.user = user;
+
+    req.session.save(() => {
+      res.redirect(`/`);
+    });
+  } catch (error) {
+    const {response} = error;
+
+    if (!response || response.status !== HttpCode.BAD_REQUEST) {
+      next(error);
+    }
+
+    res.render(`auth/login`, {
+      authFormData: authData,
+      authFormErrors: response.data,
+    });
+  }
+});
 
 rootRoutes.get(`/search`, async (req, res, next) => {
   const {query} = req.query;

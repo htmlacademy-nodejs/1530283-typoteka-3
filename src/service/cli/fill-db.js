@@ -15,7 +15,7 @@ const {
 } = require(`../../utils/common`);
 const {formatTimestamp, getRandomPastDate} = require(`../../utils/date`);
 
-const mockPassword = process.env.MOCK_PASSWORD;
+const {MOCK_PASSWORD} = process.env;
 
 const DEFAULT_COUNT = 3;
 
@@ -42,7 +42,7 @@ const DayRestrict = {
 const USERS = [
   {
     email: `admin@example.com`,
-    passwordHash: passwordService.hashSync(mockPassword),
+    passwordHash: passwordService.hashSync(MOCK_PASSWORD),
     firstName: `Админ`,
     lastName: `Админов`,
     avatar: `avatar-1.png`,
@@ -50,21 +50,21 @@ const USERS = [
   },
   {
     email: `ivanov@example.com`,
-    passwordHash: passwordService.hashSync(mockPassword),
+    passwordHash: passwordService.hashSync(MOCK_PASSWORD),
     firstName: `Иван`,
     lastName: `Иванов`,
     avatar: `avatar-2.png`,
   },
   {
     email: `petrov@example.com`,
-    passwordHash: passwordService.hashSync(mockPassword),
+    passwordHash: passwordService.hashSync(MOCK_PASSWORD),
     firstName: `Пётр`,
     lastName: `Петров`,
     avatar: `avatar-3.png`,
   },
   {
     email: `sidorov@example.com`,
-    passwordHash: passwordService.hashSync(mockPassword),
+    passwordHash: passwordService.hashSync(MOCK_PASSWORD),
     firstName: `Сидор`,
     lastName: `Сидоров`,
     avatar: `avatar-4.png`,

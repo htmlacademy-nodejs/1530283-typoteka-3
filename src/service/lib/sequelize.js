@@ -25,9 +25,11 @@ if (somethingIsNotDefined) {
   throw new Error(`One or more environmental variables are not defined`);
 }
 
+// todo: add logging depending on dev mode
 module.exports = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: DB_HOST,
   port: DB_PORT,
   dialect: DB_DIALECT,
   pool: DB_POOL_SETTINGS,
 });
+

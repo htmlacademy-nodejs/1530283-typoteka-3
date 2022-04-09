@@ -1,7 +1,6 @@
 extends ../layout.pug
 
 block content
-  - const isNew = !articleFormData.id
   - const errorMessages = Object.values(articleFormErrors)
   - const isFormInvalid = Boolean(errorMessages.length)
   - const submitAction = isNew ? `Опубликовать` : `Сохранить`
@@ -30,6 +29,7 @@ block content
             .new-publication__form.form
               .form__wrapper.form__wrapper--intro
                 .form__field
+                  input(type='hidden' name='_csrf' value=csrfToken)
                   label
                     input(type='text' name='title' placeholder='Заголовок' value=articleFormData.title)
                     p.error-text= articleFormErrors.title

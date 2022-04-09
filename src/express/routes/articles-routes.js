@@ -1,6 +1,7 @@
 "use strict";
 
 const {Router} = require(`express`);
+const csrf = require(`csurf`);
 const {getAPI} = require(`../api`);
 const {
   getArticleTemplateData,
@@ -8,7 +9,7 @@ const {
   getInitialArticleFormData,
   parseClientArticle,
 } = require(`../../utils/article`);
-const {getCommentTemplateData} = require(`../../utils/comment`);
+const {getCommentTemplateData, parseClientComment} = require(`../../utils/comment`);
 const upload = require(`../middlewares/upload`);
 const admin = require(`../middlewares/admin`);
 const auth = require(`../middlewares/auth`);
@@ -21,6 +22,8 @@ const ARTICLES_LIMIT = 8;
 const articlesRoutes = new Router();
 
 const api = getAPI();
+
+const csrfProtection = csrf({cookie: false});
 
 articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
   const page = req.query.page ? Number(req.query.page) : DEFAULT_ARTICLES_PAGE;
@@ -50,7 +53,7 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
   }
 });
 
-articlesRoutes.get(`/add`, admin, async (req, res, next) => {
+articlesRoutes.get(`/add`, admin, csrfProtection, async (req, res, next) => {
   try {
     const categories = await api.getCategories();
 
@@ -59,13 +62,15 @@ articlesRoutes.get(`/add`, admin, async (req, res, next) => {
       articleFormData: getInitialArticleFormData(),
       articleFormErrors: {},
       categories,
+      csrfToken: req.csrfToken(),
+      isNew: true,
     });
   } catch (error) {
     next(error);
   }
 });
 
-articlesRoutes.post(`/add`, admin, upload.single(`upload`), async (req, res, next) => {
+articlesRoutes.post(`/add`, admin, upload.single(`upload`), csrfProtection, async (req, res, next) => {
   try {
     const {body, file} = req;
     const newArticle = parseClientArticle(body, file);
@@ -91,6 +96,7 @@ articlesRoutes.post(`/add`, admin, upload.single(`upload`), async (req, res, nex
         articleFormData: newArticle,
         articleFormErrors: response.data,
         categories,
+        csrfToken: req.csrfToken(),
         isNew: true,
       });
     }
@@ -99,7 +105,7 @@ articlesRoutes.post(`/add`, admin, upload.single(`upload`), async (req, res, nex
   }
 });
 
-articlesRoutes.get(`/edit/:articleId`, admin, async (req, res, next) => {
+articlesRoutes.get(`/edit/:articleId`, admin, csrfProtection, async (req, res, next) => {
   try {
     const [article, categories] = await Promise.all([
       api.getArticle(req.params.articleId),
@@ -111,6 +117,7 @@ articlesRoutes.get(`/edit/:articleId`, admin, async (req, res, next) => {
       articleFormData: getArticleFormData(article),
       articleFormErrors: {},
       categories,
+      csrfToken: req.csrfToken(),
     });
   } catch (error) {
     next(error);
@@ -121,6 +128,7 @@ articlesRoutes.post(
     `/edit/:articleId`,
     admin,
     upload.single(`upload`),
+    csrfProtection,
     async (req, res, next) => {
       try {
         const {body, file} = req;
@@ -148,7 +156,7 @@ articlesRoutes.post(
             articleFormErrors: response.data,
             categories,
             isNew: true,
-            error: true
+            csrfToken: req.csrfToken(),
           });
         }
       } catch (error) {
@@ -157,7 +165,7 @@ articlesRoutes.post(
     }
 );
 
-articlesRoutes.get(`/:articleId`, async (req, res, next) => {
+articlesRoutes.get(`/:articleId`, csrfProtection, async (req, res, next) => {
   try {
     const [article, categories, comments] = await Promise.all([
       api.getArticle(req.params.articleId),
@@ -173,6 +181,7 @@ articlesRoutes.get(`/:articleId`, async (req, res, next) => {
       article: getArticleTemplateData(article),
       categories,
       comments: comments.map(getCommentTemplateData),
+      csrfToken: req.csrfToken(),
     });
   } catch (error) {
     next(error);
@@ -183,14 +192,16 @@ articlesRoutes.post(
     `/:articleId/comments`,
     auth,
     upload.none(),
+    csrfProtection,
     async (req, res) => {
       const {articleId} = req.params;
+      const newComment = parseClientComment(req.body);
 
       try {
         const createdComment = await api.createComment({
           articleId,
           data: {
-            ...req.body,
+            ...newComment,
             authorId: req.session.user.id,
           },
         });

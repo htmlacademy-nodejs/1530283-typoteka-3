@@ -46,6 +46,7 @@ block content
                   +avatarImage(user.avatar)
                 label
                   textarea(rows='1' name='text' placeholder='Присоединиться к обсуждению')
+                input(type='hidden' name='_csrf' value=csrfToken)
                 button.comments__button.button.button--colored(type='submit') Опубликовать
               p.comments__error
           else

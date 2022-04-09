@@ -7,6 +7,7 @@ const {getCommentTemplateData} = require(`../../utils/comment`);
 const {parseClientUser} = require(`../../utils/user`);
 const {getAPI} = require(`../api`);
 const upload = require(`../middlewares/upload`);
+const guest = require(`../middlewares/guest`);
 
 const rootRoutes = new Router();
 const api = getAPI();
@@ -62,7 +63,7 @@ rootRoutes.get(`/`, async (req, res, next) => {
   }
 });
 
-rootRoutes.get(`/register`, (_req, res) =>
+rootRoutes.get(`/register`, guest, (_req, res) =>
   res.render(`auth/register`, {
     registerFormData: {},
     registerFormErrors: {},
@@ -71,6 +72,7 @@ rootRoutes.get(`/register`, (_req, res) =>
 
 rootRoutes.post(
     `/register`,
+    guest,
     upload.single(`upload`),
     async (req, res, next) => {
       const {body, file} = req;
@@ -95,14 +97,14 @@ rootRoutes.post(
     },
 );
 
-rootRoutes.get(`/login`, (_req, res) => {
+rootRoutes.get(`/login`, guest, (_req, res) => {
   return res.render(`auth/login`, {
     authFormData: {},
     authFormErrors: {},
   });
 });
 
-rootRoutes.post(`/login`, upload.none(), async (req, res, next) => {
+rootRoutes.post(`/login`, guest, upload.none(), async (req, res, next) => {
   const authData = req.body;
 
   try {

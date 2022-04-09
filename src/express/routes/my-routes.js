@@ -11,14 +11,12 @@ const upload = multer();
 const myRoutes = new Router();
 const api = getAPI();
 
-myRoutes.get(`/`, async (_req, res, next) => {
+myRoutes.get(`/`, async (req, res, next) => {
   try {
     const articles = await api.getAndCountArticles();
 
     res.render(`admin/articles`, {
-      user: {
-        isAdmin: true,
-      },
+      user: req.session.user,
       articles: articles.rows.map(getArticleTemplateData),
     });
   } catch (error) {
@@ -35,14 +33,12 @@ myRoutes.delete(`/articles/:articleId`, async (req, res) => {
   }
 });
 
-myRoutes.get(`/comments`, async (_req, res, next) => {
+myRoutes.get(`/comments`, async (req, res, next) => {
   try {
     const comments = await api.getComments();
 
     res.render(`admin/comments`, {
-      user: {
-        isAdmin: true,
-      },
+      user: req.session.user,
       comments: comments.map(getCommentTemplateData),
     });
   } catch (error) {
@@ -59,14 +55,12 @@ myRoutes.delete(`/comments/:commentId`, async (req, res) => {
   }
 });
 
-myRoutes.get(`/categories`, async (_req, res, next) => {
+myRoutes.get(`/categories`, async (req, res, next) => {
   try {
     const categories = await api.getCategories({withArticlesCount: true});
 
     res.render(`admin/categories`, {
-      user: {
-        isAdmin: true,
-      },
+      user: req.session.user,
       categories,
       addCategoryFormData: {},
       addCategoryFormErrors: {}
@@ -95,9 +89,7 @@ myRoutes.post(`/categories`, upload.none(), async (req, res, next) => {
       const categories = await api.getCategories({withArticlesCount: true});
 
       res.render(`admin/categories`, {
-        user: {
-          isAdmin: true,
-        },
+        user: req.session.user,
         categories,
         addCategoryFormData,
         addCategoryFormErrors: response.data

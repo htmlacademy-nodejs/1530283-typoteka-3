@@ -27,7 +27,9 @@ rootRoutes.get(`/`, async (req, res, next) => {
     });
 
     if (!articles.count) {
-      res.render(`articles/no-articles`);
+      res.render(`articles/no-articles`, {
+        user: req.session.user,
+      });
       return;
     }
 
@@ -53,6 +55,7 @@ rootRoutes.get(`/`, async (req, res, next) => {
       page,
       totalPages: Math.ceil(articles.count / ARTICLES_LIMIT),
       withPagination: articles.count > ARTICLES_LIMIT,
+      user: req.session.user,
     });
   } catch (error) {
     next(error);
@@ -124,6 +127,14 @@ rootRoutes.post(`/login`, upload.none(), async (req, res, next) => {
   }
 });
 
+rootRoutes.get(`/logout`, (req, res) => {
+  delete req.session.user;
+
+  req.session.save(() => {
+    res.redirect(`login`);
+  });
+});
+
 rootRoutes.get(`/search`, async (req, res, next) => {
   const {query} = req.query;
 
@@ -133,6 +144,7 @@ rootRoutes.get(`/search`, async (req, res, next) => {
     res.render(`articles/search`, {
       articles: articles.map(getArticleTemplateData),
       query,
+      user: req.session.user,
     });
   } catch (error) {
     if (!error.response) {
@@ -144,6 +156,7 @@ rootRoutes.get(`/search`, async (req, res, next) => {
       res.render(`articles/search`, {
         articles: null,
         query,
+        user: req.session.user,
       });
       return;
     }
@@ -152,6 +165,7 @@ rootRoutes.get(`/search`, async (req, res, next) => {
       res.render(`articles/search`, {
         articles: [],
         query,
+        user: req.session.user,
       });
       return;
     }

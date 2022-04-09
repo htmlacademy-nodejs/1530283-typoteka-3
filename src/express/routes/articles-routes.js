@@ -37,7 +37,7 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
     ]);
 
     res.render(`articles/articles-by-category`, {
-      user: {},
+      user: req.session.user,
       articles: articles.rows.map(getArticleTemplateData),
       categories,
       currentCategoryId: Number(req.params.categoryId),
@@ -50,14 +50,12 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
   }
 });
 
-articlesRoutes.get(`/add`, async (_req, res, next) => {
+articlesRoutes.get(`/add`, async (req, res, next) => {
   try {
     const categories = await api.getCategories();
 
     res.render(`admin/form`, {
-      user: {
-        isAdmin: true,
-      },
+      user: req.session.user,
       articleFormData: getInitialArticleFormData(),
       articleFormErrors: {},
       categories,
@@ -90,9 +88,7 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
       const categories = await api.getCategories();
 
       res.render(`admin/form`, {
-        user: {
-          isAdmin: true,
-        },
+        user: req.session.user,
         articleFormData: newArticle,
         articleFormErrors: response.data,
         categories,
@@ -112,9 +108,7 @@ articlesRoutes.get(`/edit/:articleId`, async (req, res, next) => {
     ]);
 
     res.render(`admin/form`, {
-      user: {
-        isAdmin: true,
-      },
+      user: req.session.user,
       articleFormData: getArticleFormData(article),
       articleFormErrors: {},
       categories,
@@ -152,9 +146,7 @@ articlesRoutes.post(
           const categories = await api.getCategories();
 
           res.render(`admin/form`, {
-            user: {
-              isAdmin: true,
-            },
+            user: req.session.user,
             articleFormData: updatedArticle,
             articleFormErrors: response.data,
             categories,
@@ -180,7 +172,7 @@ articlesRoutes.get(`/:articleId`, async (req, res, next) => {
     ]);
 
     res.render(`articles/article`, {
-      user: {},
+      user: req.session.user,
       article: getArticleTemplateData(article),
       categories,
       comments: comments.map(getCommentTemplateData),

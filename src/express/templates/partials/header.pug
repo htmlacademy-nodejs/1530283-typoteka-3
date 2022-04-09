@@ -15,9 +15,6 @@ header.header(class={[`header--error`]: isHttpError})
           a.header__registration(href='/register') Регистрация
         li.header__list-item
           a.header__enter(href='/login') Вход с паролем
-        //- Временный роут
-        li.header__list-item
-          a.header__enter(href='/my') Админ
   else if user.isAdmin
     a.button.button--colored.header__button-new(href='/articles/add') Новая запись
     .header__dropdown
@@ -32,15 +29,15 @@ header.header(class={[`header--error`]: isHttpError})
         li.navigation__item
           a(href='/my/categories') Категории
         li.navigation__item
-          a(href='/') Выход
+          a(href='/logout') Выход
   else
     nav.header__nav
       ul.header__nav-list
         li.header__list-item
-          p Алёна Фролова
+          p #{user.firstName} #{user.lastName}
         li.header__list-item
-          a.header__exit(href='#') Выйти
+          a.header__exit(href='/logout') Выйти
     a.header__avatar.avatar
-      +avatarImage(`avatar-2.png`)
+      +avatarImage(user.avatar)
 
   a.header__search.button.button--search(href='/search' aria-label='поиск по сайту')

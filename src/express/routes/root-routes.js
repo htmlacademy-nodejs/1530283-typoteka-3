@@ -130,9 +130,7 @@ rootRoutes.post(`/login`, guest, upload.none(), async (req, res, next) => {
 });
 
 rootRoutes.get(`/logout`, (req, res) => {
-  delete req.session.user;
-
-  req.session.save(() => {
+  req.session.destroy(() => {
     res.redirect(`login`);
   });
 });

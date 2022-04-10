@@ -3,6 +3,19 @@
 const session = require(`express-session`);
 const sessionStore = require(`./session-store`);
 
+const SESSION_CONFIG = {
+  resave: false,
+  proxy: true,
+  saveUninitialized: false,
+  cookie: {
+    // path: `/`,
+    // httpOnly: true,
+    // secure: true,
+    // maxAge: null,
+    // sameSite: `lax`
+  }
+};
+
 const {SESSION_SECRET} = process.env;
 
 if (!SESSION_SECRET) {
@@ -12,7 +25,5 @@ if (!SESSION_SECRET) {
 module.exports = session({
   secret: SESSION_SECRET,
   store: sessionStore,
-  resave: false,
-  proxy: true,
-  saveUninitialized: false,
+  ...SESSION_CONFIG
 });

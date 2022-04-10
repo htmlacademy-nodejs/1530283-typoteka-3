@@ -47,6 +47,8 @@ app.use(session);
 
 app.use(helmet);
 
+app.use(express.urlencoded({extended: false}));
+
 app.set(`views`, path.resolve(__dirname, Dir.TEMPLATES));
 app.set(`view engine`, `pug`);
 

@@ -1,7 +1,6 @@
 "use strict";
 
 const {Router} = require(`express`);
-const multer = require(`multer`);
 const csrf = require(`csurf`);
 const {getAPI} = require(`../api`);
 const {HttpCode} = require(`../../constants`);
@@ -9,8 +8,6 @@ const admin = require(`../middlewares/admin`);
 const {getArticleTemplateData} = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
 const {parseClientCategory} = require(`../../utils/category`);
-
-const upload = multer();
 
 const myRoutes = new Router();
 
@@ -34,7 +31,7 @@ myRoutes.get(`/`, csrfProtection, async (req, res, next) => {
   }
 });
 
-myRoutes.delete(`/articles/:articleId`, upload.none(), csrfProtection, async (req, res) => {
+myRoutes.delete(`/articles/:articleId`, csrfProtection, async (req, res) => {
   try {
     await api.deleteArticle(req.params.articleId);
     res.status(HttpCode.NO_CONTENT).end();
@@ -57,7 +54,7 @@ myRoutes.get(`/comments`, csrfProtection, async (req, res, next) => {
   }
 });
 
-myRoutes.delete(`/comments/:commentId`, upload.none(), csrfProtection, async (req, res) => {
+myRoutes.delete(`/comments/:commentId`, csrfProtection, async (req, res) => {
   try {
     await api.deleteComment(req.params.commentId);
     res.status(HttpCode.NO_CONTENT).end();
@@ -82,7 +79,7 @@ myRoutes.get(`/categories`, csrfProtection, async (req, res, next) => {
   }
 });
 
-myRoutes.post(`/categories`, upload.none(), csrfProtection, async (req, res, next) => {
+myRoutes.post(`/categories`, csrfProtection, async (req, res, next) => {
   const newCategoryDate = parseClientCategory(req.body);
 
   try {
@@ -113,7 +110,7 @@ myRoutes.post(`/categories`, upload.none(), csrfProtection, async (req, res, nex
   }
 });
 
-myRoutes.put(`/categories/:categoryId`, upload.none(), csrfProtection, async (req, res) => {
+myRoutes.put(`/categories/:categoryId`, csrfProtection, async (req, res) => {
   const updatedCategoryData = parseClientCategory(req.body);
 
   try {
@@ -139,7 +136,7 @@ myRoutes.put(`/categories/:categoryId`, upload.none(), csrfProtection, async (re
   }
 });
 
-myRoutes.delete(`/categories/:categoryId`, upload.none(), csrfProtection, async (req, res) => {
+myRoutes.delete(`/categories/:categoryId`, csrfProtection, async (req, res) => {
   try {
     await api.deleteCategory(req.params.categoryId);
 

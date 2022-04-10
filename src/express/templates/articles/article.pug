@@ -41,7 +41,7 @@ block content
 
           if user
             .comments__footer.comments__footer--user
-              form(action=`/articles/${article.id}/comments` method='POST' enctype='multipart/form-data' autocomplete='off')
+              form(action=`/articles/${article.id}/comments` method='POST' autocomplete='off')
                 .comments__avatar.avatar
                   +avatarImage(user.avatar)
                 label

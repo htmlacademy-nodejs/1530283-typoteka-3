@@ -63,6 +63,7 @@
     evt.preventDefault();
 
     const formData = new FormData(formNode);
+    const formBody = new URLSearchParams(formData);
 
     textAreaNode.disabled = true;
     submitButtonNode.disabled = true;
@@ -71,7 +72,7 @@
     try {
       const response = await fetch(apiEndpoint, {
         method: POST_METHOD,
-        body: formData,
+        body: formBody,
       });
 
       if (response.status === HttpStatusCode.BAD_REQUEST) {

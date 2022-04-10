@@ -30,10 +30,12 @@
     const formData = new FormData();
     formData.append(CSRF_TOKEN_NAME, csrfToken);
 
+    const formBody = new URLSearchParams(formData);
+
     try {
       const response = await fetch(apiEndpoint, {
         method: DELETE_METHOD,
-        body: formData,
+        body: formBody,
       });
 
       if (response.status !== NO_CONTENT_STATUS_CODE) {

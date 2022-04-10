@@ -105,7 +105,7 @@ rootRoutes.get(`/login`, guest, (_req, res) => {
   });
 });
 
-rootRoutes.post(`/login`, guest, upload.none(), async (req, res, next) => {
+rootRoutes.post(`/login`, guest, async (req, res, next) => {
   const authData = req.body;
 
   try {

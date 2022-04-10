@@ -191,7 +191,6 @@ articlesRoutes.get(`/:articleId`, csrfProtection, async (req, res, next) => {
 articlesRoutes.post(
     `/:articleId/comments`,
     auth,
-    upload.none(),
     csrfProtection,
     async (req, res) => {
       const {articleId} = req.params;

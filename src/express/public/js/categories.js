@@ -17,8 +17,6 @@
   const categoriesListNode = document.querySelector(`.category__list`);
   const csrfToken = document.querySelector(`meta[name='csrf-token']`).content;
 
-  console.log(csrfToken);
-
   categoriesListNode.addEventListener(`submit`, async (evt) => {
     const updateFormNode = evt.target.closest(`form`);
 
@@ -42,6 +40,8 @@
     const formData = new FormData(updateFormNode);
     formData.append(CSRF_TOKEN_NAME, csrfToken);
 
+    const formBody = new URLSearchParams(formData);
+
     inputNode.disabled = true;
     submitButtonNode.disabled = true;
     errorNode.textContent = ``;
@@ -51,7 +51,7 @@
     try {
       const response = await fetch(apiEndpoint, {
         method: HttpMethod.PUT,
-        body: formData,
+        body: formBody,
       });
 
       if (response.status === HttpSuccessCode.BAD_REQUEST) {
@@ -92,13 +92,14 @@
 
     const apiEndpoint = getApiEndpoint(deleteButtonNode.dataset.categoryId);
 
-    const formData = new FormData();
-    formData.append(CSRF_TOKEN_NAME, csrfToken);
+    const formBody = new URLSearchParams({
+      [CSRF_TOKEN_NAME]: csrfToken
+    });
 
     try {
       const response = await fetch(apiEndpoint, {
         method: HttpMethod.DELETE,
-        body:formData,
+        body: formBody,
       });
 
       if (response.status !== HttpSuccessCode.NO_CONTENT) {

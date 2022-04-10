@@ -17,6 +17,10 @@ const {formatTimestamp, getRandomPastDate} = require(`../../utils/date`);
 
 const {MOCK_PASSWORD} = process.env;
 
+if (!MOCK_PASSWORD) {
+  throw new Error(`MOCK_PASSWORD environment variable is not defined`);
+}
+
 const DEFAULT_COUNT = 3;
 
 const SentenceRestrict = {

@@ -13,12 +13,15 @@ const DB_POOL_SETTINGS = {
   idle: 10000,
 };
 
+const DB_LOGGING = false;
+
 const somethingIsNotDefined = [
   DB_NAME,
   DB_USER,
   DB_PASSWORD,
   DB_HOST,
   DB_PORT,
+  DB_LOGGING,
 ].some((value) => value === undefined);
 
 if (somethingIsNotDefined) {
@@ -30,6 +33,6 @@ module.exports = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   port: DB_PORT,
   dialect: DB_DIALECT,
   pool: DB_POOL_SETTINGS,
-  logging: false
+  logging: DB_LOGGING,
 });
 

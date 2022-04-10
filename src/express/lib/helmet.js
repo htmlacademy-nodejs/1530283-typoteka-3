@@ -7,10 +7,12 @@ const SCRIPT_SOURCES = [
   `https://unpkg.com/dayjs@1.8.21/dayjs.min.js`,
 ];
 
-module.exports = helmet({
-  contentSecurityPolicy: {
-    directives: {
-      scriptSrc: SCRIPT_SOURCES,
+module.exports = {
+  helmet: helmet({
+    contentSecurityPolicy: {
+      directives: {
+        scriptSrc: SCRIPT_SOURCES,
+      },
     },
-  },
-});
+  })
+};

@@ -11,7 +11,7 @@ const admin = (req, res, next) => {
   }
 
   if (req.method === HttpMethod.GET) {
-    res.redirect(`/`);
+    res.redirect(`/404`);
     return;
   }
 

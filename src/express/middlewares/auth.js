@@ -9,7 +9,7 @@ const auth = (req, res, next) => {
   }
 
   if (req.method === HttpMethod.GET) {
-    res.redirect(`/`);
+    res.redirect(`/login`);
     return;
   }
 

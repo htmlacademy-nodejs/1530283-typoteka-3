@@ -9,6 +9,7 @@ const SESSION_CONFIG = {
   name: SESSION_COOKIE_NAME,
   resave: false,
   proxy: true,
+  rolling: true,
   saveUninitialized: false,
   cookie: {
     path: `/`,

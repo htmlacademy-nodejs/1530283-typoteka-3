@@ -7,7 +7,7 @@ const express = require(`express`);
 const {HttpCode, HttpMethod} = require(`../constants`);
 
 const helmet = require(`./lib/helmet`);
-const session = require(`./lib/session`);
+const {session} = require(`./lib/session`);
 
 const rootRoutes = require(`./routes/root-routes`);
 const errorRoutes = require(`./routes/error-routes`);

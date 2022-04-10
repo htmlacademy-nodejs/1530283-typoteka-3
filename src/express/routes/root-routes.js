@@ -2,6 +2,7 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
+const {SESSION_COOKIE_NAME} = require(`../lib/session`);
 const {getArticleTemplateData} = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
 const {parseClientUser} = require(`../../utils/user`);
@@ -131,6 +132,7 @@ rootRoutes.post(`/login`, guest, upload.none(), async (req, res, next) => {
 
 rootRoutes.get(`/logout`, (req, res) => {
   req.session.destroy(() => {
+    res.clearCookie(SESSION_COOKIE_NAME);
     res.redirect(`login`);
   });
 });

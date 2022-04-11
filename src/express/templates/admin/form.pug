@@ -4,6 +4,7 @@ block content
   - const errorMessages = Object.values(articleFormErrors)
   - const isFormInvalid = Boolean(errorMessages.length)
   - const submitAction = isNew ? `Опубликовать` : `Сохранить`
+
   main
     section
       .popup.popup--new-publication.popup--anti
@@ -28,6 +29,7 @@ block content
             .new-publication__form.form
               .form__wrapper.form__wrapper--intro
                 .form__field
+                  +csrfInput(csrfToken)
                   label
                     input(type='text' name='title' placeholder='Заголовок' value=articleFormData.title)
                     p.error-text= articleFormErrors.title

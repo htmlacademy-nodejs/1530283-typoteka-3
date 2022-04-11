@@ -3,48 +3,33 @@
 const path = require(`path`);
 const chalk = require(`chalk`);
 const express = require(`express`);
-const helmet = require(`helmet`);
-const {HttpCode, HttpMethod} = require(`../constants`);
+
+const {helmet} = require(`./lib/helmet`);
+const {session} = require(`./lib/session`);
+
+const clientError = require(`./middlewares/client-error`);
+const serverError = require(`./middlewares/server-error`);
+
 const rootRoutes = require(`./routes/root-routes`);
 const errorRoutes = require(`./routes/error-routes`);
 const myRoutes = require(`./routes/my-routes`);
 const articlesRoutes = require(`./routes/articles-routes`);
 
 const PORT = 8080;
+
 const Dir = {
   TEMPLATES: `templates`,
   PUBLIC: `public`,
-  UPLOAD: `upload`
-};
-
-const handleClientError = (req, res) => {
-  if (req.method !== HttpMethod.GET) {
-    res.status(HttpCode.NOT_FOUND).end();
-    return;
-  }
-
-  res.redirect(`/404`);
-};
-
-const handleServerError = (err, req, res, _next) => {
-  if (err.response && err.response.status === HttpCode.NOT_FOUND) {
-    handleClientError(req, res);
-    return;
-  }
-
-  console.error(chalk.red(`Request failed with error: ${err.message}`));
-  res.redirect(`/500`);
+  UPLOAD: `upload`,
 };
 
 const app = express();
 
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      scriptSrc: [`'self' 'unsafe-eval'`, `https://unpkg.com/dayjs@1.8.21/dayjs.min.js`]
-    }
-  },
-}));
+app.use(session);
+
+app.use(helmet);
+
+app.use(express.urlencoded({extended: false}));
 
 app.set(`views`, path.resolve(__dirname, Dir.TEMPLATES));
 app.set(`view engine`, `pug`);
@@ -57,12 +42,14 @@ app.use(`/`, errorRoutes);
 app.use(`/my`, myRoutes);
 app.use(`/articles`, articlesRoutes);
 
-app.use(handleClientError);
-app.use(handleServerError);
+app.use(clientError);
+app.use(serverError);
 
 app.listen(PORT, (err) => {
   if (err) {
-    console.error(chalk.red(`An error occurred on server creation: ${err.message}`));
+    console.error(
+        chalk.red(`An error occurred on server creation: ${err.message}`)
+    );
     return;
   }
 

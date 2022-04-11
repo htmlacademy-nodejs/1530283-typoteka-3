@@ -2,11 +2,13 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
+const {SESSION_COOKIE_NAME} = require(`../lib/session`);
 const {getArticleTemplateData} = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
 const {parseClientUser} = require(`../../utils/user`);
 const {getAPI} = require(`../api`);
 const upload = require(`../middlewares/upload`);
+const guest = require(`../middlewares/guest`);
 
 const rootRoutes = new Router();
 const api = getAPI();
@@ -27,7 +29,9 @@ rootRoutes.get(`/`, async (req, res, next) => {
     });
 
     if (!articles.count) {
-      res.render(`articles/no-articles`);
+      res.render(`articles/no-articles`, {
+        user: req.session.user,
+      });
       return;
     }
 
@@ -45,29 +49,31 @@ rootRoutes.get(`/`, async (req, res, next) => {
       articles: articles.rows.map(getArticleTemplateData),
       categories,
       mostCommentedArticles: mostCommentedArticles.rows.map((article) =>
-        getArticleTemplateData(article, {truncate: true})
+        getArticleTemplateData(article, {truncate: true}),
       ),
       latestComments: latestComments.map((comment) =>
-        getCommentTemplateData(comment, {truncate: true})
+        getCommentTemplateData(comment, {truncate: true}),
       ),
       page,
       totalPages: Math.ceil(articles.count / ARTICLES_LIMIT),
       withPagination: articles.count > ARTICLES_LIMIT,
+      user: req.session.user,
     });
   } catch (error) {
     next(error);
   }
 });
 
-rootRoutes.get(`/register`, (_req, res) =>
+rootRoutes.get(`/register`, guest, (_req, res) =>
   res.render(`auth/register`, {
     registerFormData: {},
     registerFormErrors: {},
-  })
+  }),
 );
 
 rootRoutes.post(
     `/register`,
+    guest,
     upload.single(`upload`),
     async (req, res, next) => {
       const {body, file} = req;
@@ -89,10 +95,47 @@ rootRoutes.post(
           registerFormErrors: response.data,
         });
       }
-    }
+    },
 );
 
-rootRoutes.get(`/login`, (_req, res) => res.render(`auth/login`));
+rootRoutes.get(`/login`, guest, (_req, res) => {
+  return res.render(`auth/login`, {
+    authFormData: {},
+    authFormErrors: {},
+  });
+});
+
+rootRoutes.post(`/login`, guest, async (req, res, next) => {
+  const authData = req.body;
+
+  try {
+    const user = await api.auth(authData);
+
+    req.session.user = user;
+
+    req.session.save(() => {
+      res.redirect(`/`);
+    });
+  } catch (error) {
+    const {response} = error;
+
+    if (!response || response.status !== HttpCode.BAD_REQUEST) {
+      next(error);
+    }
+
+    res.render(`auth/login`, {
+      authFormData: authData,
+      authFormErrors: response.data,
+    });
+  }
+});
+
+rootRoutes.get(`/logout`, (req, res) => {
+  req.session.destroy(() => {
+    res.clearCookie(SESSION_COOKIE_NAME);
+    res.redirect(`login`);
+  });
+});
 
 rootRoutes.get(`/search`, async (req, res, next) => {
   const {query} = req.query;
@@ -103,6 +146,7 @@ rootRoutes.get(`/search`, async (req, res, next) => {
     res.render(`articles/search`, {
       articles: articles.map(getArticleTemplateData),
       query,
+      user: req.session.user,
     });
   } catch (error) {
     if (!error.response) {
@@ -114,6 +158,7 @@ rootRoutes.get(`/search`, async (req, res, next) => {
       res.render(`articles/search`, {
         articles: null,
         query,
+        user: req.session.user,
       });
       return;
     }
@@ -122,6 +167,7 @@ rootRoutes.get(`/search`, async (req, res, next) => {
       res.render(`articles/search`, {
         articles: [],
         query,
+        user: req.session.user,
       });
       return;
     }

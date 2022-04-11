@@ -1,6 +1,9 @@
 extends ../layout.pug
 
 block content
+  - const errorMessages = Object.values(authFormErrors)
+  - const isFormInvalid = Boolean(errorMessages.length)
+
   main
     h1.visually-hidden Авторизация пользователя
     section
@@ -8,12 +11,15 @@ block content
         a.popup__button.button.button--popup-close(href='/' aria-label='Закрыть окно') Закрыть окно
         h2.popup__title Войти
         .popup__form.form.form--log-in
-          form(method='post' enctype='multipart/form-data' autocomplete='off')
+          form(method='post' autocomplete='off')
             .form__field
               label
-                input(type='email' name='email' placeholder='Электронная почта')
+                input(type='text' name='email' value=authFormData.email placeholder='Электронная почта')
             .form__field
               label
                 input(type='password' name='password' placeholder='Пароль')
-            //- p.form__error-message Некоторая ошибка произошла, беда!
+
+            if isFormInvalid
+              +errorList(errorMessages, `При входе произошли ошибки:`)
+
             button.form__submit-btn.form__submit-btn--log-in.button.button--colored(type='submit') Войти

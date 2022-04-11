@@ -1,6 +1,7 @@
 "use strict";
 
 const {Router} = require(`express`);
+const csrf = require(`csurf`);
 const {getAPI} = require(`../api`);
 const {
   getArticleTemplateData,
@@ -8,19 +9,21 @@ const {
   getInitialArticleFormData,
   parseClientArticle,
 } = require(`../../utils/article`);
-const {getCommentTemplateData} = require(`../../utils/comment`);
+const {getCommentTemplateData, parseClientComment} = require(`../../utils/comment`);
 const upload = require(`../middlewares/upload`);
+const admin = require(`../middlewares/admin`);
+const auth = require(`../middlewares/auth`);
 
 const {HttpCode} = require(`../../constants`);
 
 const DEFAULT_ARTICLES_PAGE = 1;
 const ARTICLES_LIMIT = 8;
 
-const AUTHOR_ID = 1;
-
 const articlesRoutes = new Router();
 
 const api = getAPI();
+
+const csrfProtection = csrf({cookie: false});
 
 articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
   const page = req.query.page ? Number(req.query.page) : DEFAULT_ARTICLES_PAGE;
@@ -37,7 +40,7 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
     ]);
 
     res.render(`articles/articles-by-category`, {
-      user: {},
+      user: req.session.user,
       articles: articles.rows.map(getArticleTemplateData),
       categories,
       currentCategoryId: Number(req.params.categoryId),
@@ -50,17 +53,16 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
   }
 });
 
-articlesRoutes.get(`/add`, async (_req, res, next) => {
+articlesRoutes.get(`/add`, admin, csrfProtection, async (req, res, next) => {
   try {
     const categories = await api.getCategories();
 
     res.render(`admin/form`, {
-      user: {
-        isAdmin: true,
-      },
+      user: req.session.user,
       articleFormData: getInitialArticleFormData(),
       articleFormErrors: {},
       categories,
+      csrfToken: req.csrfToken(),
       isNew: true,
     });
   } catch (error) {
@@ -68,7 +70,7 @@ articlesRoutes.get(`/add`, async (_req, res, next) => {
   }
 });
 
-articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
+articlesRoutes.post(`/add`, admin, upload.single(`upload`), csrfProtection, async (req, res, next) => {
   try {
     const {body, file} = req;
     const newArticle = parseClientArticle(body, file);
@@ -76,7 +78,7 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
     try {
       await api.createArticle({
         ...newArticle,
-        authorId: AUTHOR_ID,
+        authorId: req.session.user.id,
       });
 
       res.redirect(`/my`);
@@ -90,12 +92,11 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
       const categories = await api.getCategories();
 
       res.render(`admin/form`, {
-        user: {
-          isAdmin: true,
-        },
+        user: req.session.user,
         articleFormData: newArticle,
         articleFormErrors: response.data,
         categories,
+        csrfToken: req.csrfToken(),
         isNew: true,
       });
     }
@@ -104,7 +105,7 @@ articlesRoutes.post(`/add`, upload.single(`upload`), async (req, res, next) => {
   }
 });
 
-articlesRoutes.get(`/edit/:articleId`, async (req, res, next) => {
+articlesRoutes.get(`/edit/:articleId`, admin, csrfProtection, async (req, res, next) => {
   try {
     const [article, categories] = await Promise.all([
       api.getArticle(req.params.articleId),
@@ -112,12 +113,11 @@ articlesRoutes.get(`/edit/:articleId`, async (req, res, next) => {
     ]);
 
     res.render(`admin/form`, {
-      user: {
-        isAdmin: true,
-      },
+      user: req.session.user,
       articleFormData: getArticleFormData(article),
       articleFormErrors: {},
       categories,
+      csrfToken: req.csrfToken(),
     });
   } catch (error) {
     next(error);
@@ -126,7 +126,9 @@ articlesRoutes.get(`/edit/:articleId`, async (req, res, next) => {
 
 articlesRoutes.post(
     `/edit/:articleId`,
+    admin,
     upload.single(`upload`),
+    csrfProtection,
     async (req, res, next) => {
       try {
         const {body, file} = req;
@@ -135,10 +137,7 @@ articlesRoutes.post(
         try {
           await api.updateArticle({
             id: req.params.articleId,
-            data: {
-              ...updatedArticle,
-              authorId: AUTHOR_ID,
-            },
+            data: updatedArticle,
           });
 
           res.redirect(`/my`);
@@ -152,14 +151,12 @@ articlesRoutes.post(
           const categories = await api.getCategories();
 
           res.render(`admin/form`, {
-            user: {
-              isAdmin: true,
-            },
+            user: req.session.user,
             articleFormData: updatedArticle,
             articleFormErrors: response.data,
             categories,
             isNew: true,
-            error: true
+            csrfToken: req.csrfToken(),
           });
         }
       } catch (error) {
@@ -168,7 +165,7 @@ articlesRoutes.post(
     }
 );
 
-articlesRoutes.get(`/:articleId`, async (req, res, next) => {
+articlesRoutes.get(`/:articleId`, csrfProtection, async (req, res, next) => {
   try {
     const [article, categories, comments] = await Promise.all([
       api.getArticle(req.params.articleId),
@@ -180,10 +177,11 @@ articlesRoutes.get(`/:articleId`, async (req, res, next) => {
     ]);
 
     res.render(`articles/article`, {
-      user: {},
+      user: req.session.user,
       article: getArticleTemplateData(article),
       categories,
       comments: comments.map(getCommentTemplateData),
+      csrfToken: req.csrfToken(),
     });
   } catch (error) {
     next(error);
@@ -192,16 +190,18 @@ articlesRoutes.get(`/:articleId`, async (req, res, next) => {
 
 articlesRoutes.post(
     `/:articleId/comments`,
-    upload.none(),
+    auth,
+    csrfProtection,
     async (req, res) => {
       const {articleId} = req.params;
+      const newComment = parseClientComment(req.body);
 
       try {
         const createdComment = await api.createComment({
           articleId,
           data: {
-            ...req.body,
-            authorId: AUTHOR_ID,
+            ...newComment,
+            authorId: req.session.user.id,
           },
         });
 

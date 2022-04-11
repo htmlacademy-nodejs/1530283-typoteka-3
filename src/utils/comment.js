@@ -12,6 +12,10 @@ const getCommentTemplateData = (comment, {truncate} = {}) => ({
   createdCEODate: formatCEODate(comment.createdAt),
 });
 
+const parseClientComment = (comment) => ({
+  text: comment.text,
+});
+
 module.exports = {
-  getCommentTemplateData,
+  getCommentTemplateData, parseClientComment
 };

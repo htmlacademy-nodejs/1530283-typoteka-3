@@ -1,10 +1,12 @@
 (() => {
   const NO_CONTENT_STATUS_CODE = 204;
   const DELETE_METHOD = `DELETE`;
+  const CSRF_TOKEN_NAME = `_csrf`;
 
   const getApiEndpoint = (id) => `/my/articles/${id}`;
 
   const articlesListNode = document.querySelector(`.notes__list`);
+  const csrfToken = document.querySelector(`meta[name='csrf-token']`).content;
 
   articlesListNode.addEventListener("click", async (evt) => {
     const deleteButtonNode = evt.target.closest(`.button[data-delete]`);
@@ -25,9 +27,15 @@
 
     errorNode.textContent = ``;
 
+    const formData = new FormData();
+    formData.append(CSRF_TOKEN_NAME, csrfToken);
+
+    const formBody = new URLSearchParams(formData);
+
     try {
       const response = await fetch(apiEndpoint, {
         method: DELETE_METHOD,
+        body: formBody,
       });
 
       if (response.status !== NO_CONTENT_STATUS_CODE) {

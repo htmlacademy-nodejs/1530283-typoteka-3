@@ -6,7 +6,8 @@ block content
       h1.category__title Категории
 
       .category__add-form
-        form(action='/my/categories' method='POST' enctype='multipart/form-data' autocomplete='off')
+        form(action='/my/categories' method='POST' autocomplete='off')
+          +csrfInput(csrfToken)
           input#add-form-add-category(type='text' name='name' value=addCategoryFormData.name placeholder='Новая категория')
           label(for='add-form-add-category')
             span.visually-hidden Добавить категорию
@@ -18,7 +19,7 @@ block content
           each category in categories
             - const id = `modify-form-category-${category.id}`
             li.category__list-item
-              form(method='POST' enctype='multipart/form-data' autocomplete='off' data-category-id=category.id)
+              form(method='POST' autocomplete='off' data-category-id=category.id)
                 input(id=id type='text' name='name' value=category.name data-value=category.name)
                 label(for=id)
                   span.visually-hidden Редактировать категорию

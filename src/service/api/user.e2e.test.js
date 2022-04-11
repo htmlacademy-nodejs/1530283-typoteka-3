@@ -4,11 +4,14 @@ const Sequelize = require(`sequelize`);
 const express = require(`express`);
 const request = require(`supertest`);
 
+const passwordService = require(`../lib/password-service`);
 const initDB = require(`../lib/init-db`);
 
 const user = require(`./user`);
 const UserService = require(`../data-service/user-service`);
 const {HttpCode} = require(`../../constants`);
+
+const mockPassword = `password`;
 
 const mockCategories = [
   `Деревья`,
@@ -29,7 +32,7 @@ const mockCategories = [
 const mockUsers = [
   {
     email: `ivanov@example.com`,
-    passwordHash: `5f4dcc3b5aa765d61d8327deb882cf99`,
+    passwordHash: passwordService.hashSync(mockPassword),
     firstName: `Иван`,
     lastName: `Иванов`,
     avatar: `avatar-1.png`,
@@ -294,6 +297,105 @@ describe(`API refuses to create new user if avatar is invalid`, () => {
   beforeAll(async () => {
     const app = await createAPI();
     response = await request(app).post(`/user`).send(invalidUser);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+});
+
+const validAuthData = {
+  email: `ivanov@example.com`,
+  password: mockPassword,
+};
+
+describe(`API returns user if auth data is correct`, () => {
+  const userData = {
+    ...mockUsers[0]
+  };
+
+  delete userData.passwordHash;
+
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app).post(`/user/auth`).send(validAuthData);
+  });
+
+  test(`Status code 200`, () =>
+    expect(response.statusCode).toBe(HttpCode.OK));
+
+  test(`Returns user data`, () =>
+    expect(response.body).toEqual(expect.objectContaining(userData)));
+});
+
+describe(`API refuses to auth if no e-mail is provided`, () => {
+  const invalidAuthData = {
+    ...validAuthData,
+    email: ``,
+  };
+
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app).post(`/user/auth`).send(invalidAuthData);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+});
+
+describe(`API refuses to auth if no e-mail is invalid`, () => {
+  const invalidAuthData = {
+    ...validAuthData,
+    email: `email`,
+  };
+
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app).post(`/user/auth`).send(invalidAuthData);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+});
+
+describe(`API refuses to auth if no password is provided`, () => {
+  const invalidAuthData = {
+    ...validAuthData,
+    password: ``,
+  };
+
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app).post(`/user/auth`).send(invalidAuthData);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+});
+
+describe(`API refuses to auth if user is not registered`, () => {
+  const invalidAuthData = {
+    ...validAuthData,
+    email: `email@absent.com`
+  };
+
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app).post(`/user/auth`).send(invalidAuthData);
+  });
+
+  test(`Status code 400`, () =>
+    expect(response.statusCode).toBe(HttpCode.BAD_REQUEST));
+});
+
+describe(`API refuses to auth if password is incorrect`, () => {
+  const invalidAuthData = {
+    ...validAuthData,
+    password: `invalid_password`
+  };
+
+  beforeAll(async () => {
+    const app = await createAPI();
+    response = await request(app).post(`/user/auth`).send(invalidAuthData);
   });
 
   test(`Status code 400`, () =>

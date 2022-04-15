@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
-const commentExists = require(`../middlewares/comment-exists`);
+const instanceExists = require(`../middlewares/instance-exists`);
 const routeParamsValidator = require(`../middlewares/route-params-validator`);
 
 module.exports = (app, commentService) => {
@@ -24,7 +24,7 @@ module.exports = (app, commentService) => {
     }
   });
 
-  commentsRoutes.use(`/:commentId`, routeParamsValidator, commentExists(commentService));
+  commentsRoutes.use(`/:commentId`, routeParamsValidator, instanceExists(commentService, `commentId`));
 
   commentsRoutes.delete(`/:commentId`, async (req, res, next) => {
     try {

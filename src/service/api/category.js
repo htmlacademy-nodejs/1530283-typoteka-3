@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
-const categoryExists = require(`../middlewares/category-exists`);
+const instanceExists = require(`../middlewares/instance-exists`);
 const categoryValidator = require(`../middlewares/category-validator`);
 
 module.exports = (app, categoryService) => {
@@ -40,7 +40,7 @@ module.exports = (app, categoryService) => {
       }
   );
 
-  categoriesRoutes.use(`/:categoryId`, categoryExists(categoryService));
+  categoriesRoutes.use(`/:categoryId`, instanceExists(categoryService, `categoryId`));
 
   categoriesRoutes.put(
       `/:categoryId`,

@@ -81,6 +81,7 @@ rootRoutes.get(`/register`, guest(), (_req, res) =>
   res.render(`auth/register`, {
     registerFormData: {},
     registerFormErrors: {},
+    currentPath: `/register`,
   }),
 );
 
@@ -106,6 +107,7 @@ rootRoutes.post(
         res.render(`auth/register`, {
           registerFormData: userData,
           registerFormErrors: response.data,
+          currentPath: `/register`,
         });
       }
     },
@@ -115,6 +117,7 @@ rootRoutes.get(`/login`, guest(), (_req, res) => {
   return res.render(`auth/login`, {
     authFormData: {},
     authFormErrors: {},
+    currentPath: `/login`,
   });
 });
 
@@ -139,6 +142,7 @@ rootRoutes.post(`/login`, guest(), async (req, res, next) => {
     res.render(`auth/login`, {
       authFormData: authData,
       authFormErrors: response.data,
+      currentPath: `/login`,
     });
   }
 });

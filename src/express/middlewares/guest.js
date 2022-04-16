@@ -2,7 +2,7 @@
 
 const {HttpMethod, HttpCode} = require(`../../constants`);
 
-const guest = (req, res, next) => {
+const guest = () => (req, res, next) => {
   if (!req.session.user) {
     next();
     return;

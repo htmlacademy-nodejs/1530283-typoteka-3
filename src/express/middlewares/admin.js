@@ -2,7 +2,7 @@
 
 const {HttpMethod, HttpCode} = require(`../../constants`);
 
-const admin = (req, res, next) => {
+const admin = () => (req, res, next) => {
   const {user} = req.session;
 
   if (user && user.isAdmin) {

@@ -2,7 +2,7 @@
 
 const {HttpMethod, HttpCode} = require(`../../constants`);
 
-const auth = (req, res, next) => {
+const auth = () => (req, res, next) => {
   if (req.session.user) {
     next();
     return;

@@ -3,65 +3,24 @@
 const express = require(`express`);
 const requestId = require(`express-request-id`);
 const helmet = require(`helmet`);
-const {HttpCode, ExitCode, HttpMethod} = require(`../../constants`);
-const apiRoutes = require(`../api/api`);
+const {ExitCode} = require(`../../constants`);
+const api = require(`../api/api`);
 const {getLogger} = require(`../lib/logger/logger`);
 const sequelize = require(`../lib/sequelize`);
+const {
+  requestLogger,
+  unhandledRequestLogger,
+  errorLogger,
+  bodyTrimmer,
+  clientError,
+  serverError
+} = require(`../middlewares`);
 
 const API_PREFIX = `/api`;
 const DEFAULT_PORT = 3000;
-const Messages = {
-  NOT_FOUND_MESSAGE: `Not found`,
-  SERVER_ERROR_MESSAGE: `Internal server error`,
-};
+const LOGGER_NAME = `api`;
 
-const logger = getLogger({name: `api`});
-
-const logEveryRequest = (req, res, next) => {
-  logger.debug(`${req.id}: ${req.method} Request on route ${req.url}`);
-
-  res.on(`finish`, () => {
-    logger.info(`${req.id}: Response status code ${res.statusCode}`);
-  });
-
-  next();
-};
-
-const trimBody = (req, _res, next) => {
-  const {method} = req;
-
-  if (method === HttpMethod.POST || method === HttpMethod.PUT) {
-    for (const [key, value] of Object.entries(req.body)) {
-      if (typeof value === `string`) {
-        req.body[key] = value.trim();
-      }
-    }
-  }
-
-  next();
-};
-
-const logUnhandledRequest = (req, _res, next) => {
-  logger.error(`Route not found: ${req.url}`);
-  next();
-};
-
-const logInternalError = (err, req, _res, next) => {
-  logger.error(
-      `${req.id}: An error occurred on processing request: ${err.message}`
-  );
-  next(err);
-};
-
-const sendNotFoundResponse = (_req, res) => {
-  res.status(HttpCode.NOT_FOUND).send(Messages.NOT_FOUND_MESSAGE);
-};
-
-const sendServerErrorResponse = (_err, _req, res, _next) => {
-  res
-    .status(HttpCode.INTERNAL_SERVER_ERROR)
-    .send(Messages.SERVER_ERROR_MESSAGE);
-};
+const logger = getLogger({name: LOGGER_NAME});
 
 const app = express();
 
@@ -71,18 +30,17 @@ app.use(express.json());
 
 app.use(requestId());
 
-app.use(logEveryRequest);
+app.use(requestLogger(logger));
 
-app.use(trimBody);
+app.use(bodyTrimmer());
 
-app.use(API_PREFIX, apiRoutes);
+app.use(API_PREFIX, api());
 
-app.use(logUnhandledRequest);
-app.use(logInternalError);
+app.use(unhandledRequestLogger(logger));
+app.use(errorLogger(logger));
 
-
-app.use(sendNotFoundResponse);
-app.use(sendServerErrorResponse);
+app.use(clientError());
+app.use(serverError());
 
 module.exports = {
   name: `--server`,

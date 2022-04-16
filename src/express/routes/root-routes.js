@@ -7,8 +7,7 @@ const {getArticleTemplateData} = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
 const {parseClientUser} = require(`../../utils/user`);
 const {getAPI} = require(`../api`);
-const upload = require(`../middlewares/upload`);
-const guest = require(`../middlewares/guest`);
+const {upload, guest} = require(`../middlewares`);
 
 const rootRoutes = new Router();
 const api = getAPI();
@@ -64,7 +63,7 @@ rootRoutes.get(`/`, async (req, res, next) => {
   }
 });
 
-rootRoutes.get(`/register`, guest, (_req, res) =>
+rootRoutes.get(`/register`, guest(), (_req, res) =>
   res.render(`auth/register`, {
     registerFormData: {},
     registerFormErrors: {},
@@ -73,7 +72,7 @@ rootRoutes.get(`/register`, guest, (_req, res) =>
 
 rootRoutes.post(
     `/register`,
-    guest,
+    guest(),
     upload.single(`upload`),
     async (req, res, next) => {
       const {body, file} = req;
@@ -98,14 +97,14 @@ rootRoutes.post(
     },
 );
 
-rootRoutes.get(`/login`, guest, (_req, res) => {
+rootRoutes.get(`/login`, guest(), (_req, res) => {
   return res.render(`auth/login`, {
     authFormData: {},
     authFormErrors: {},
   });
 });
 
-rootRoutes.post(`/login`, guest, async (req, res, next) => {
+rootRoutes.post(`/login`, guest(), async (req, res, next) => {
   const authData = req.body;
 
   try {

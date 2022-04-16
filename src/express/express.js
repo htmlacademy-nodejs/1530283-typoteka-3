@@ -4,16 +4,12 @@ const path = require(`path`);
 const chalk = require(`chalk`);
 const express = require(`express`);
 
-const {helmet} = require(`./lib/helmet`);
+const helmet = require(`./lib/helmet`);
 const {session} = require(`./lib/session`);
 
-const clientError = require(`./middlewares/client-error`);
-const serverError = require(`./middlewares/server-error`);
+const {clientError, serverError} = require(`./middlewares`);
 
-const rootRoutes = require(`./routes/root-routes`);
-const errorRoutes = require(`./routes/error-routes`);
-const myRoutes = require(`./routes/my-routes`);
-const articlesRoutes = require(`./routes/articles-routes`);
+const {rootRoutes, errorRoutes, myRoutes, articlesRoutes} = require(`./routes`);
 
 const PORT = 8080;
 
@@ -25,9 +21,9 @@ const Dir = {
 
 const app = express();
 
-app.use(session);
+app.use(session());
 
-app.use(helmet);
+app.use(helmet());
 
 app.use(express.urlencoded({extended: false}));
 
@@ -42,8 +38,8 @@ app.use(`/`, errorRoutes);
 app.use(`/my`, myRoutes);
 app.use(`/articles`, articlesRoutes);
 
-app.use(clientError);
-app.use(serverError);
+app.use(clientError());
+app.use(serverError());
 
 app.listen(PORT, (err) => {
   if (err) {

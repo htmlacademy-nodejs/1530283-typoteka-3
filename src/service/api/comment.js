@@ -2,8 +2,7 @@
 
 const {Router} = require(`express`);
 const {HttpCode} = require(`../../constants`);
-const instanceExists = require(`../middlewares/instance-exists`);
-const routeParamsValidator = require(`../middlewares/route-params-validator`);
+const {instanceExists, routeParamsValidator} = require(`../middlewares`);
 
 module.exports = (app, commentService) => {
   const commentsRoutes = new Router();

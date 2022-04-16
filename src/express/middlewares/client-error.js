@@ -2,7 +2,7 @@
 
 const {HttpCode, HttpMethod} = require(`../../constants`);
 
-const clientError = (req, res) => {
+const clientError = () => (req, res) => {
   if (req.method !== HttpMethod.GET) {
     res.status(HttpCode.NOT_FOUND).end();
     return;

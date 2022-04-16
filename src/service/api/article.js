@@ -1,18 +1,19 @@
 "use strict";
 
 const {Router} = require(`express`);
+
 const {HttpCode} = require(`../../constants`);
+
 const articleComment = require(`./article-comment`);
-const articleValidator = require(`../middlewares/article-validator`);
-const articleExists = require(`../middlewares/article-exists`);
-const routeParamsValidator = require(`../middlewares/route-params-validator`);
+
+const {articleValidator, instanceExists, routeParamsValidator} = require(`../middlewares`);
 
 module.exports = (app, articleService, commentService, categoryService) => {
   const articlesRoutes = new Router();
 
   app.use(`/articles`, articlesRoutes);
 
-  articlesRoutes.use(`/:articleId`, routeParamsValidator, articleExists(articleService));
+  articlesRoutes.use(`/:articleId`, routeParamsValidator, instanceExists(articleService, `articleId`));
 
   articleComment(articlesRoutes, commentService);
 

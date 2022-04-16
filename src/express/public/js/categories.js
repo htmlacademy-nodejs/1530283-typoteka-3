@@ -15,7 +15,7 @@
   const getApiEndpoint = (id) => `/my/categories/${id}`;
 
   const categoriesListNode = document.querySelector(`.category__list`);
-  const csrfToken = document.querySelector(`meta[name='csrf-token']`).content;
+  const csrfToken = document.querySelector(`meta[name="csrf-token"]`).content;
 
   categoriesListNode.addEventListener(`submit`, async (evt) => {
     const updateFormNode = evt.target.closest(`form`);

@@ -11,10 +11,25 @@ header.header(class={[`header--error`]: isHttpError})
   if !user
     nav.header__nav
       ul.header__nav-list
+        -
+          const LOGIN_PATH = `/login`;
+          const REGISTRATION_PATH = `/register`
+          const LOGIN_ACTIVE_CLASS = `header__registration--active`
+          const REGISTRATION_ACTIVE_CLASS = `header__enter--active`
+
+          const isCurrentLoginPath = currentPath === LOGIN_PATH
+          const isCurrentRegistrationPath = currentPath === REGISTRATION_PATH
+
         li.header__list-item
-          a.header__registration(href='/register') Регистрация
+          a.header__registration(
+            class={[LOGIN_ACTIVE_CLASS]: isCurrentRegistrationPath}
+            href=(!isCurrentRegistrationPath && REGISTRATION_PATH)
+          ) Регистрация
         li.header__list-item
-          a.header__enter(href='/login') Вход с паролем
+          a.header__enter(
+             class={[REGISTRATION_ACTIVE_CLASS]: isCurrentLoginPath}
+             href=(!isCurrentLoginPath && LOGIN_PATH)
+          ) Вход с паролем
   else if user.isAdmin
     a.button.button--colored.header__button-new(href='/articles/add') Новая запись
     .header__dropdown

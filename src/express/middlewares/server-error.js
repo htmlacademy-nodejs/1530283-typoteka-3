@@ -1,12 +1,14 @@
 "use strict";
 
 const chalk = require(`chalk`);
+
 const {HttpCode} = require(`../../constants`);
+
 const clientError = require(`./client-error`);
 
-const serverError = (err, req, res, _next) => {
+const serverError = () => (err, req, res, _next) => {
   if (err.response && err.response.status === HttpCode.NOT_FOUND) {
-    clientError(req, res);
+    clientError()(req, res);
     return;
   }
 

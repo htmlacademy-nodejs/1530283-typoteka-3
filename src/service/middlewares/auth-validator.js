@@ -1,8 +1,11 @@
 "use strict";
 
 const Joi = require(`joi`);
+
 const {HttpCode} = require(`../../constants`);
+
 const passwordService = require(`../lib/password-service`);
+
 const {prepareErrors} = require(`../../utils/common`);
 
 const AuthRestriction = {

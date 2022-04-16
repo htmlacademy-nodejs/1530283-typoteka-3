@@ -1,6 +1,7 @@
 "use strict";
 
 const session = require(`express-session`);
+
 const {sessionStore, SESSION_EXPIRATION_TIME} = require(`./session-store`);
 
 const SESSION_COOKIE_NAME = `session.id`;
@@ -27,7 +28,7 @@ if (!SESSION_SECRET) {
 
 module.exports = {
   SESSION_COOKIE_NAME,
-  session: session({
+  session: () => session({
     secret: SESSION_SECRET,
     store: sessionStore,
     ...SESSION_CONFIG

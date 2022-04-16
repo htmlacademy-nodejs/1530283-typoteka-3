@@ -1,11 +1,12 @@
 "use strict";
 
+const {ExitCode, FilePath, FileType} = require(`../../constants`);
+
 const initDb = require(`../lib/init-db`);
 const sequelize = require(`../lib/sequelize`);
 const passwordService = require(`../lib/password-service`);
-
 const {getLogger} = require(`../lib/logger/logger`);
-const {ExitCode, FilePath, FileType} = require(`../../constants`);
+
 const {
   readFile,
   getRandomItem,
@@ -89,7 +90,7 @@ const generateCreatedDate = (randomDay) => {
 };
 
 const generateComment = ({commentTexts, articleDaysBefore}) => {
-  const daysBefore = getRandomInt(DayRestrict.MIN - 1, articleDaysBefore - 1);
+  const daysBefore = getRandomInt(DayRestrict.MIN, articleDaysBefore - 1);
   return {
     authorEmail: getRandomItem(USERS).email,
     text: shuffle(commentTexts)

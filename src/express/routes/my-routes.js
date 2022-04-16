@@ -1,23 +1,26 @@
 "use strict";
 
 const {Router} = require(`express`);
-const csrf = require(`csurf`);
-const {getAPI} = require(`../api`);
+
 const {HttpCode} = require(`../../constants`);
-const admin = require(`../middlewares/admin`);
+
+const {getAPI} = require(`../api`);
+
+const {admin} = require(`../middlewares`);
+
+const csrf = require(`../lib/csrf`);
+
+const {parseClientCategory} = require(`../../utils/category`);
 const {getArticleTemplateData} = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
-const {parseClientCategory} = require(`../../utils/category`);
 
 const myRoutes = new Router();
 
 const api = getAPI();
 
-const csrfProtection = csrf({cookie: false});
+myRoutes.use(admin());
 
-myRoutes.use(admin);
-
-myRoutes.get(`/`, csrfProtection, async (req, res, next) => {
+myRoutes.get(`/`, csrf(), async (req, res, next) => {
   try {
     const articles = await api.getAndCountArticles();
 
@@ -31,7 +34,7 @@ myRoutes.get(`/`, csrfProtection, async (req, res, next) => {
   }
 });
 
-myRoutes.delete(`/articles/:articleId`, csrfProtection, async (req, res) => {
+myRoutes.delete(`/articles/:articleId`, csrf(), async (req, res) => {
   try {
     await api.deleteArticle(req.params.articleId);
     res.status(HttpCode.NO_CONTENT).end();
@@ -40,7 +43,7 @@ myRoutes.delete(`/articles/:articleId`, csrfProtection, async (req, res) => {
   }
 });
 
-myRoutes.get(`/comments`, csrfProtection, async (req, res, next) => {
+myRoutes.get(`/comments`, csrf(), async (req, res, next) => {
   try {
     const comments = await api.getComments();
 
@@ -54,7 +57,7 @@ myRoutes.get(`/comments`, csrfProtection, async (req, res, next) => {
   }
 });
 
-myRoutes.delete(`/comments/:commentId`, csrfProtection, async (req, res) => {
+myRoutes.delete(`/comments/:commentId`, csrf(), async (req, res) => {
   try {
     await api.deleteComment(req.params.commentId);
     res.status(HttpCode.NO_CONTENT).end();
@@ -63,9 +66,11 @@ myRoutes.delete(`/comments/:commentId`, csrfProtection, async (req, res) => {
   }
 });
 
-myRoutes.get(`/categories`, csrfProtection, async (req, res, next) => {
+myRoutes.get(`/categories`, csrf(), async (req, res, next) => {
   try {
-    const categories = await api.getCategories({withArticlesCount: true});
+    const categories = await api.getCategories({
+      withArticlesCount: true
+    });
 
     res.render(`admin/categories`, {
       user: req.session.user,
@@ -79,7 +84,7 @@ myRoutes.get(`/categories`, csrfProtection, async (req, res, next) => {
   }
 });
 
-myRoutes.post(`/categories`, csrfProtection, async (req, res, next) => {
+myRoutes.post(`/categories`, csrf(), async (req, res, next) => {
   const newCategoryDate = parseClientCategory(req.body);
 
   try {
@@ -95,7 +100,9 @@ myRoutes.post(`/categories`, csrfProtection, async (req, res, next) => {
         return;
       }
 
-      const categories = await api.getCategories({withArticlesCount: true});
+      const categories = await api.getCategories({
+        withArticlesCount: true
+      });
 
       res.render(`admin/categories`, {
         user: req.session.user,
@@ -110,7 +117,7 @@ myRoutes.post(`/categories`, csrfProtection, async (req, res, next) => {
   }
 });
 
-myRoutes.put(`/categories/:categoryId`, csrfProtection, async (req, res) => {
+myRoutes.put(`/categories/:categoryId`, csrf(), async (req, res) => {
   const updatedCategoryData = parseClientCategory(req.body);
 
   try {
@@ -136,7 +143,7 @@ myRoutes.put(`/categories/:categoryId`, csrfProtection, async (req, res) => {
   }
 });
 
-myRoutes.delete(`/categories/:categoryId`, csrfProtection, async (req, res) => {
+myRoutes.delete(`/categories/:categoryId`, csrf(), async (req, res) => {
   try {
     await api.deleteCategory(req.params.categoryId);
 

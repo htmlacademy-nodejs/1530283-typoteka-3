@@ -4,6 +4,7 @@ const chalk = require(`chalk`);
 const fs = require(`fs`).promises;
 
 const {ExitCode, FilePath, FileType} = require(`../../constants`);
+
 const {
   shuffle,
   readFile,

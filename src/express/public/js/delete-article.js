@@ -6,9 +6,9 @@
   const getApiEndpoint = (id) => `/my/articles/${id}`;
 
   const articlesListNode = document.querySelector(`.notes__list`);
-  const csrfToken = document.querySelector(`meta[name='csrf-token']`).content;
+  const csrfToken = document.querySelector(`meta[name="csrf-token"]`).content;
 
-  articlesListNode.addEventListener("click", async (evt) => {
+  articlesListNode.addEventListener(`click`, async (evt) => {
     const deleteButtonNode = evt.target.closest(`.button[data-delete]`);
 
     if (!deleteButtonNode || !evt.currentTarget.contains(deleteButtonNode)) {
@@ -39,7 +39,7 @@
       });
 
       if (response.status !== NO_CONTENT_STATUS_CODE) {
-        throw new Error("Не удалось удалить публикацию");
+        throw new Error(`Не удалось удалить публикацию`);
       }
 
       articleItemNode.remove();

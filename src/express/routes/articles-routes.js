@@ -1,8 +1,15 @@
 "use strict";
 
 const {Router} = require(`express`);
-const csrf = require(`csurf`);
+
+const {HttpCode} = require(`../../constants`);
+
 const {getAPI} = require(`../api`);
+
+const csrf = require(`../lib/csrf`);
+
+const {upload, admin, auth} = require(`../middlewares`);
+
 const {
   getArticleTemplateData,
   getArticleFormData,
@@ -10,11 +17,6 @@ const {
   parseClientArticle,
 } = require(`../../utils/article`);
 const {getCommentTemplateData, parseClientComment} = require(`../../utils/comment`);
-const upload = require(`../middlewares/upload`);
-const admin = require(`../middlewares/admin`);
-const auth = require(`../middlewares/auth`);
-
-const {HttpCode} = require(`../../constants`);
 
 const DEFAULT_ARTICLES_PAGE = 1;
 const ARTICLES_LIMIT = 8;
@@ -22,8 +24,6 @@ const ARTICLES_LIMIT = 8;
 const articlesRoutes = new Router();
 
 const api = getAPI();
-
-const csrfProtection = csrf({cookie: false});
 
 articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
   const page = req.query.page ? Number(req.query.page) : DEFAULT_ARTICLES_PAGE;
@@ -36,14 +36,20 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
         limit: ARTICLES_LIMIT,
         offset: (page - 1) * ARTICLES_LIMIT,
       }),
-      api.getCategories({withArticlesCount: true, havingArticles: true}),
+      api.getCategories({
+        withArticlesCount: true,
+        havingArticles: true
+      }),
     ]);
+
+    const currentCategoryId = Number(req.params.categoryId);
+    const currentCategory = categories.find((category) => category.id === currentCategoryId);
 
     res.render(`articles/articles-by-category`, {
       user: req.session.user,
       articles: articles.rows.map(getArticleTemplateData),
       categories,
-      currentCategoryId: Number(req.params.categoryId),
+      currentCategory,
       page,
       totalPages: Math.ceil(articles.count / ARTICLES_LIMIT),
       withPagination: articles.count > ARTICLES_LIMIT
@@ -53,7 +59,7 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
   }
 });
 
-articlesRoutes.get(`/add`, admin, csrfProtection, async (req, res, next) => {
+articlesRoutes.get(`/add`, admin(), csrf(), async (req, res, next) => {
   try {
     const categories = await api.getCategories();
 
@@ -70,7 +76,7 @@ articlesRoutes.get(`/add`, admin, csrfProtection, async (req, res, next) => {
   }
 });
 
-articlesRoutes.post(`/add`, admin, upload.single(`upload`), csrfProtection, async (req, res, next) => {
+articlesRoutes.post(`/add`, admin(), upload.single(`upload`), csrf(), async (req, res, next) => {
   try {
     const {body, file} = req;
     const newArticle = parseClientArticle(body, file);
@@ -105,7 +111,7 @@ articlesRoutes.post(`/add`, admin, upload.single(`upload`), csrfProtection, asyn
   }
 });
 
-articlesRoutes.get(`/edit/:articleId`, admin, csrfProtection, async (req, res, next) => {
+articlesRoutes.get(`/edit/:articleId`, admin(), csrf(), async (req, res, next) => {
   try {
     const [article, categories] = await Promise.all([
       api.getArticle(req.params.articleId),
@@ -126,9 +132,9 @@ articlesRoutes.get(`/edit/:articleId`, admin, csrfProtection, async (req, res, n
 
 articlesRoutes.post(
     `/edit/:articleId`,
-    admin,
+    admin(),
     upload.single(`upload`),
-    csrfProtection,
+    csrf(),
     async (req, res, next) => {
       try {
         const {body, file} = req;
@@ -165,7 +171,7 @@ articlesRoutes.post(
     }
 );
 
-articlesRoutes.get(`/:articleId`, csrfProtection, async (req, res, next) => {
+articlesRoutes.get(`/:articleId`, csrf(), async (req, res, next) => {
   try {
     const [article, categories, comments] = await Promise.all([
       api.getArticle(req.params.articleId),
@@ -173,7 +179,9 @@ articlesRoutes.get(`/:articleId`, csrfProtection, async (req, res, next) => {
         withArticlesCount: true,
         articleId: req.params.articleId,
       }),
-      api.getComments({articleId: req.params.articleId}),
+      api.getComments({
+        articleId: req.params.articleId
+      }),
     ]);
 
     res.render(`articles/article`, {
@@ -190,8 +198,8 @@ articlesRoutes.get(`/:articleId`, csrfProtection, async (req, res, next) => {
 
 articlesRoutes.post(
     `/:articleId/comments`,
-    auth,
-    csrfProtection,
+    auth(),
+    csrf(),
     async (req, res) => {
       const {articleId} = req.params;
       const newComment = parseClientComment(req.body);
@@ -211,10 +219,10 @@ articlesRoutes.post(
 
         if (response) {
           res
-            .set(response.headers)
-            .status(response.status)
-            .send(response.data)
-            .end();
+          .set(response.headers)
+          .status(response.status)
+          .send(response.data)
+          .end();
           return;
         }
 

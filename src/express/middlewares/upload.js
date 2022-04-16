@@ -2,6 +2,7 @@
 
 const multer = require(`multer`);
 const path = require(`path`);
+
 const {getImageFileName} = require(`../../utils/image`);
 
 const UPLOAD_DIR = `../upload/img`;

@@ -1,9 +1,10 @@
 "use strict";
 
 const {Router} = require(`express`);
+
 const {HttpCode} = require(`../../constants`);
-const categoryExists = require(`../middlewares/category-exists`);
-const categoryValidator = require(`../middlewares/category-validator`);
+
+const {instanceExists, categoryValidator} = require(`../middlewares`);
 
 module.exports = (app, categoryService) => {
   const categoriesRoutes = new Router();
@@ -40,7 +41,7 @@ module.exports = (app, categoryService) => {
       }
   );
 
-  categoriesRoutes.use(`/:categoryId`, categoryExists(categoryService));
+  categoriesRoutes.use(`/:categoryId`, instanceExists(categoryService, `categoryId`));
 
   categoriesRoutes.put(
       `/:categoryId`,

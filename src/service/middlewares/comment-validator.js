@@ -1,7 +1,9 @@
 "use strict";
 
 const Joi = require(`joi`);
+
 const {HttpCode} = require(`../../constants`);
+
 const {prepareErrors} = require(`../../utils/common`);
 
 const CommentRestriction = {
@@ -29,9 +31,9 @@ const schema = Joi.object({
 });
 
 const commentValidator = (req, res, next) => {
-  const newСomment = req.body;
+  const newComment = req.body;
 
-  const {error} = schema.validate(newСomment, {abortEarly: false});
+  const {error} = schema.validate(newComment, {abortEarly: false});
 
   if (error) {
     res.status(HttpCode.BAD_REQUEST).json(prepareErrors(error));

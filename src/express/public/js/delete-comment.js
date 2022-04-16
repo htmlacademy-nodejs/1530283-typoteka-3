@@ -6,9 +6,9 @@
   const getApiEndpoint = (id) => `/my/comments/${id}`;
 
   const commentsListNode = document.querySelector(`.publication__list`);
-  const csrfToken = document.querySelector(`meta[name='csrf-token']`).content;
+  const csrfToken = document.querySelector(`meta[name="csrf-token"]`).content;
 
-  commentsListNode.addEventListener("click", async (evt) => {
+  commentsListNode.addEventListener(`click`, async (evt) => {
     const deleteButtonNode = evt.target.closest(`.button[data-delete]`);
 
     if (!deleteButtonNode || !evt.currentTarget.contains(deleteButtonNode)) {

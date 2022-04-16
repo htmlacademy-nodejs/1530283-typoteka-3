@@ -2,6 +2,7 @@
 
 const session = require(`express-session`);
 const connectSessionSequelize = require(`connect-session-sequelize`);
+
 const sequelize = require(`../../service/lib/sequelize`);
 
 const SESSION_EXPIRATION_TIME = 60 * 60 * 1000; // 60 minutes

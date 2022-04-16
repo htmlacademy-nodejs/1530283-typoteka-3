@@ -1,9 +1,10 @@
 "use strict";
 
 const {Router} = require(`express`);
+
 const {HttpCode} = require(`../../constants`);
-const commentExists = require(`../middlewares/comment-exists`);
-const routeParamsValidator = require(`../middlewares/route-params-validator`);
+
+const {instanceExists, routeParamsValidator} = require(`../middlewares`);
 
 module.exports = (app, commentService) => {
   const commentsRoutes = new Router();
@@ -24,7 +25,7 @@ module.exports = (app, commentService) => {
     }
   });
 
-  commentsRoutes.use(`/:commentId`, routeParamsValidator, commentExists(commentService));
+  commentsRoutes.use(`/:commentId`, routeParamsValidator, instanceExists(commentService, `commentId`));
 
   commentsRoutes.delete(`/:commentId`, async (req, res, next) => {
     try {

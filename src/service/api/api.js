@@ -38,4 +38,4 @@ defineModels(sequelize);
   user(api, userService);
 })();
 
-module.exports = api;
+module.exports = () => api;

@@ -1,8 +1,10 @@
 "use strict";
 
 const {Router} = require(`express`);
+
 const {HttpCode} = require(`../../constants`);
-const commentValidator = require(`../middlewares/comment-validator`);
+
+const {commentValidator} = require(`../middlewares`);
 
 module.exports = (app, commentService) => {
   const articleCommentsRoutes = new Router({mergeParams: true});

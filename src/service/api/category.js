@@ -1,7 +1,9 @@
 "use strict";
 
 const {Router} = require(`express`);
+
 const {HttpCode} = require(`../../constants`);
+
 const {instanceExists, categoryValidator} = require(`../middlewares`);
 
 module.exports = (app, categoryService) => {

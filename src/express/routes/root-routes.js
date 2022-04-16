@@ -1,13 +1,18 @@
 "use strict";
 
 const {Router} = require(`express`);
+
 const {HttpCode} = require(`../../constants`);
+
+const {getAPI} = require(`../api`);
+
+const {upload, guest} = require(`../middlewares`);
+
 const {SESSION_COOKIE_NAME} = require(`../lib/session`);
+
+const {parseClientUser} = require(`../../utils/user`);
 const {getArticleTemplateData} = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
-const {parseClientUser} = require(`../../utils/user`);
-const {getAPI} = require(`../api`);
-const {upload, guest} = require(`../middlewares`);
 
 const rootRoutes = new Router();
 const api = getAPI();
@@ -40,18 +45,27 @@ rootRoutes.get(`/`, async (req, res, next) => {
           limit: MOST_COMMENTED_ARTICLES_LIMIT,
           mostCommented: true,
         }),
-        api.getCategories({withArticlesCount: true, havingArticles: true}),
-        api.getComments({limit: LATEST_COMMENTS_LIMIT}),
+        api.getCategories({
+          withArticlesCount: true,
+          havingArticles: true
+        }),
+        api.getComments({
+          limit: LATEST_COMMENTS_LIMIT
+        }),
       ]);
 
     res.render(`articles/all-articles`, {
       articles: articles.rows.map(getArticleTemplateData),
       categories,
       mostCommentedArticles: mostCommentedArticles.rows.map((article) =>
-        getArticleTemplateData(article, {truncate: true}),
+        getArticleTemplateData(article, {
+          truncate: true
+        }),
       ),
       latestComments: latestComments.map((comment) =>
-        getCommentTemplateData(comment, {truncate: true}),
+        getCommentTemplateData(comment, {
+          truncate: true
+        }),
       ),
       page,
       totalPages: Math.ceil(articles.count / ARTICLES_LIMIT),

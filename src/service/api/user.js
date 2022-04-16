@@ -1,8 +1,11 @@
 "use strict";
 
 const {Router} = require(`express`);
+
 const {HttpCode} = require(`../../constants`);
+
 const passwordService = require(`../lib/password-service`);
+
 const {userValidator, authValidator} = require(`../middlewares`);
 
 module.exports = (app, userService) => {

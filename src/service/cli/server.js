@@ -3,10 +3,13 @@
 const express = require(`express`);
 const requestId = require(`express-request-id`);
 const helmet = require(`helmet`);
+
 const {ExitCode} = require(`../../constants`);
-const api = require(`../api/api`);
+
 const {getLogger} = require(`../lib/logger/logger`);
 const sequelize = require(`../lib/sequelize`);
+const api = require(`../api/api`);
+
 const {
   requestLogger,
   unhandledRequestLogger,

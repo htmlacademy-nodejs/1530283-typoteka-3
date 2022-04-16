@@ -1,7 +1,15 @@
 "use strict";
 
 const {Router} = require(`express`);
+
+const {HttpCode} = require(`../../constants`);
+
 const {getAPI} = require(`../api`);
+
+const csrf = require(`../lib/csrf`);
+
+const {upload, admin, auth} = require(`../middlewares`);
+
 const {
   getArticleTemplateData,
   getArticleFormData,
@@ -9,10 +17,6 @@ const {
   parseClientArticle,
 } = require(`../../utils/article`);
 const {getCommentTemplateData, parseClientComment} = require(`../../utils/comment`);
-const csrf = require(`../lib/csrf`);
-const {upload, admin, auth} = require(`../middlewares`);
-
-const {HttpCode} = require(`../../constants`);
 
 const DEFAULT_ARTICLES_PAGE = 1;
 const ARTICLES_LIMIT = 8;
@@ -32,7 +36,10 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
         limit: ARTICLES_LIMIT,
         offset: (page - 1) * ARTICLES_LIMIT,
       }),
-      api.getCategories({withArticlesCount: true, havingArticles: true}),
+      api.getCategories({
+        withArticlesCount: true,
+        havingArticles: true
+      }),
     ]);
 
     res.render(`articles/articles-by-category`, {
@@ -169,7 +176,9 @@ articlesRoutes.get(`/:articleId`, csrf(), async (req, res, next) => {
         withArticlesCount: true,
         articleId: req.params.articleId,
       }),
-      api.getComments({articleId: req.params.articleId}),
+      api.getComments({
+        articleId: req.params.articleId
+      }),
     ]);
 
     res.render(`articles/article`, {

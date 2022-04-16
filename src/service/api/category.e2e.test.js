@@ -4,11 +4,13 @@ const Sequelize = require(`sequelize`);
 const express = require(`express`);
 const request = require(`supertest`);
 
+const {HttpCode} = require(`../../constants`);
+
 const initDB = require(`../lib/init-db`);
 
 const category = require(`./category`);
+
 const CategoryService = require(`../data-service/category-service`);
-const {HttpCode} = require(`../../constants`);
 
 const mockCategories = [
   `Деревья`,

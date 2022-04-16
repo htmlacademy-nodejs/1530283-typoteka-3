@@ -4,12 +4,12 @@ const path = require(`path`);
 const chalk = require(`chalk`);
 const express = require(`express`);
 
-const helmet = require(`./lib/helmet`);
-const {session} = require(`./lib/session`);
+const {rootRoutes, errorRoutes, myRoutes, articlesRoutes} = require(`./routes`);
 
 const {clientError, serverError} = require(`./middlewares`);
 
-const {rootRoutes, errorRoutes, myRoutes, articlesRoutes} = require(`./routes`);
+const helmet = require(`./lib/helmet`);
+const {session} = require(`./lib/session`);
 
 const PORT = 8080;
 

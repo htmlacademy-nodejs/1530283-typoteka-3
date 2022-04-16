@@ -1,8 +1,11 @@
 "use strict";
 
 const {Router} = require(`express`);
+
 const {HttpCode} = require(`../../constants`);
+
 const articleComment = require(`./article-comment`);
+
 const {articleValidator, instanceExists, routeParamsValidator} = require(`../middlewares`);
 
 module.exports = (app, articleService, commentService, categoryService) => {

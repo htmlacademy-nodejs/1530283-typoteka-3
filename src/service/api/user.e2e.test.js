@@ -4,12 +4,13 @@ const Sequelize = require(`sequelize`);
 const express = require(`express`);
 const request = require(`supertest`);
 
+const {HttpCode} = require(`../../constants`);
+
 const passwordService = require(`../lib/password-service`);
 const initDB = require(`../lib/init-db`);
 
 const user = require(`./user`);
 const UserService = require(`../data-service/user-service`);
-const {HttpCode} = require(`../../constants`);
 
 const mockPassword = `password`;
 

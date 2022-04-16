@@ -1,6 +1,7 @@
 "use strict";
 
 const {Router} = require(`express`);
+
 const {HttpCode} = require(`../../constants`);
 
 module.exports = (app, searchService) => {

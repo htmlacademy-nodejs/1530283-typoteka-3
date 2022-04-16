@@ -1,18 +1,22 @@
 "use strict";
 
 const {Router} = require(`express`);
-const {getAPI} = require(`../api`);
+
 const {HttpCode} = require(`../../constants`);
+
+const {getAPI} = require(`../api`);
+
 const {admin} = require(`../middlewares`);
+
 const csrf = require(`../lib/csrf`);
+
+const {parseClientCategory} = require(`../../utils/category`);
 const {getArticleTemplateData} = require(`../../utils/article`);
 const {getCommentTemplateData} = require(`../../utils/comment`);
-const {parseClientCategory} = require(`../../utils/category`);
 
 const myRoutes = new Router();
 
 const api = getAPI();
-
 
 myRoutes.use(admin());
 
@@ -64,7 +68,9 @@ myRoutes.delete(`/comments/:commentId`, csrf(), async (req, res) => {
 
 myRoutes.get(`/categories`, csrf(), async (req, res, next) => {
   try {
-    const categories = await api.getCategories({withArticlesCount: true});
+    const categories = await api.getCategories({
+      withArticlesCount: true
+    });
 
     res.render(`admin/categories`, {
       user: req.session.user,
@@ -94,7 +100,9 @@ myRoutes.post(`/categories`, csrf(), async (req, res, next) => {
         return;
       }
 
-      const categories = await api.getCategories({withArticlesCount: true});
+      const categories = await api.getCategories({
+        withArticlesCount: true
+      });
 
       res.render(`admin/categories`, {
         user: req.session.user,

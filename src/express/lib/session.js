@@ -1,6 +1,7 @@
 "use strict";
 
 const session = require(`express-session`);
+
 const {sessionStore, SESSION_EXPIRATION_TIME} = require(`./session-store`);
 
 const SESSION_COOKIE_NAME = `session.id`;

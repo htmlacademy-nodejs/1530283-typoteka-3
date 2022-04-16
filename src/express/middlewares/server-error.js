@@ -1,7 +1,9 @@
 "use strict";
 
 const chalk = require(`chalk`);
+
 const {HttpCode} = require(`../../constants`);
+
 const clientError = require(`./client-error`);
 
 const serverError = () => (err, req, res, _next) => {

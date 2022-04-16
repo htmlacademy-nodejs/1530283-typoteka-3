@@ -1,10 +1,10 @@
 "use strict";
 
+const {ExitCode} = require(`../../constants`);
+
 const initDb = require(`../lib/init-db`);
 const sequelize = require(`../lib/sequelize`);
-
 const {getLogger} = require(`../lib/logger/logger`);
-const {ExitCode} = require(`../../constants`);
 
 const logger = getLogger({name: `init-db`});
 

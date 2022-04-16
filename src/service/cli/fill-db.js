@@ -1,11 +1,12 @@
 "use strict";
 
+const {ExitCode, FilePath, FileType} = require(`../../constants`);
+
 const initDb = require(`../lib/init-db`);
 const sequelize = require(`../lib/sequelize`);
 const passwordService = require(`../lib/password-service`);
-
 const {getLogger} = require(`../lib/logger/logger`);
-const {ExitCode, FilePath, FileType} = require(`../../constants`);
+
 const {
   readFile,
   getRandomItem,

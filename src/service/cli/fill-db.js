@@ -90,7 +90,7 @@ const generateCreatedDate = (randomDay) => {
 };
 
 const generateComment = ({commentTexts, articleDaysBefore}) => {
-  const daysBefore = getRandomInt(DayRestrict.MIN - 1, articleDaysBefore - 1);
+  const daysBefore = getRandomInt(DayRestrict.MIN, articleDaysBefore - 1);
   return {
     authorEmail: getRandomItem(USERS).email,
     text: shuffle(commentTexts)

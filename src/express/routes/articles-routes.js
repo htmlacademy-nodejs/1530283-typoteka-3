@@ -42,11 +42,14 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
       }),
     ]);
 
+    const currentCategoryId = Number(req.params.categoryId);
+    const currentCategory = categories.find((category) => category.id === currentCategoryId);
+
     res.render(`articles/articles-by-category`, {
       user: req.session.user,
       articles: articles.rows.map(getArticleTemplateData),
       categories,
-      currentCategoryId: Number(req.params.categoryId),
+      currentCategory,
       page,
       totalPages: Math.ceil(articles.count / ARTICLES_LIMIT),
       withPagination: articles.count > ARTICLES_LIMIT

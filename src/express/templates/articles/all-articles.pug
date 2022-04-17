@@ -64,3 +64,7 @@ block content
 
     if withPagination
       +pagination(page, totalPages)
+
+block scripts
+  script(src='https://cdn.socket.io/4.0.1/socket.io.js' crossorigin='anonymous' defer)
+  script(src='/js/main-socket.js' type='module')

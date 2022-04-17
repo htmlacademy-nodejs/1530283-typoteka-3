@@ -4,14 +4,14 @@ const path = require(`path`);
 const chalk = require(`chalk`);
 const express = require(`express`);
 
+const {HostName, Port} = require(`../constants`);
+
 const {rootRoutes, errorRoutes, myRoutes, articlesRoutes} = require(`./routes`);
 
 const {clientError, serverError} = require(`./middlewares`);
 
 const helmet = require(`./lib/helmet`);
 const {session} = require(`./lib/session`);
-
-const PORT = 8080;
 
 const Dir = {
   TEMPLATES: `templates`,
@@ -41,7 +41,7 @@ app.use(`/articles`, articlesRoutes);
 app.use(clientError());
 app.use(serverError());
 
-app.listen(PORT, (err) => {
+app.listen(Port.SSR, HostName.SSR, (err) => {
   if (err) {
     console.error(
         chalk.red(`An error occurred on server creation: ${err.message}`)
@@ -49,5 +49,5 @@ app.listen(PORT, (err) => {
     return;
   }
 
-  console.info(chalk.green(`Сервер запущен на порту: ${PORT}`));
+  console.info(chalk.green(`Listening to connections on ${Port.SSR}`));
 });

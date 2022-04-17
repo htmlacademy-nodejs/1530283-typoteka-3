@@ -1,6 +1,16 @@
 "use strict";
 
-const DEFAULT_COMMAND = `--help`;
+const DEFAULT_CLI_COMMAND = `--help`;
+
+const HostName = {
+  API: `localhost`,
+  SSR: `localhost`
+};
+
+const Port = {
+  API: 3000,
+  SSR: 8080,
+};
 
 const ExitCode = {
   SUCCESS: 0,
@@ -58,7 +68,9 @@ const Environment = {
 };
 
 module.exports = {
-  DEFAULT_COMMAND,
+  DEFAULT_CLI_COMMAND,
+  HostName,
+  Port,
   FilePath,
   ExitCode,
   HttpCode,

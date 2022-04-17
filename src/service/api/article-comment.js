@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 
-const {HttpCode, Limit, SocketEvent} = require(`../../constants`);
+const {HttpCode, SocketEvent} = require(`../../constants`);
 
 const {commentValidator} = require(`../middlewares`);
 
@@ -32,38 +32,29 @@ module.exports = (app, articleService, commentService) => {
     try {
       const articleId = Number(req.params.articleId);
 
+      const {socket} = req.app.locals;
+
       const newComment = await commentService.create({
         ...req.body,
         articleId,
       });
 
-      // todo: get most commented articles after comment creation. DONE
-      // todo: get latest comments after comment creation. DONE
       const [hotArticles, lastComments] = await Promise.all([
-        articleService.findAndCountAll({
-          mostCommented: true,
-          limit: Limit.HOT_ARTICLES_SECTION,
-        }),
-        commentService.findAll({
-          limit: Limit.LAST_COMMENTS_SECTION,
-        }),
+        articleService.findHotOnes(),
+        commentService.findLastOnes(),
       ]);
 
-      const {socket} = req.app.locals;
+      const isHotArticlesAffected = hotArticles.map((article) => article.id === articleId);
 
-      const isHotArticlesAffected = hotArticles.rows.map((article) => article.id === articleId);
-
-      // todo: if most articleId in most commented articles emit `most-commented:update`. DONE
       if (isHotArticlesAffected) {
-        socket.emit(SocketEvent.HOT_ARTICLES_UPDATE, hotArticles.rows.map((article) =>
+        socket.emit(SocketEvent.HOT_ARTICLES_UPDATE, hotArticles.map((article) =>
           getArticleTemplateData(article)
         ));
       }
 
-      // todo: anyway emit `latest-comments:update`. DONE
       socket.emit(SocketEvent.LAST_COMMENTS_UPDATE, lastComments.map((comment) =>
         getCommentTemplateData(comment, {
-          truncate: true
+          truncate: true,
         }),
       ));
 

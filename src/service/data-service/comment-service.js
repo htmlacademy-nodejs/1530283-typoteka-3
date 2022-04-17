@@ -1,5 +1,7 @@
 "use strict";
 
+const {Limit} = require(`../../constants`);
+
 const Alias = require(`../models/alias`);
 
 class CommentService {
@@ -44,6 +46,12 @@ class CommentService {
     });
 
     return comments.map((comment) => comment.get());
+  }
+
+  async findLastOnes() {
+    return this.findAll({
+      limit: Limit.LAST_COMMENTS_SECTION,
+    });
   }
 
   async checkExistence(commentId) {

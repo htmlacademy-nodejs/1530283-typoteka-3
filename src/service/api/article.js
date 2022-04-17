@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 
-const {HttpCode, Limit} = require(`../../constants`);
+const {HttpCode} = require(`../../constants`);
 
 const articleComment = require(`./article-comment`);
 
@@ -79,48 +79,34 @@ module.exports = (app, articleService, commentService, categoryService) => {
     try {
       const articleId = Number(req.params.articleId);
 
-      // todo: get latest comments before article deletion.DONE
-      // todo: get most commented before article deletion.DONE
+      const {socket} = req.app.locals;
+
       const [hotArticles, lastComments] = await Promise.all([
-        articleService.findAndCountAll({
-          mostCommented: true,
-          limit: Limit.HOT_ARTICLES_SECTION,
-        }),
-        commentService.findAll({
-          limit: Limit.LAST_COMMENTS_SECTION,
-        }),
+        articleService.findHotOnes(),
+        commentService.findLastOnes()
       ]);
+
+      const isHotArticlesAffected = hotArticles.some((article) => article.id === articleId);
+      const isLastCommentsAffected = lastComments.some((comment) => comment.articleId === articleId);
 
       await articleService.drop(articleId);
 
-      const {socket} = req.app.locals;
+      if (isHotArticlesAffected) {
+        const hotArticlesUpdated = await articleService.findHotOnes();
 
-      const isLastCommentsAffected = lastComments.some((comment) => comment.articleId === articleId);
-      const isHotArticlesAffected = hotArticles.rows.some((article) => article.id === articleId);
-
-      // todo: if last comments before deletion had comments with articleId - get new latest comments and emit `latest-comments:update`. DONE
-      if (isLastCommentsAffected) {
-        const updatedLastComments = await commentService.findAll({
-          limit: Limit.LAST_COMMENTS_SECTION,
-        });
-
-        socket.emit(SocketEvent.LAST_COMMENTS_UPDATE, updatedLastComments.map((comment) =>
-          getCommentTemplateData(comment, {
-            truncate: true
+        socket.emit(SocketEvent.HOT_ARTICLES_UPDATE, hotArticlesUpdated.map((articles) =>
+          getArticleTemplateData(articles, {
+            truncate: true,
           }),
         ));
       }
 
-      // todo: if most commented before deletion had articleId - get new most commented and emit `most-commented:update`. DONE
-      if (isHotArticlesAffected) {
-        const hotArticlesUpdated = await articleService.findAndCountAll({
-          mostCommented: true,
-          limit: Limit.HOT_ARTICLES_SECTION,
-        });
+      if (isLastCommentsAffected) {
+        const updatedLastComments = await commentService.findLastOnes();
 
-        socket.emit(SocketEvent.HOT_ARTICLES_UPDATE, hotArticlesUpdated.rows.map((comment) =>
-          getArticleTemplateData(comment, {
-            truncate: true
+        socket.emit(SocketEvent.LAST_COMMENTS_UPDATE, updatedLastComments.map((comment) =>
+          getCommentTemplateData(comment, {
+            truncate: true,
           }),
         ));
       }

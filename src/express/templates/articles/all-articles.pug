@@ -24,7 +24,7 @@ block content
         each category in categories
           +categoryTab(category)
 
-    - const noComments = !latestComments.length;
+    - const noComments = !lastComments.length;
 
     .main-page__section-flex.main-page__section-flex--short
       section.main-page__hot.hot
@@ -32,29 +32,29 @@ block content
           | Самое обсуждаемое
           |
           span.hot__icon.hot__icon--fire
-        ul.hot__list
-          if mostCommentedArticles.length
+        if mostCommentedArticles.length
+          ul.hot__list
             each article in mostCommentedArticles
               li.hot__list-item
                 a.hot__list-link(href=`/articles/${article.id}`)= article.announce
                   sup.hot__link-sup #{article.commentsCount}
-          else
-            p Здесь пока ничего нет...
+        else
+          p.hot__empty Здесь пока ничего нет...
 
       section.main-page__last.last
         h2.last__name
           | Последние комментарии
           |
           span.last__icon.last__icon--cloud
-        ul.last__list
-          if !noComments
-            each comment in latestComments
+        if !noComments
+          ul.last__list
+            each comment in lastComments
               li.last__list-item
                 +avatarImage(comment.author.avatar)
                 b.last__list-name #{comment.author.firstName} #{comment.author.lastName}
                 a.last__list-link(href=`/articles/${comment.articleId}#comments`)= comment.text
-          else
-            p Здесь пока ничего нет...
+        else
+          p.last__empty Здесь пока ничего нет...
 
     section.main-page__list.preview
       h2.visually-hidden Список превью статей

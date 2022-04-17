@@ -2,11 +2,13 @@
 
 const {Router} = require(`express`);
 
-const {HttpCode} = require(`../../constants`);
+const {HttpCode, Limit} = require(`../../constants`);
 
 const articleComment = require(`./article-comment`);
 
 const {articleValidator, instanceExists, routeParamsValidator} = require(`../middlewares`);
+const {SocketEvent} = require(`../../constants`);
+const {getCommentTemplateData} = require(`../../utils/comment`);
 
 module.exports = (app, articleService, commentService, categoryService) => {
   const articlesRoutes = new Router();
@@ -75,13 +77,40 @@ module.exports = (app, articleService, commentService, categoryService) => {
   articlesRoutes.delete(`/:articleId`, async (req, res, next) => {
     try {
       const articleId = Number(req.params.articleId);
-      // todo: get latest comments before article deletion
-      // todo: get most commented before article deletion
+
+      // todo: get latest comments before article deletion.DONE
+      // todo: get most commented before article deletion.DONE
+      const [mostCommented, lastComments] = await Promise.all([
+        articleService.findAndCountAll({
+          mostCommented: true,
+          limit: Limit.MOST_COMMENTED_SECTION,
+        }),
+        commentService.findAll({
+          limit: Limit.LAST_COMMENTS_SECTION,
+        }),
+      ]);
 
       await articleService.drop(articleId);
 
-      // todo: if latest comments before deletion had comments with articleId - get new latest comments and emit `latest-comments:update`
+      const {socket} = req.app.locals;
+
+      const isLastCommentsAffected = lastComments.some((comment) => comment.articleId === articleId);
+
+      // todo: if last comments before deletion had comments with articleId - get new latest comments and emit `latest-comments:update`. DONE
+      if (isLastCommentsAffected) {
+        const updatedLastComments = await commentService.findAll({
+          limit: Limit.LAST_COMMENTS_SECTION,
+        });
+
+        socket.emit(SocketEvent.LAST_COMMENTS_UPDATE, updatedLastComments.map((comment) =>
+          getCommentTemplateData(comment, {
+            truncate: true
+          }),
+        ));
+      }
+
       // todo: if most commented before deletion had articleId - get new most commented and emit `most-commented:update`
+
 
       req.app.locals.socket.emit(`article:delete`, res.locals.articleIdInstance);
 

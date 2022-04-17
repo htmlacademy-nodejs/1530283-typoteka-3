@@ -12,6 +12,17 @@ const Port = {
   SSR: 8080,
 };
 
+const SocketEvent = {
+  MOST_COMMENTED_UPDATE: `most-commented:update`,
+  LAST_COMMENTS_UPDATE: `last-comments:update`,
+};
+
+const Limit = {
+  MOST_COMMENTED_SECTION: 4,
+  LAST_COMMENTS_SECTION: 4,
+  ARTICLES_PAGE: 8,
+};
+
 const ExitCode = {
   SUCCESS: 0,
   ERROR: 1,
@@ -71,6 +82,8 @@ module.exports = {
   DEFAULT_CLI_COMMAND,
   HostName,
   Port,
+  SocketEvent,
+  Limit,
   FilePath,
   ExitCode,
   HttpCode,

@@ -6,4 +6,8 @@
   const socket = io(SOCKET_URL);
 
   console.log(socket);
+
+  socket.on(`article:delete`, (article) => {
+    console.log(`Article delete, `, article);
+  })
 })();

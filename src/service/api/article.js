@@ -15,7 +15,7 @@ module.exports = (app, articleService, commentService, categoryService) => {
 
   articlesRoutes.use(`/:articleId`, routeParamsValidator, instanceExists(articleService, `articleId`));
 
-  articleComment(articlesRoutes, commentService);
+  articleComment(articlesRoutes, articleService, commentService);
 
   articlesRoutes.get(`/`, async (req, res, next) => {
     try {
@@ -74,7 +74,16 @@ module.exports = (app, articleService, commentService, categoryService) => {
 
   articlesRoutes.delete(`/:articleId`, async (req, res, next) => {
     try {
-      await articleService.drop(Number(req.params.articleId));
+      const articleId = Number(req.params.articleId);
+      // todo: get latest comments before article deletion
+      // todo: get most commented before article deletion
+
+      await articleService.drop(articleId);
+
+      // todo: if latest comments before deletion had comments with articleId - get new latest comments and emit `latest-comments:update`
+      // todo: if most commented before deletion had articleId - get new most commented and emit `most-commented:update`
+
+      req.app.locals.socket.emit(`article:delete`, res.locals.articleIdInstance);
 
       res.status(HttpCode.NO_CONTENT).end();
     } catch (error) {

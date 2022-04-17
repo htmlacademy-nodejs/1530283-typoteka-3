@@ -141,6 +141,11 @@ const createAPI = async () => {
   });
 
   const app = express();
+
+  app.locals.socket = {
+    emit: jest.fn(),
+  };
+
   app.use(express.json());
 
   article(

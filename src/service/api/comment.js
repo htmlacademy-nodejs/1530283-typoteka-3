@@ -6,7 +6,7 @@ const {HttpCode} = require(`../../constants`);
 
 const {instanceExists, routeParamsValidator} = require(`../middlewares`);
 
-module.exports = (app, commentService) => {
+module.exports = (app, articleService, commentService) => {
   const commentsRoutes = new Router();
 
   app.use(`/comments`, commentsRoutes);
@@ -29,7 +29,17 @@ module.exports = (app, commentService) => {
 
   commentsRoutes.delete(`/:commentId`, async (req, res, next) => {
     try {
-      await commentService.drop(Number(req.params.commentId));
+      // todo: get articleId from locals
+      // todo: get latest comments before comment deletion
+      // todo: get most commented before comment deletion
+
+      const commentId = Number(req.params.commentId);
+      await commentService.drop(commentId);
+
+      // todo: if latest comments before deletion had commentIdInstance - get new latest comments and emit `latest-comments:update`
+      // todo: if most commented before deletion had articleId - get new most commented and emit `most-commented:update`
+
+      req.app.locals.socket.emit(`comment:delete`, res.locals.commentIdInstance);
 
       res.status(HttpCode.NO_CONTENT).end();
     } catch (error) {

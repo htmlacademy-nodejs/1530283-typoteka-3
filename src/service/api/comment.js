@@ -7,6 +7,7 @@ const {HttpCode, Limit, SocketEvent} = require(`../../constants`);
 const {instanceExists, routeParamsValidator} = require(`../middlewares`);
 
 const {getCommentTemplateData} = require(`../../utils/comment`);
+const {getArticleTemplateData} = require(`../../utils/article`);
 
 module.exports = (app, articleService, commentService) => {
   const commentsRoutes = new Router();
@@ -37,10 +38,10 @@ module.exports = (app, articleService, commentService) => {
 
       // todo: get last comments before comment deletion. DONE
       // todo: get most commented before comment deletion. DONE
-      const [mostCommented, lastComments] = await Promise.all([
+      const [hotArticles, lastComments] = await Promise.all([
         articleService.findAndCountAll({
           mostCommented: true,
-          limit: Limit.MOST_COMMENTED_SECTION,
+          limit: Limit.HOT_ARTICLES_SECTION,
         }),
         commentService.findAll({
           limit: Limit.LAST_COMMENTS_SECTION,
@@ -52,6 +53,7 @@ module.exports = (app, articleService, commentService) => {
       const {socket} = req.app.locals;
 
       const isLastCommentsAffected = lastComments.some((comment) => comment.id === commentId);
+      const isHotArticlesAffected = hotArticles.rows.some((article) => article.id === articleId);
 
       // todo: if latest comments before deletion had commentIdInstance - get new latest comments and emit `latest-comments:update`. DONE
       if (isLastCommentsAffected) {
@@ -66,7 +68,19 @@ module.exports = (app, articleService, commentService) => {
         ));
       }
 
-      // todo: if most commented before deletion had articleId - get new most commented and emit `most-commented:update`
+      // todo: if most commented before deletion had articleId - get new most commented and emit `most-commented:update`. DONE
+      if (isHotArticlesAffected) {
+        const hotArticlesUpdated = await articleService.findAndCountAll({
+          mostCommented: true,
+          limit: Limit.HOT_ARTICLES_SECTION,
+        });
+
+        socket.emit(SocketEvent.HOT_ARTICLES_UPDATE, hotArticlesUpdated.rows.map((article) =>
+          getArticleTemplateData(article, {
+            truncate: true
+          }),
+        ));
+      }
 
       res.status(HttpCode.NO_CONTENT).end();
     } catch (error) {

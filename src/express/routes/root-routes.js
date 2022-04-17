@@ -36,10 +36,10 @@ rootRoutes.get(`/`, async (req, res, next) => {
       return;
     }
 
-    const [mostCommentedArticles, categories, lastComments] =
+    const [hotArticles, categories, lastComments] =
       await Promise.all([
         api.getAndCountArticles({
-          limit: Limit.MOST_COMMENTED_SECTION,
+          limit: Limit.HOT_ARTICLES_SECTION,
           mostCommented: true,
         }),
         api.getCategories({
@@ -54,7 +54,7 @@ rootRoutes.get(`/`, async (req, res, next) => {
     res.render(`articles/all-articles`, {
       articles: articles.rows.map(getArticleTemplateData),
       categories,
-      mostCommentedArticles: mostCommentedArticles.rows.map((article) =>
+      hotArticles: hotArticles.rows.map((article) =>
         getArticleTemplateData(article, {
           truncate: true
         }),

@@ -32,9 +32,9 @@ block content
           | Самое обсуждаемое
           |
           span.hot__icon.hot__icon--fire
-        if mostCommentedArticles.length
+        if hotArticles.length
           ul.hot__list
-            each article in mostCommentedArticles
+            each article in hotArticles
               li.hot__list-item
                 a.hot__list-link(href=`/articles/${article.id}`)= article.announce
                   sup.hot__link-sup #{article.commentsCount}

@@ -13,12 +13,12 @@ const Port = {
 };
 
 const SocketEvent = {
-  MOST_COMMENTED_UPDATE: `most-commented:update`,
+  HOT_ARTICLES_UPDATE: `hot-articles:update`,
   LAST_COMMENTS_UPDATE: `last-comments:update`,
 };
 
 const Limit = {
-  MOST_COMMENTED_SECTION: 4,
+  HOT_ARTICLES_SECTION: 4,
   LAST_COMMENTS_SECTION: 4,
   ARTICLES_PAGE: 8,
 };

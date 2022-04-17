@@ -11,7 +11,7 @@
   };
 
   const SocketEvent = {
-    MOST_COMMENTED_UPDATE: `most-commented:update`,
+    HOT_ARTICLES_UPDATE: `hot-articles:update`,
     LAST_COMMENTS_UPDATE: `last-comments:update`,
   };
 
@@ -48,7 +48,7 @@
     return emptyNode;
   };
 
-  const createLatestCommentNode = (comment) => {
+  const createLastCommentNode = (comment) => {
     const commentNode = document.createElement(`li`);
 
     commentNode.classList.add(`last__list-item`);
@@ -71,9 +71,29 @@
     return commentNode;
   };
 
+  const createHotArticleNode = (article) => {
+    const articleNode = document.createElement(`li`);
+
+    articleNode.classList.add(`hot__list-item`);
+
+    articleNode.innerHTML = `
+      <a class="hot__list-link" href=""><sup class="hot__link-sup"></sup></a>
+    `;
+
+    const linkNode = articleNode.querySelector(`.hot__list-link`);
+    const commentsCountNode = articleNode.querySelector(`.hot__link-sup`);
+    const textNode = document.createTextNode(article.announce);
+
+    linkNode.href = `/articles/${article.id}`;
+    commentsCountNode.textContent = article.commentsCount;
+    linkNode.prepend(textNode);
+
+    return articleNode;
+  }
+
   const ListItemNodeConstructor = {
-    [Section.HOT]: () => null,
-    [Section.LAST]: createLatestCommentNode,
+    [Section.HOT]: createHotArticleNode,
+    [Section.LAST]: createLastCommentNode,
   };
 
   const updateSection = (items, type) => {
@@ -113,8 +133,8 @@
     updateSection(lastComments, Section.LAST);
   });
 
-  socket.on(SocketEvent.MOST_COMMENTED_UPDATE, (hotArticles = []) => {
-    console.log(`${SocketEvent.MOST_COMMENTED_UPDATE}, `, hotArticles);
+  socket.on(SocketEvent.HOT_ARTICLES_UPDATE, (hotArticles = []) => {
+    console.log(`${SocketEvent.HOT_ARTICLES_UPDATE}, `, hotArticles);
     updateSection(hotArticles, Section.HOT);
   });
 })();

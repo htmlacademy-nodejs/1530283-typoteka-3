@@ -124,17 +124,11 @@
 
   const socket = io(SOCKET_URL);
 
-  socket.on(`connect`, () => {
-    console.log(`Socket connected successfully`);
-  })
-
   socket.on(SocketEvent.LAST_COMMENTS_UPDATE, (lastComments = []) => {
-    console.log(`${SocketEvent.LAST_COMMENTS_UPDATE}, `, lastComments);
     updateSection(lastComments, Section.LAST);
   });
 
   socket.on(SocketEvent.HOT_ARTICLES_UPDATE, (hotArticles = []) => {
-    console.log(`${SocketEvent.HOT_ARTICLES_UPDATE}, `, hotArticles);
     updateSection(hotArticles, Section.HOT);
   });
 })();

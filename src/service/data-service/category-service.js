@@ -7,7 +7,6 @@ const Alias = require(`../models/alias`);
 class CategoryService {
   constructor(sequelize) {
     this._Category = sequelize.models.Category;
-    this._ArticleCategory = sequelize.models.ArticleCategory;
     this._Article = sequelize.models.Article;
   }
 

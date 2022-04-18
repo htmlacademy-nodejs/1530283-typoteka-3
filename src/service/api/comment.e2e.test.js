@@ -7,6 +7,7 @@ const request = require(`supertest`);
 const initDB = require(`../lib/init-db`);
 
 const comment = require(`./comment`);
+const ArticleService = require(`../data-service/article-service`);
 const CommentService = require(`../data-service/comment-service`);
 const {HttpCode} = require(`../../constants`);
 
@@ -136,9 +137,14 @@ const createAPI = async () => {
   });
 
   const app = express();
+
+  app.locals.socket = {
+    emit: jest.fn()
+  };
+
   app.use(express.json());
 
-  comment(app, new CommentService(mockDB));
+  comment(app, new ArticleService(mockDB), new CommentService(mockDB));
 
   return app;
 };

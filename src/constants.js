@@ -1,6 +1,27 @@
 "use strict";
 
-const DEFAULT_COMMAND = `--help`;
+const DEFAULT_CLI_COMMAND = `--help`;
+
+const HostName = {
+  API: `localhost`,
+  SSR: `localhost`
+};
+
+const Port = {
+  API: 3000,
+  SSR: 8080,
+};
+
+const SocketEvent = {
+  HOT_ARTICLES_UPDATE: `hot-articles:update`,
+  LAST_COMMENTS_UPDATE: `last-comments:update`,
+};
+
+const Limit = {
+  HOT_ARTICLES_SECTION: 4,
+  LAST_COMMENTS_SECTION: 4,
+  ARTICLES_PAGE: 8,
+};
 
 const ExitCode = {
   SUCCESS: 0,
@@ -58,7 +79,11 @@ const Environment = {
 };
 
 module.exports = {
-  DEFAULT_COMMAND,
+  DEFAULT_CLI_COMMAND,
+  HostName,
+  Port,
+  SocketEvent,
+  Limit,
   FilePath,
   ExitCode,
   HttpCode,

@@ -7,6 +7,9 @@ const {HttpCode} = require(`../../constants`);
 const articleComment = require(`./article-comment`);
 
 const {articleValidator, instanceExists, routeParamsValidator} = require(`../middlewares`);
+const {SocketEvent} = require(`../../constants`);
+const {getCommentTemplateData} = require(`../../utils/comment`);
+const {getArticleTemplateData} = require(`../../utils/article`);
 
 module.exports = (app, articleService, commentService, categoryService) => {
   const articlesRoutes = new Router();
@@ -15,7 +18,7 @@ module.exports = (app, articleService, commentService, categoryService) => {
 
   articlesRoutes.use(`/:articleId`, routeParamsValidator, instanceExists(articleService, `articleId`));
 
-  articleComment(articlesRoutes, commentService);
+  articleComment(articlesRoutes, articleService, commentService);
 
   articlesRoutes.get(`/`, async (req, res, next) => {
     try {
@@ -74,7 +77,39 @@ module.exports = (app, articleService, commentService, categoryService) => {
 
   articlesRoutes.delete(`/:articleId`, async (req, res, next) => {
     try {
-      await articleService.drop(Number(req.params.articleId));
+      const articleId = Number(req.params.articleId);
+
+      const {socket} = req.app.locals;
+
+      const [hotArticles, lastComments] = await Promise.all([
+        articleService.findHotOnes(),
+        commentService.findLastOnes()
+      ]);
+
+      const isHotArticlesAffected = hotArticles.some((article) => article.id === articleId);
+      const isLastCommentsAffected = lastComments.some((comment) => comment.articleId === articleId);
+
+      await articleService.drop(articleId);
+
+      if (isHotArticlesAffected) {
+        const hotArticlesUpdated = await articleService.findHotOnes();
+
+        socket.emit(SocketEvent.HOT_ARTICLES_UPDATE, hotArticlesUpdated.map((articles) =>
+          getArticleTemplateData(articles, {
+            truncate: true,
+          }),
+        ));
+      }
+
+      if (isLastCommentsAffected) {
+        const updatedLastComments = await commentService.findLastOnes();
+
+        socket.emit(SocketEvent.LAST_COMMENTS_UPDATE, updatedLastComments.map((comment) =>
+          getCommentTemplateData(comment, {
+            truncate: true,
+          }),
+        ));
+      }
 
       res.status(HttpCode.NO_CONTENT).end();
     } catch (error) {

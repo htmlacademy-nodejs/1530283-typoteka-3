@@ -6,11 +6,13 @@ const instanceExists = (service, pathParam) => async (req, res, next) => {
   const id = req.params[pathParam];
 
   try {
-    const isExist = await service.checkExistence(Number(id));
+    const instance = await service.checkExistence(Number(id));
 
-    if (!isExist) {
+    if (!instance) {
       throw new Error(`No instance with ${pathParam} = ${id}`);
     }
+
+    res.locals[`${pathParam}Instance`] = instance;
 
     next();
   } catch (error) {

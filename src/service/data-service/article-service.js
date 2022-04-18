@@ -2,6 +2,8 @@
 
 const Sequelize = require(`sequelize`);
 
+const {Limit} = require(`../../constants`);
+
 const Alias = require(`../models/alias`);
 
 class ArticleService {
@@ -9,7 +11,6 @@ class ArticleService {
     this._Article = sequelize.models.Article;
     this._Comment = sequelize.models.Comment;
     this._Category = sequelize.models.Category;
-    this._ArticleCategory = sequelize.models.Category;
   }
 
   async findAndCountAll({
@@ -118,6 +119,13 @@ class ArticleService {
     }
 
     return result;
+  }
+
+  async findHotOnes() {
+    return (await this.findAndCountAll({
+      mostCommented: true,
+      limit: Limit.HOT_ARTICLES_SECTION,
+    })).rows;
   }
 
   async findOne(articleId) {

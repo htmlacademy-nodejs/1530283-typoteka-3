@@ -34,7 +34,7 @@ defineModels(sequelize);
   article(api, articleService, commentService, categoryService);
   category(api, categoryService);
   search(api, searchService);
-  comment(api, commentService);
+  comment(api, articleService, commentService);
   user(api, userService);
 })();
 

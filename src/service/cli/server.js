@@ -1,13 +1,16 @@
 "use strict";
 
+const http = require(`http`);
 const express = require(`express`);
 const requestId = require(`express-request-id`);
 const helmet = require(`helmet`);
 
-const {ExitCode} = require(`../../constants`);
+const {Port, HostName, ExitCode} = require(`../../constants`);
 
+const socket = require(`../lib/socket`);
 const {getLogger} = require(`../lib/logger/logger`);
 const sequelize = require(`../lib/sequelize`);
+
 const api = require(`../api/api`);
 
 const {
@@ -20,12 +23,14 @@ const {
 } = require(`../middlewares`);
 
 const API_PREFIX = `/api`;
-const DEFAULT_PORT = 3000;
 const LOGGER_NAME = `api`;
 
 const logger = getLogger({name: LOGGER_NAME});
 
 const app = express();
+const server = http.createServer(app);
+
+app.locals.socket = socket(server);
 
 app.use(helmet());
 
@@ -59,10 +64,10 @@ module.exports = {
     logger.info(`Connection to database established`);
 
     const [rawPort] = args;
-    const port = Number.parseInt(rawPort, 10) || DEFAULT_PORT;
+    const port = Number.parseInt(rawPort, 10) || Port.API;
 
     try {
-      app.listen(port, (err) => {
+      server.listen(port, HostName.API, (err) => {
         if (err) {
           return logger.error(
               `An error occurred on server creation: ${err.message}`

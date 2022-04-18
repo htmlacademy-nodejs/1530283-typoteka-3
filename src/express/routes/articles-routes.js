@@ -2,7 +2,7 @@
 
 const {Router} = require(`express`);
 
-const {HttpCode} = require(`../../constants`);
+const {HttpCode, Limit} = require(`../../constants`);
 
 const {getAPI} = require(`../api`);
 
@@ -19,7 +19,6 @@ const {
 const {getCommentTemplateData, parseClientComment} = require(`../../utils/comment`);
 
 const DEFAULT_ARTICLES_PAGE = 1;
-const ARTICLES_LIMIT = 8;
 
 const articlesRoutes = new Router();
 
@@ -33,12 +32,12 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
       api.getAndCountArticles({
         categoryId: req.params.categoryId,
         withCategories: true,
-        limit: ARTICLES_LIMIT,
-        offset: (page - 1) * ARTICLES_LIMIT,
+        limit: Limit.ARTICLES_PAGE,
+        offset: (page - 1) * Limit.ARTICLES_PAGE,
       }),
       api.getCategories({
         withArticlesCount: true,
-        havingArticles: true
+        havingArticles: true,
       }),
     ]);
 
@@ -51,8 +50,8 @@ articlesRoutes.get(`/category/:categoryId`, async (req, res, next) => {
       categories,
       currentCategory,
       page,
-      totalPages: Math.ceil(articles.count / ARTICLES_LIMIT),
-      withPagination: articles.count > ARTICLES_LIMIT
+      totalPages: Math.ceil(articles.count / Limit.ARTICLES_PAGE),
+      withPagination: articles.count > Limit.ARTICLES_PAGE,
     });
   } catch (error) {
     next(error);

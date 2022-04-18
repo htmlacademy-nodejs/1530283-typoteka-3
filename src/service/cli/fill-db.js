@@ -16,11 +16,9 @@ const {
 } = require(`../../utils/common`);
 const {formatTimestamp, getRandomPastDate} = require(`../../utils/date`);
 
-const {MOCK_PASSWORD} = process.env;
+const DEFAULT_USER_PASSWORD = `password`;
 
-if (!MOCK_PASSWORD) {
-  throw new Error(`MOCK_PASSWORD environment variable is not defined`);
-}
+const MOCK_PASSWORD = process.env.MOCK_PASSWORD || DEFAULT_USER_PASSWORD;
 
 const DEFAULT_COUNT = 3;
 

@@ -28,7 +28,4 @@ const logger = pino({
   }
 });
 
-module.exports = {
-  logger,
-  getLogger: (options = {}) => logger.child(options),
-};
+module.exports = logger;

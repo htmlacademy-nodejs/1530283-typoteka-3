@@ -8,7 +8,7 @@ const helmet = require(`helmet`);
 const {Port, HostName, ExitCode} = require(`../../constants`);
 
 const socket = require(`../lib/socket`);
-const {getLogger} = require(`../lib/logger/logger`);
+const {getLogger} = require(`../lib/logger`);
 const sequelize = require(`../lib/sequelize`);
 
 const api = require(`../api/api`);
@@ -70,12 +70,13 @@ module.exports = {
     try {
       server.listen(port, HostName.API, (err) => {
         if (err) {
-          return logger.error(
+          logger.error(
               `An error occurred on server creation: ${err.message}`
           );
+          process.exit(ExitCode.ERROR);
         }
 
-        return logger.info(`Listening to connections on ${port}`);
+        logger.info(`Listening to connections on ${port}`);
       });
     } catch (err) {
       logger.error(`An error occurred: ${err.message}`);

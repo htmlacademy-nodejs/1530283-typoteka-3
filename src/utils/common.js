@@ -41,8 +41,8 @@ const readFile = async (filePath, fileType, fallbackContent = []) => {
       default:
         throw new Error(`Unknown file type: ${fileType}`);
     }
-  } catch (err) {
-    console.error(chalk.red(err));
+  } catch (error) {
+    console.error(chalk.red(error));
     return fallbackContent;
   }
 };

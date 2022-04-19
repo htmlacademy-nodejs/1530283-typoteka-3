@@ -51,26 +51,26 @@ app.use(serverError());
     logger.info(`Trying to connect to database...`);
     await sequelize.authenticate();
     await sequelize.sync({force: false});
-  } catch (err) {
-    logger.error(`An error occurred: ${err.message}`);
+  } catch (error) {
+    logger.error(`An error occurred: ${error.message}`);
     process.exit(ExitCode.ERROR);
   }
 
   logger.info(`Connection to database established`);
 
   try {
-    app.listen(Port.SSR, HostName.SSR, (err) => {
-      if (err) {
+    app.listen(Port.SSR, HostName.SSR, (error) => {
+      if (error) {
         logger.error(
-            `An error occurred on server creation: ${err.message}`
+            `An error occurred on server creation: ${error.message}`
         );
         process.exit(ExitCode.ERROR);
       }
 
       logger.info(`Listening to connections on ${Port.SSR}`);
     });
-  } catch (err) {
-    logger.error(`An error occurred: ${err.message}`);
+  } catch (error) {
+    logger.error(`An error occurred: ${error.message}`);
     process.exit(ExitCode.ERROR);
   }
 })();

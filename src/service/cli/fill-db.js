@@ -5,7 +5,7 @@ const {ExitCode, FilePath, FileType} = require(`../../constants`);
 const initDb = require(`../lib/init-db`);
 const sequelize = require(`../lib/sequelize`);
 const passwordService = require(`../lib/password-service`);
-const {getLogger} = require(`../lib/logger/logger`);
+const {getLogger} = require(`../lib/logger`);
 
 const {
   readFile,
@@ -74,7 +74,7 @@ const USERS = [
   },
 ];
 
-const logger = getLogger({name: `fill-db`});
+const logger = getLogger({name: `filldb`});
 
 const generateAnnounce = (sentences) => getRandomItem(sentences);
 
@@ -138,15 +138,15 @@ const generateArticles = (count, sourceData) =>
     .map(() => generateArticle(sourceData));
 
 module.exports = {
-  name: `--fill-db`,
+  name: `--filldb`,
   run: async (args) => {
     try {
       logger.info(`Trying to connect to database...`);
       await sequelize.authenticate();
       logger.info(`Connection to database established successfully`);
-    } catch (err) {
+    } catch (error) {
       logger.error(
-          `An error occurred during database connection: ${err.message}`
+          `An error occurred during database connection: ${error.message}`
       );
       process.exit(ExitCode.ERROR);
     }

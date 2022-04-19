@@ -40,8 +40,6 @@ const HttpCode = {
 };
 
 const FilePath = {
-  FILL_DB: `fill-db.sql`,
-  MOCKS: `mocks.json`,
   CATEGORIES: `data/categories.txt`,
   TITLES: `data/titles.txt`,
   SENTENCES: `data/sentences.txt`,

@@ -18,8 +18,6 @@ const sessionStore = new SequelizeStore({
   tableName: SESSION_TABLE_NAME,
 });
 
-sequelize.sync({force: false});
-
 module.exports = {
   SESSION_EXPIRATION_TIME,
   sessionStore

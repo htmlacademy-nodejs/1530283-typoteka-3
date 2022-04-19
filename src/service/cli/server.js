@@ -8,7 +8,7 @@ const helmet = require(`helmet`);
 const {Port, HostName, ExitCode} = require(`../../constants`);
 
 const socket = require(`../lib/socket`);
-const {getLogger} = require(`../lib/logger/logger`);
+const {getLogger} = require(`../lib/logger`);
 const sequelize = require(`../lib/sequelize`);
 
 const api = require(`../api/api`);
@@ -57,8 +57,8 @@ module.exports = {
       logger.info(`Trying to connect to database...`);
       await sequelize.authenticate();
       await sequelize.sync({force: false});
-    } catch (err) {
-      logger.error(`An error occurred: ${err.message}`);
+    } catch (error) {
+      logger.error(`An error occurred: ${error.message}`);
       process.exit(ExitCode.ERROR);
     }
 
@@ -68,17 +68,18 @@ module.exports = {
     const port = Number.parseInt(rawPort, 10) || Port.API;
 
     try {
-      server.listen(port, HostName.API, (err) => {
-        if (err) {
-          return logger.error(
-              `An error occurred on server creation: ${err.message}`
+      server.listen(port, HostName.API, (error) => {
+        if (error) {
+          logger.error(
+              `An error occurred on server creation: ${error.message}`
           );
+          process.exit(ExitCode.ERROR);
         }
 
-        return logger.info(`Listening to connections on ${port}`);
+        logger.info(`Listening to connections on ${port}`);
       });
-    } catch (err) {
-      logger.error(`An error occurred: ${err.message}`);
+    } catch (error) {
+      logger.error(`An error occurred: ${error.message}`);
       process.exit(ExitCode.ERROR);
     }
   },

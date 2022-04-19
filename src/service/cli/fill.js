@@ -236,7 +236,7 @@ ${commentsValues};
       await fs.writeFile(FilePath.FILL_DB, content);
       console.info(
           chalk.green(
-              `Операция завершена успешно. Данные записаны в файл ${FilePath.MOCKS}.`
+              `Операция завершена успешно. Данные записаны в файл ${FilePath.FILL_DB}.`
           )
       );
     } catch (error) {

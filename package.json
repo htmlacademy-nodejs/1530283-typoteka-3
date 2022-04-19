@@ -12,7 +12,6 @@
     "start-ssr-server::debug": "cross-env LOG_LEVEL=debug NODE_ENV=development nodemon -r dotenv/config ./src/express/express.js",
     "start-servers": "concurrently --names \"API,SSR\" --prefix-colors \"bgYellow.black,bgGreen.black\" \"npm run start-api-server\" \"npm run start-ssr-server\"",
     "start-servers::debug": "concurrently --names \"API,SSR\" --prefix-colors \"bgYellow.black,bgGreen.black\" \"npm run start-api-server::debug\" \"npm run start-ssr-server::debug\"",
-    "generate": "node ./src/service/service.js --generate",
     "test": "npm run eslint && npm run jest",
     "eslint": "eslint --ext .js src/",
     "jest": "jest",

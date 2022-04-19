@@ -74,7 +74,7 @@ const USERS = [
   },
 ];
 
-const logger = getLogger({name: `fill-db`});
+const logger = getLogger({name: `filldb`});
 
 const generateAnnounce = (sentences) => getRandomItem(sentences);
 
@@ -138,7 +138,7 @@ const generateArticles = (count, sourceData) =>
     .map(() => generateArticle(sourceData));
 
 module.exports = {
-  name: `--fill-db`,
+  name: `--filldb`,
   run: async (args) => {
     try {
       logger.info(`Trying to connect to database...`);

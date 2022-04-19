@@ -6,10 +6,10 @@ const initDb = require(`../lib/init-db`);
 const sequelize = require(`../lib/sequelize`);
 const {getLogger} = require(`../lib/logger`);
 
-const logger = getLogger({name: `init-db`});
+const logger = getLogger({name: `initdb`});
 
 module.exports = {
-  name: `--init-db`,
+  name: `--initdb`,
   run: async () => {
     try {
       logger.info(`Trying to connect to database...`);
